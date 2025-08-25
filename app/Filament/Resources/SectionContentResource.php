@@ -2,12 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use App\Models\CourseSection;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\SectionContentResource\Pages\ListSectionContents;
+use App\Filament\Resources\SectionContentResource\Pages\CreateSectionContent;
+use App\Filament\Resources\SectionContentResource\Pages\EditSectionContent;
 use App\Filament\Resources\SectionContentResource\Pages;
 use App\Filament\Resources\SectionContentResource\RelationManagers;
 use App\Models\SectionContent;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,20 +31,20 @@ class SectionContentResource extends Resource
 {
     protected static ?string $model = SectionContent::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Products';
+    protected static string | \UnitEnum | null $navigationGroup = 'Products';
 
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
                 Select::make('course_section_id')
                 ->label('Course Section')
                 ->options(function () {
-                    return \App\Models\CourseSection::with('course')
+                    return CourseSection::with('course')
                         ->get()
                         ->mapWithKeys(function ($section) {
                             return [
@@ -45,11 +58,11 @@ class SectionContentResource extends Resource
                 ->searchable()
                 ->required(),
 
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
 
-                Forms\Components\RichEditor::make('content')
+                RichEditor::make('content')
                     ->columnSpanFull()
                     ->required(),
             ]);
@@ -60,29 +73,29 @@ class SectionContentResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                 ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('courseSection.name')
+                TextColumn::make('courseSection.name')
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('courseSection.course.name')
+                TextColumn::make('courseSection.course.name')
                     ->sortable()
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -97,9 +110,9 @@ class SectionContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSectionContents::route('/'),
-            'create' => Pages\CreateSectionContent::route('/create'),
-            'edit' => Pages\EditSectionContent::route('/{record}/edit'),
+            'index' => ListSectionContents::route('/'),
+            'create' => CreateSectionContent::route('/create'),
+            'edit' => EditSectionContent::route('/{record}/edit'),
         ];
     }
 

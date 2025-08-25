@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SectionContentResource\Pages;
 
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\SectionContentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -13,7 +14,7 @@ class ListSectionContents extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

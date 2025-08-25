@@ -2,12 +2,25 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\CourseMentorResource\Pages\ListCourseMentors;
+use App\Filament\Resources\CourseMentorResource\Pages\CreateCourseMentor;
+use App\Filament\Resources\CourseMentorResource\Pages\EditCourseMentor;
 use App\Filament\Resources\CourseMentorResource\Pages;
 use App\Filament\Resources\CourseMentorResource\RelationManagers;
 use App\Models\CourseMentor;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,23 +31,23 @@ class CourseMentorResource extends Resource
 {
     protected static ?string $model = CourseMentor::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Products';
+    protected static string | \UnitEnum | null $navigationGroup = 'Products';
 
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
-                Forms\Components\Select::make('course_id')
+                Select::make('course_id')
                     ->relationship('course', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
 
-                Forms\Components\Select::make('user_id')
+                Select::make('user_id')
                     ->label('Mentor')
                     ->options(function () {
                         return User::role('mentor')->pluck('name', 'id');
@@ -43,10 +56,10 @@ class CourseMentorResource extends Resource
                     ->preload()
                     ->required(),
 
-                Forms\Components\Textarea::make('about')
+                Textarea::make('about')
                     ->required(),
 
-                Forms\Components\Select::make('is_active')
+                Select::make('is_active')
                     ->options([
                         true => 'Active',
                         false => 'Banned',
@@ -60,29 +73,29 @@ class CourseMentorResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\ImageColumn::make('mentor.photo'),
+                ImageColumn::make('mentor.photo'),
 
-                Tables\Columns\TextColumn::make('mentor.name')
+                TextColumn::make('mentor.name')
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\ImageColumn::make('course.thumbnail'),
+                ImageColumn::make('course.thumbnail'),
 
-                Tables\Columns\TextColumn::make('course.name')
+                TextColumn::make('course.name')
                     ->sortable()
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -97,9 +110,9 @@ class CourseMentorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCourseMentors::route('/'),
-            'create' => Pages\CreateCourseMentor::route('/create'),
-            'edit' => Pages\EditCourseMentor::route('/{record}/edit'),
+            'index' => ListCourseMentors::route('/'),
+            'create' => CreateCourseMentor::route('/create'),
+            'edit' => EditCourseMentor::route('/{record}/edit'),
         ];
     }
 

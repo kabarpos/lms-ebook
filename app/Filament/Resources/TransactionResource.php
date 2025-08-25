@@ -2,16 +2,36 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Components\Grid;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Carbon\Carbon;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\TransactionResource\Pages\ListTransactions;
+use App\Filament\Resources\TransactionResource\Pages\CreateTransaction;
+use App\Filament\Resources\TransactionResource\Pages\EditTransaction;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Pricing;
 use App\Models\Transaction;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,23 +43,23 @@ class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Customers';
+    protected static string | \UnitEnum | null $navigationGroup = 'Customers';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
                 Wizard::make([
 
-                    Forms\Components\Wizard\Step::make('Product and Price')
+                    Step::make('Product and Price')
                         ->schema([
                             Grid::make(2)
                                 ->schema([
 
-                                    Forms\Components\Select::make('pricing_id')
+                                    Select::make('pricing_id')
                                     ->relationship('pricing', 'name')
                                     ->searchable()
                                     ->preload()
@@ -69,7 +89,7 @@ class TransactionResource extends Resource
                                         }
                                     }),
 
-                                    Forms\Components\TextInput::make('duration')
+                                    TextInput::make('duration')
                                     ->required()
                                     ->numeric()
                                     ->readOnly()
@@ -79,19 +99,19 @@ class TransactionResource extends Resource
 
                             Grid::make(3)
                             ->schema([
-                                Forms\Components\TextInput::make('sub_total_amount')
+                                TextInput::make('sub_total_amount')
                                     ->required()
                                     ->numeric()
                                     ->prefix('IDR')
                                     ->readOnly(),
 
-                                Forms\Components\TextInput::make('total_tax_amount')
+                                TextInput::make('total_tax_amount')
                                     ->required()
                                     ->numeric()
                                     ->prefix('IDR')
                                     ->readOnly(),
 
-                                Forms\Components\TextInput::make('grand_total_amount')
+                                TextInput::make('grand_total_amount')
                                     ->required()
                                     ->numeric()
                                     ->prefix('IDR')
@@ -102,27 +122,27 @@ class TransactionResource extends Resource
 
                             Grid::make(2)
                             ->schema([
-                                Forms\Components\DatePicker::make('started_at')
+                                DatePicker::make('started_at')
                                 ->live()
                                 ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                     $duration = $get('duration'); // Get the duration from the form state
                                     if ($state && $duration) {
-                                        $endedAt = \Carbon\Carbon::parse($state)->addMonth($duration); // Calculate the end date
+                                        $endedAt = Carbon::parse($state)->addMonth($duration); // Calculate the end date
                                         $set('ended_at', $endedAt->format('Y-m-d')); // Set the calculated end date
                                     }
                                 })
                                 ->required(),
 
-                                Forms\Components\DatePicker::make('ended_at')
+                                DatePicker::make('ended_at')
                                 ->readOnly()
                                 ->required(),
 
                             ]),
                         ]),
 
-                        Forms\Components\Wizard\Step::make('Customer Information')
+                        Step::make('Customer Information')
                         ->schema([
-                            Forms\Components\Select::make('user_id')
+                            Select::make('user_id')
                                 ->relationship('student', 'email')
                                 ->searchable()
                                 ->preload()
@@ -147,19 +167,19 @@ class TransactionResource extends Resource
                                         $set('email', $email);
                                     }
                                 }),
-                            Forms\Components\TextInput::make('name')
+                            TextInput::make('name')
                                 ->required()
                                 ->readOnly()
                                 ->maxLength(255),
 
-                            Forms\Components\TextInput::make('email')
+                            TextInput::make('email')
                                 ->required()
                                 ->readOnly()
                                 ->maxLength(255),
                         ]),
 
 
-                    Forms\Components\Wizard\Step::make('Payment Information')
+                    Step::make('Payment Information')
                         ->schema([
 
                             ToggleButtons::make('is_paid')
@@ -172,14 +192,14 @@ class TransactionResource extends Resource
                                 ])
                                 ->required(),
 
-                            Forms\Components\Select::make('payment_type')
+                            Select::make('payment_type')
                                 ->options([
                                     'Midtrans' => 'Midtrans',
                                     'Manual' => 'Manual',
                                 ])
                                 ->required(),
 
-                            Forms\Components\FileUpload::make('proof')
+                            FileUpload::make('proof')
                                 ->image(),
                         ]),
 
@@ -195,19 +215,19 @@ class TransactionResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\ImageColumn::make('student.photo')
+                ImageColumn::make('student.photo')
                 ->circular()
                 ,
 
-                Tables\Columns\TextColumn::make('student.name')
+                TextColumn::make('student.name')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('booking_trx_id')
+                TextColumn::make('booking_trx_id')
                 ->searchable(),
 
-                Tables\Columns\TextColumn::make('pricing.name'),
+                TextColumn::make('pricing.name'),
 
-                Tables\Columns\IconColumn::make('is_paid')
+                IconColumn::make('is_paid')
                     ->boolean()
                     ->trueColor('success')
                     ->falseColor('danger')
@@ -216,13 +236,13 @@ class TransactionResource extends Resource
                     ->label('Terverifikasi'),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+            ->recordActions([
+                EditAction::make(),
+                ViewAction::make(),
 
-                Tables\Actions\Action::make('approve')
+                Action::make('approve')
                     ->label('Approve')
                     ->action(function (Transaction $record) {
                         $record->is_paid = true;
@@ -242,11 +262,11 @@ class TransactionResource extends Resource
                     ->requiresConfirmation()
                     ->visible(fn (Transaction $record) => !$record->is_paid),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -261,9 +281,9 @@ class TransactionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTransactions::route('/'),
-            'create' => Pages\CreateTransaction::route('/create'),
-            'edit' => Pages\EditTransaction::route('/{record}/edit'),
+            'index' => ListTransactions::route('/'),
+            'create' => CreateTransaction::route('/create'),
+            'edit' => EditTransaction::route('/{record}/edit'),
         ];
     }
 

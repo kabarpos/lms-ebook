@@ -2,11 +2,24 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,32 +30,32 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Customers';
+    protected static string | \UnitEnum | null $navigationGroup = 'Customers';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                 ->maxLength(255)
                 ->required(),
 
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                 ->maxLength(255)
                 ->email()
                 ->required(),
 
-                Forms\Components\TextInput::make('password')
+                TextInput::make('password')
                 ->helperText('Minimum 9 characters')
                 ->password() // This makes it a password field
                 ->required()
                 ->minLength(9) // Minimum length for the password
                 ->maxLength(255),
 
-                Forms\Components\Select::make('occupation')
+                Select::make('occupation')
                 ->options([
                     'Developer' => 'Developer',
                     'Designer' => 'Designer',
@@ -52,12 +65,12 @@ class UserResource extends Resource
                 ])
                 ->required(),
 
-                Forms\Components\Select::make('roles')
+                Select::make('roles')
                 ->label('Role')
                 ->relationship('roles', 'name')
                 ->required(),
 
-                Forms\Components\FileUpload::make('photo')
+                FileUpload::make('photo')
                 ->required()
                 ->image(),
             ]);
@@ -68,24 +81,24 @@ class UserResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\ImageColumn::make('photo'),
+                ImageColumn::make('photo'),
 
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('roles.name'),
+                TextColumn::make('roles.name'),
             ])
             ->filters([
                 // Tables\Filters\TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -100,9 +113,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 

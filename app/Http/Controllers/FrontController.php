@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Pricing;
 use App\Services\PaymentService;
 use App\Services\PricingService;
@@ -69,7 +70,7 @@ class FrontController extends Controller
 
             // Return the Snap token to the frontend
             return response()->json(['snap_token' => $snapToken], 200);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Handle any exceptions that occur during transaction creation
             return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
         }
@@ -89,7 +90,7 @@ class FrontController extends Controller
 
             // transaction has been created in database
             return response()->json(['status' => $transactionStatus]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Failed to handle Midtrans notification:', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to process notification.'], 500);
         }

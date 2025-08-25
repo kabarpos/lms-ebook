@@ -2,13 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use App\Filament\Resources\CourseResource\Pages\ListCourses;
+use App\Filament\Resources\CourseResource\Pages\CreateCourse;
+use App\Filament\Resources\CourseResource\Pages\EditCourse;
 use App\Filament\Resources\CourseResource\Pages;
 use App\Filament\Resources\CourseResource\RelationManagers;
 use App\Filament\Resources\CourseResource\RelationManagers\CourseSectionsRelationManager;
 use App\Models\Course;
 use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,24 +36,24 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static ?string $navigationGroup = 'Products';
+    protected static string | \UnitEnum | null $navigationGroup = 'Products';
 
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
                 Fieldset::make('Details')
                 ->schema([
                     // ...
-                    Forms\Components\TextInput::make('name')
+                    TextInput::make('name')
                     ->maxLength(255)
                     ->required(),
 
-                    Forms\Components\FileUpload::make('thumbnail')
+                    FileUpload::make('thumbnail')
                     ->required()
                     ->image(),
 
@@ -46,24 +63,24 @@ class CourseResource extends Resource
                 ->schema([
                     // ...
 
-                    Forms\Components\Repeater::make('benefits')
+                    Repeater::make('benefits')
                     ->relationship('benefits')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required(),
                     ]),
 
-                    Forms\Components\Textarea::make('about')
+                    Textarea::make('about')
                     ->required(),
 
-                    Forms\Components\Select::make('is_popular')
+                    Select::make('is_popular')
                     ->options([
                         true => 'Popular',
                         false => 'Not Popular',
                     ])
                     ->required(),
 
-                    Forms\Components\Select::make('category_id')
+                    Select::make('category_id')
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload()
@@ -77,14 +94,14 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\ImageColumn::make('thumbnail'),
+                ImageColumn::make('thumbnail'),
 
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('category.name'),
+                TextColumn::make('category.name'),
 
-                Tables\Columns\IconColumn::make('is_popular')
+                IconColumn::make('is_popular')
                     ->boolean()
                     ->trueColor('success')
                     ->falseColor('danger')
@@ -93,16 +110,16 @@ class CourseResource extends Resource
                     ->label('Popular'),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -118,9 +135,9 @@ class CourseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCourses::route('/'),
-            'create' => Pages\CreateCourse::route('/create'),
-            'edit' => Pages\EditCourse::route('/{record}/edit'),
+            'index' => ListCourses::route('/'),
+            'create' => CreateCourse::route('/create'),
+            'edit' => EditCourse::route('/{record}/edit'),
         ];
     }
 

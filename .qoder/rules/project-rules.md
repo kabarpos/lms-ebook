@@ -13,3 +13,4 @@ alwaysApply: true
 - Selalu croscek log setelah melakukan perbaikan atau pembuatan fitur baru
 - Hindari downgrade versi libary, package, dan lain-lain
 - Project ini Laravel 12, jadi jangan menggunakan versi lain
+- Arsitektur menggunakan repository pattern (WAJIB)
