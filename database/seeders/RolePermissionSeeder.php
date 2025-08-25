@@ -80,6 +80,7 @@ class RolePermissionSeeder extends Seeder
         // Create roles
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'web']);
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $instructorRole = Role::firstOrCreate(['name' => 'instructor', 'guard_name' => 'web']);
         $mentorRole = Role::firstOrCreate(['name' => 'mentor', 'guard_name' => 'web']);
         $studentRole = Role::firstOrCreate(['name' => 'student', 'guard_name' => 'web']);
 
@@ -93,6 +94,22 @@ class RolePermissionSeeder extends Seeder
             'delete users',
         ])->get();
         $adminRole->syncPermissions($adminPermissions);
+        
+        // Assign permissions to instructor (similar to mentor but can create courses)
+        $instructorPermissions = Permission::whereIn('name', [
+            'view courses',
+            'create courses',
+            'edit courses',
+            'view content',
+            'create content',
+            'edit content',
+            'view users',
+            'view reports',
+            'view mentors',
+            'create mentors',
+            'edit mentors',
+        ])->get();
+        $instructorRole->syncPermissions($instructorPermissions);
         
         // Assign permissions to mentor (course and content related)
         $mentorPermissions = Permission::whereIn('name', [
