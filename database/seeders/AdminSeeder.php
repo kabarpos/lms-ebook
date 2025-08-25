@@ -49,7 +49,7 @@ class AdminSeeder extends Seeder
 
         // Create Super Admin User
         $superAdmin = User::firstOrCreate(
-            ['email' => 'superadmin@obitobwalms.com'],
+            ['email' => 'superadmin@lmsebook.com'],
             [
                 'name' => 'Super Administrator',
                 'password' => Hash::make('SuperAdmin123!'),
@@ -61,7 +61,7 @@ class AdminSeeder extends Seeder
 
         // Create Admin User
         $admin = User::firstOrCreate(
-            ['email' => 'admin@obitobwalms.com'],
+            ['email' => 'admin@lmsebook.com'],
             [
                 'name' => 'Administrator',
                 'password' => Hash::make('Admin123!'),
@@ -73,7 +73,7 @@ class AdminSeeder extends Seeder
 
         // Create Demo Admin User (for testing)
         $demoAdmin = User::firstOrCreate(
-            ['email' => 'demo@obitobwalms.com'],
+            ['email' => 'demo@lmsebook.com'],
             [
                 'name' => 'Demo Admin',
                 'password' => Hash::make('Demo123!'),
@@ -84,8 +84,8 @@ class AdminSeeder extends Seeder
         $demoAdmin->assignRole($adminRole);
 
         $this->command->info('Admin users created successfully!');
-        $this->command->info('Super Admin: superadmin@obitobwalms.com / SuperAdmin123!');
-        $this->command->info('Admin: admin@obitobwalms.com / Admin123!');
-        $this->command->info('Demo Admin: demo@obitobwalms.com / Demo123!');
+        $this->command->info('Super Admin: superadmin@lmsebook.com / SuperAdmin123!');
+        $this->command->info('Admin: admin@lmsebook.com / Admin123!');
+        $this->command->info('Demo Admin: demo@lmsebook.com / Demo123!');
     }
 }
