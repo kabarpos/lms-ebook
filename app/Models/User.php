@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\Course;
+use App\Models\UserLessonProgress;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -76,5 +78,33 @@ class User extends Authenticatable implements FilamentUser
             ->where('is_paid', true)
             ->where('ended_at', '>=', now()) // Ensure the subscription is still active
             ->exists(); // return boolean
+    }
+
+    public function lessonProgress()
+    {
+        return $this->hasMany(UserLessonProgress::class);
+    }
+
+    public function completedLessons()
+    {
+        return $this->lessonProgress()->completed();
+    }
+
+    public function getCourseProgress($courseId)
+    {
+        $totalLessons = Course::find($courseId)
+            ->courseSections
+            ->sum(fn($section) => $section->sectionContents->count());
+            
+        $completedLessons = $this->lessonProgress()
+            ->forCourse($courseId)
+            ->completed()
+            ->count();
+            
+        return [
+            'total' => $totalLessons,
+            'completed' => $completedLessons,
+            'percentage' => $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100, 2) : 0
+        ];
     }
 }

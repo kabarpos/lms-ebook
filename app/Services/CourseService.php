@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Course;
+use App\Models\UserLessonProgress;
 use App\Repositories\CourseRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -47,20 +48,49 @@ class CourseService
     public function getLearningData(Course $course, $contentSectionId, $sectionContentId)
     {
         $course->load(['courseSections.sectionContents']);
+        $user = Auth::user();
 
         $currentSection = $course->courseSections->find($contentSectionId);
         $currentContent = $currentSection ? $currentSection->sectionContents->find($sectionContentId) : null;
 
-        // Determine next content
+        // Get user progress for this course
+        $userProgress = UserLessonProgress::forUser($user->id)
+            ->forCourse($course->id)
+            ->get()
+            ->keyBy('section_content_id');
+
+        // Calculate progress statistics
+        $totalLessons = $course->courseSections->sum(function ($section) {
+            return $section->sectionContents->count();
+        });
+        
+        $completedLessons = $userProgress->where('is_completed', true)->count();
+        $progressPercentage = $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100, 2) : 0;
+
+        // Check if current lesson is completed
+        $isCurrentCompleted = $currentContent && isset($userProgress[$currentContent->id]) 
+            ? $userProgress[$currentContent->id]->is_completed 
+            : false;
+
+        // Determine next and previous content
         $nextContent = null;
+        $prevContent = null;
 
         if ($currentContent) {
+            // Find next content in current section
             $nextContent = $currentSection->sectionContents
                 ->where('id', '>', $currentContent->id)
                 ->sortBy('id')
                 ->first();
+                
+            // Find previous content in current section
+            $prevContent = $currentSection->sectionContents
+                ->where('id', '<', $currentContent->id)
+                ->sortByDesc('id')
+                ->first();
         }
 
+        // If no next content in current section, find first content of next section
         if (!$nextContent && $currentSection) {
             $nextSection = $course->courseSections
                 ->where('id', '>', $currentSection->id)
@@ -72,14 +102,31 @@ class CourseService
             }
         }
 
+        // If no previous content in current section, find last content of previous section
+        if (!$prevContent && $currentSection) {
+            $prevSection = $course->courseSections
+                ->where('id', '<', $currentSection->id)
+                ->sortByDesc('id')
+                ->first();
+
+            if ($prevSection) {
+                $prevContent = $prevSection->sectionContents->sortByDesc('id')->first();
+            }
+        }
+
         return [
             'course' => $course,
             'currentSection' => $currentSection,
             'currentContent' => $currentContent,
             'nextContent' => $nextContent,
+            'prevContent' => $prevContent,
             'isFinished' => !$nextContent,
+            'progressPercentage' => $progressPercentage,
+            'totalLessons' => $totalLessons,
+            'completedLessons' => $completedLessons,
+            'isCurrentCompleted' => $isCurrentCompleted,
+            'userProgress' => $userProgress
         ];
-
     }
 
     public function searchCourses(string $keyword)

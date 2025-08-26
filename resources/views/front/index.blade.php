@@ -1,9 +1,20 @@
 @extends('front.layouts.app')
-@section('title', 'Obito BuildWithAngga')
+@section('title', 'BuildWithAngga - Learning Platform')
 @section('content')
+    <style>
+    /* Force Manrope Font Implementation */
+    body, html, * {
+        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
+    }
+    
+    .hero-gradient {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    }
+    </style>
+    
     <x-nav-guest />
     <!-- Hero Section -->
-    <section class="relative bg-white py-16 lg:py-24">
+    <section class="relative hero-gradient py-16 lg:py-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <!-- Hero Content -->

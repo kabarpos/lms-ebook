@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\LessonProgressController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontController;
@@ -54,6 +55,24 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/booking/payment/midtrans', [FrontController::class, 'paymentStoreMidtrans'])
         ->name('front.payment_store_midtrans');
+    });
+
+    // API Routes for Lesson Progress (JSON responses)
+    Route::prefix('api')->middleware(['check.subscription.or.admin'])->group(function () {
+        Route::get('/lesson-progress', [LessonProgressController::class, 'index'])
+            ->name('api.lesson-progress.index');
+        
+        Route::post('/lesson-progress', [LessonProgressController::class, 'store'])
+            ->name('api.lesson-progress.store');
+        
+        Route::get('/lesson-progress/{sectionContent}', [LessonProgressController::class, 'show'])
+            ->name('api.lesson-progress.show');
+        
+        Route::put('/lesson-progress/{sectionContent}', [LessonProgressController::class, 'update'])
+            ->name('api.lesson-progress.update');
+        
+        Route::get('/course-progress/{course}', [LessonProgressController::class, 'courseProgress'])
+            ->name('api.course-progress');
     });
 
 

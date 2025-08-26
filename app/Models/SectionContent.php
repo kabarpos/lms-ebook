@@ -21,4 +21,17 @@ class SectionContent extends Model
     {
         return $this->belongsTo(CourseSection::class, 'course_section_id');
     }
+
+    public function userProgress()
+    {
+        return $this->hasMany(UserLessonProgress::class);
+    }
+
+    public function isCompletedByUser($userId)
+    {
+        return $this->userProgress()
+            ->where('user_id', $userId)
+            ->where('is_completed', true)
+            ->exists();
+    }
 }

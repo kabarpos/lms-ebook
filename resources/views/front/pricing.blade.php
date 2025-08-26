@@ -2,10 +2,21 @@
 @section('title', 'Pricing - Obito BuildWithAngga')
 
 @section('content')
+    <style>
+    /* Force Manrope Font Implementation */
+    body, html, * {
+        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
+    }
+    
+    .hero-gradient {
+        background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+    }
+    </style>
+    
     <x-nav-guest />
     
     <!-- Hero Section -->
-    <section class="bg-white py-16 lg:py-24">
+    <section class="hero-gradient py-16 lg:py-24" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <!-- Trust Badge -->
             <div class="inline-flex items-center space-x-2 px-4 py-2 bg-lochmara-50 text-lochmara-700 rounded-full text-sm font-semibold mb-6">
@@ -26,7 +37,7 @@
     </section>
     
     <!-- Pricing Cards Section -->
-    <section class="bg-gray-50 py-16">
+    <section class="bg-gray-50 py-16" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-6">
                 
@@ -171,7 +182,7 @@
     </section>
     
     <!-- Testimonials Section -->
-    <section class="bg-white py-16">
+    <section class="bg-white py-16" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
                 <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">

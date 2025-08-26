@@ -5,12 +5,74 @@
     sidebarOpen: false,
     currentProgress: {{ $progressPercentage ?? 0 }},
     totalLessons: {{ $totalLessons ?? $course->courseSections->sum(fn($s) => $s->sectionContents->count()) }},
-    completedLessons: {{ $completedLessons ?? 0 }}
-}" class="flex min-h-screen bg-gray-50">
+    completedLessons: {{ $completedLessons ?? 0 }},
+    isLessonCompleted: {{ $isCurrentCompleted ? 'true' : 'false' }},
+    isLoading: false,
+    
+    // Mark lesson as complete using database API
+    async markLessonComplete() {
+        if (this.isLessonCompleted || this.isLoading) return;
+        
+        this.isLoading = true;
+        
+        try {
+            const response = await fetch('/api/lesson-progress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    course_id: {{ $course->id }},
+                    section_content_id: {{ $currentContent->id }},
+                    time_spent: Math.floor(Math.random() * 600) + 300 // Random 5-15 minutes
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.status === 'success') {
+                this.isLessonCompleted = true;
+                this.completedLessons = data.data.course_progress.completed;
+                this.currentProgress = data.data.course_progress.percentage;
+                
+                // Show success notification
+                this.showNotification('✅ Lesson completed! Great progress!', 'success');
+            } else {
+                this.showNotification(data.message || 'Failed to mark lesson as complete', 'error');
+            }
+        } catch (error) {
+            console.error('Error marking lesson complete:', error);
+            this.showNotification('Network error. Please try again.', 'error');
+        } finally {
+            this.isLoading = false;
+        }
+    },
+    
+    // Simple notification system
+    showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 ${
+            type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+}" 
+class="bg-gray-50 min-h-screen">
     
     <!-- Modern Sidebar -->
     <aside :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" 
-           class="fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto flex flex-col bg-white w-80 lg:w-96 h-screen border-r border-gray-200 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
+           class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white w-80 lg:w-96 h-screen border-r border-gray-200 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
         
         <!-- Back to Dashboard Button (Above Sidebar) -->
         <div class="flex-shrink-0 px-6 py-4 border-b border-gray-100">
@@ -33,6 +95,42 @@
         
         <!-- Lesson Navigation -->
         <div class="flex-1 overflow-y-auto">
+            <!-- Course Progress Header -->
+            <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
+                <div class="mb-3">
+                    <h2 class="font-semibold text-lg truncate">{{ $course->name }}</h2>
+                    <p class="text-lochmara-100 text-sm mt-1">Course Progress</p>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="mb-3">
+                    <div class="flex items-center justify-between mb-2 text-sm">
+                        <span x-text="`${completedLessons} of ${totalLessons} lessons`"></span>
+                        <span x-text="`${Math.round(currentProgress)}%`"></span>
+                    </div>
+                    <div class="w-full bg-lochmara-800 rounded-full h-2">
+                        <div class="bg-white h-2 rounded-full transition-all duration-500" 
+                             :style="`width: ${currentProgress}%`"></div>
+                    </div>
+                </div>
+                
+                <!-- Progress Stats -->
+                <div class="flex items-center justify-between text-xs text-lochmara-100">
+                    <div class="flex items-center">
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        <span x-text="completedLessons + ' completed'"></span>
+                    </div>
+                    <div class="flex items-center">
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span x-text="(totalLessons - completedLessons) + ' remaining'"></span>
+                    </div>
+                </div>
+            </div>
+            
             <div class="px-6 py-4">
                 @foreach($course->courseSections as $sectionIndex => $section)
                 <div class="mb-6 last:mb-0">
@@ -61,6 +159,7 @@
                         @php
                             $isActive = $currentSection && $section->id == $currentSection->id && $currentContent->id == $content->id;
                             $lessonNumber = $contentIndex + 1;
+                            $isCompleted = isset($userProgress[$content->id]) && $userProgress[$content->id]->is_completed;
                         @endphp
                         <a href="{{ route('dashboard.course.learning', [
                                 'course' => $course->slug,
@@ -71,8 +170,19 @@
                            class="group block">
                             <div class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-lochmara-50 border border-lochmara-200' : 'hover:bg-gray-50 border border-transparent hover:border-gray-200' }}">
                                 <!-- Lesson Status Icon -->
-                                <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 {{ $isActive ? 'bg-lochmara-600 text-white' : 'bg-gray-100 text-gray-400 group-hover:bg-lochmara-100 group-hover:text-lochmara-600' }}">
-                                    @if($isActive)
+                                <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 
+                                    @if($isCompleted) 
+                                        bg-green-500 text-white
+                                    @elseif($isActive) 
+                                        bg-lochmara-600 text-white
+                                    @else 
+                                        bg-gray-100 text-gray-400 group-hover:bg-lochmara-100 group-hover:text-lochmara-600
+                                    @endif">
+                                    @if($isCompleted)
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                        </svg>
+                                    @elseif($isActive)
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M8 5v14l11-7z"/>
                                         </svg>
@@ -85,6 +195,9 @@
                                 <div class="flex-1 min-w-0">
                                     <h4 class="font-medium text-sm {{ $isActive ? 'text-lochmara-900' : 'text-gray-900 group-hover:text-lochmara-700' }} line-clamp-2 leading-tight">
                                         {{ $content->name }}
+                                        @if($isCompleted)
+                                            <span class="ml-2 text-green-600 text-xs">✓</span>
+                                        @endif
                                     </h4>
                                     <div class="flex items-center space-x-4 mt-1 text-xs {{ $isActive ? 'text-lochmara-600' : 'text-gray-500' }}">
                                         <span class="flex items-center">
@@ -99,6 +212,14 @@
                                             </svg>
                                             Article
                                         </span>
+                                        @if($isCompleted)
+                                        <span class="flex items-center text-green-600">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                            </svg>
+                                            Completed
+                                        </span>
+                                        @endif
                                     </div>
                                 </div>
                                 
@@ -127,7 +248,7 @@
     </div>
     
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-h-screen bg-white">
+    <div class="flex-1 flex flex-col min-h-screen bg-white lg:ml-96">
         <!-- Top Navigation Bar -->
         <header class="flex-shrink-0 bg-white border-b border-gray-200 px-4 lg:px-8 py-4">
             <div class="main-content-wrapper">
@@ -234,16 +355,6 @@
                                 </span>
                             </div>
                         </div>
-                        
-                        <!-- Lesson Actions -->
-                        <div class="hidden lg:flex items-center space-x-3 ml-6">
-                            <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-lochmara-300 hover:text-lochmara-600 transition-colors">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                                </svg>
-                                Bookmark
-                            </button>
-                        </div>
                             </div>
                             
                             <!-- Progress Bar -->
@@ -322,20 +433,26 @@
                     <div class="content-card rounded-2xl">
                         <div class="px-6 sm:px-8 lg:px-10 py-6 lg:py-8">
                             <div class="flex flex-col sm:flex-row items-stretch gap-4">
-                                <!-- Ask Mentor Button -->
-                                <button class="inline-flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                    </svg>
-                                    Ask Mentor
-                                </button>
-                                
                                 <!-- Mark Complete Button -->
-                                <button class="inline-flex items-center justify-center px-4 py-3 border border-green-300 rounded-lg text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400 transition-all duration-200">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button 
+                                    @click="markLessonComplete()" 
+                                    :disabled="isLessonCompleted || isLoading"
+                                    class="inline-flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-w-[180px]"
+                                    :class="isLessonCompleted ? 
+                                        'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' : 
+                                        isLoading ? 'bg-gray-100 text-gray-500 border border-gray-300 cursor-not-allowed' :
+                                        'border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400'"
+                                >
+                                    <!-- Loading Spinner -->
+                                    <div x-show="isLoading" class="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
+                                    
+                                    <!-- Checkmark Icon -->
+                                    <svg x-show="!isLoading" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    Mark as Complete
+                                    
+                                    <!-- Button Text -->
+                                    <span x-text="isLoading ? 'Saving...' : (isLessonCompleted ? 'Completed ✅' : 'Mark as Complete')"></span>
                                 </button>
                                 
                                 <!-- Continue Learning Button -->
@@ -414,7 +531,15 @@
             background: #ffffff;
         }
         
-        /* Responsive Sidebar - Clean Approach */
+        /* Fixed Sidebar Positioning */
+        aside {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 50;
+        }
+        
         @media (max-width: 1023px) {
             /* Mobile: Hidden by default, shows when toggled */
             aside {
@@ -427,10 +552,9 @@
         }
         
         @media (min-width: 1024px) {
-            /* Desktop: Always visible */
+            /* Desktop: Always visible and fixed */
             aside {
                 transform: translateX(0) !important;
-                position: relative !important;
             }
         }
         
