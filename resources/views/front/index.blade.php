@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', 'BuildWithAngga - Learning Platform')
+@section('title', 'DripCourse - Learning Platform')
 @section('content')
     <style>
     /* Force Manrope Font Implementation */
@@ -53,7 +53,7 @@
                         </a>
                     </div>
                     
-                    <!-- Social Proof -->
+                    {{-- <!-- Social Proof -->
                     <div class="flex items-center space-x-4">
                         <div class="flex -space-x-2">
                             <div class="w-10 h-10 rounded-full bg-lochmara-500 border-2 border-white flex items-center justify-center">
@@ -83,7 +83,7 @@
                                 <span class="font-semibold">{{ $totalCourses ?? 0 }} Courses</span>
                             </p>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 
                 <!-- Hero Image -->

@@ -29,6 +29,11 @@
     completedLessons: {{ $completedLessons ?? 0 }},
     isLessonCompleted: {{ $isCurrentCompleted ? 'true' : 'false' }},
     isLoading: false,
+    openSections: {
+        @foreach($course->courseSections as $section)
+        'section_{{ $section->id }}': {{ $section->id == ($currentSection->id ?? 0) ? 'true' : 'false' }},
+        @endforeach
+    },
     
     // Mark lesson as complete using database API
     async markLessonComplete() {
@@ -156,7 +161,7 @@ class="bg-gray-50 min-h-screen">
                 <div class="mb-6 last:mb-0">
                     <!-- Section Header -->
                     <button type="button" 
-                            data-expand="section-{{ $section->id }}" 
+                            @click="openSections['section_{{ $section->id }}'] = !openSections['section_{{ $section->id }}']"
                             class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
                         <div class="flex items-center space-x-3">
                             <div class="w-8 h-8 rounded-lg bg-lochmara-100 flex items-center justify-center flex-shrink-0">
@@ -167,14 +172,22 @@ class="bg-gray-50 min-h-screen">
                                 <p class="text-xs text-gray-500 mt-0.5">{{ $section->sectionContents->count() }} lessons</p>
                             </div>
                         </div>
-                        <svg class="w-5 h-5 text-gray-400 group-hover:text-lochmara-600 transition-all duration-200 section-arrow" 
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-lochmara-600 transition-all duration-200 transform" 
+                             :class="openSections['section_{{ $section->id }}'] ? 'rotate-180' : ''"
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
                     
                     <!-- Section Content -->
-                    <div id="section-{{ $section->id }}" class="section-content mt-3 ml-11 space-y-2">
+                    <div x-show="openSections['section_{{ $section->id }}']" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 transform scale-95"
+                         x-transition:enter-end="opacity-100 transform scale-100"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 transform scale-100"
+                         x-transition:leave-end="opacity-0 transform scale-95"
+                         class="mt-3 ml-11 space-y-2">
                         @foreach($section->sectionContents as $contentIndex => $content)
                         @php
                             $isActive = $currentSection && $section->id == $currentSection->id && $currentContent->id == $content->id;
@@ -220,18 +233,7 @@ class="bg-gray-50 min-h-screen">
                                         @endif
                                     </h4>
                                     <div class="flex items-center space-x-4 mt-1 text-xs {{ $isActive ? 'text-lochmara-600' : 'text-gray-500' }}">
-                                        <span class="flex items-center">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            5-8 min
-                                        </span>
-                                        <span class="flex items-center">
-                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                            </svg>
-                                            Article
-                                        </span>
+
                                         @if($isCompleted)
                                         <span class="flex items-center text-green-600">
                                             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
@@ -341,166 +343,135 @@ class="bg-gray-50 min-h-screen">
         </header>
         
         <!-- Content Area -->
-        <main class="flex-1 overflow-y-auto content-area">
-            <!-- Content Container with Proper Width Constraints -->
-            <div class="main-content-wrapper px-4 sm:px-6 lg:px-8">
-                <div class="content-inner py-6 lg:py-10">
-                <!-- Content Header -->
-                <header class="mb-6 lg:mb-8">
-                    <div class="content-card rounded-2xl mb-6">
-                        <div class="px-6 sm:px-8 lg:px-10 py-6 lg:py-8">
-                            <div class="flex items-start justify-between mb-6">
-                        <div class="flex-1">
-                            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-                                {{ $currentContent->name }}
-                            </h1>
-                            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
-                                <span class="inline-flex items-center px-3 py-1 bg-lochmara-100 text-lochmara-700 rounded-full">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    5-8 min read
-                                </span>
-                                <span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                    </svg>
-                                    {{ $currentSection->name ?? 'Section' }}
-                                </span>
-                                <span class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Article
-                                </span>
-                            </div>
+        <main class="flex-1 bg-white">
+            <!-- Lesson Content -->
+            <article class="max-w-4xl mx-auto">
+                <div class="px-6 sm:px-8 lg:px-10 py-8 lg:py-12">
+                    <!-- Lesson Header -->
+                    <header class="mb-8">
+                        <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4 leading-tight">
+                            {{ $currentContent->name }}
+                        </h1>
+                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
+                            <span class="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                                {{ $currentSection->name ?? 'Section' }}
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Premium Lesson
+                            </span>
                         </div>
-                            </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-8">
+                            <div class="bg-gradient-to-r from-lochmara-600 to-lochmara-500 h-2 rounded-full transition-all duration-500" 
+                                 :style="`width: ${currentProgress}%`"></div>
+                        </div>
+                    </header>
+                    
+                    <!-- Lesson Content -->
+                    <div class="prose prose-lg max-w-none content-typography mb-12">
+                        {!! $currentContent->content !!}
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row items-stretch gap-4 mb-8">
+                        <!-- Mark Complete Button -->
+                        <button 
+                            @click="markLessonComplete()" 
+                            :disabled="isLessonCompleted || isLoading"
+                            class="inline-flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-w-[180px]"
+                            :class="isLessonCompleted ? 
+                                'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' : 
+                                isLoading ? 'bg-gray-100 text-gray-500 border border-gray-300 cursor-not-allowed' :
+                                'border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400'"
+                        >
+                            <!-- Loading Spinner -->
+                            <div x-show="isLoading" class="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
                             
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-gradient-to-r from-lochmara-600 to-lochmara-500 h-2 rounded-full transition-all duration-500" 
-                                     :style="`width: ${currentProgress}%`"></div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-                
-                <!-- Article Content with Proper Constraints -->
-                <article class="prose prose-lg prose-gray max-w-none">
-                    <div class="content-card rounded-2xl hover:shadow-md transition-shadow duration-300">
-                        <div class="px-6 sm:px-8 lg:px-10 py-8 lg:py-12">
-                            <div class="prose prose-lg max-w-none content-typography">
-                                {!! $currentContent->content !!}
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                
-                <!-- Lesson Navigation -->
-                <div class="mt-8 lg:mt-12">
-                    <div class="content-card rounded-2xl">
-                        <div class="px-6 sm:px-8 lg:px-10 py-6 lg:py-8">
-                            <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
-                    <!-- Previous Lesson -->
-                    <div class="flex-1">
-                        @if(isset($prevContent))
-                        <a href="{{ route('dashboard.course.learning', [
-                                'course' => $course->slug,
-                                'courseSection' => $prevContent->course_section_id,
-                                'sectionContent' => $prevContent->id,
-                            ]) }}" 
-                           class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-lochmara-600 transition-colors">
-                            <svg class="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            <!-- Checkmark Icon -->
+                            <svg x-show="!isLoading" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <div class="text-left">
-                                <div class="text-xs text-gray-500">Previous</div>
-                                <div class="font-semibold line-clamp-1">{{ $prevContent->name ?? 'Previous Lesson' }}</div>
-                            </div>
+                            
+                            <!-- Button Text -->
+                            <span x-text="isLoading ? 'Saving...' : (isLessonCompleted ? 'Completed ✅' : 'Mark as Complete')"></span>
+                        </button>
+                        
+                        <!-- Continue Learning Button -->
+                        @if (!$isFinished && isset($nextContent))
+                        <a href="{{ route('dashboard.course.learning', [
+                                    'course' => $course->slug,
+                                    'courseSection' => $nextContent->course_section_id,
+                                    'sectionContent' => $nextContent->id,
+                                ]) }}" 
+                           class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white text-sm font-medium rounded-lg hover:from-lochmara-700 hover:to-lochmara-800 transition-all duration-200">
+                            <span>Continue Learning</span>
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                            </svg>
+                        </a>
+                        @elseif ($isFinished)
+                        <a href="{{ route('dashboard.course.learning.finished', $course->slug) }}" 
+                           class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white text-sm font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Complete Course</span>
                         </a>
                         @endif
                     </div>
                     
-                    <!-- Next Lesson -->
-                    <div class="flex-1 text-right">
-                        @if(isset($nextContent))
-                        <a href="{{ route('dashboard.course.learning', [
-                                'course' => $course->slug,
-                                'courseSection' => $nextContent->course_section_id,
-                                'sectionContent' => $nextContent->id,
-                            ]) }}" 
-                           class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-lochmara-600 transition-colors">
-                            <div class="text-right mr-2">
-                                <div class="text-xs text-gray-500">Next</div>
-                                <div class="font-semibold line-clamp-1">{{ $nextContent->name ?? 'Next Lesson' }}</div>
-                            </div>
-                            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                        @endif
-                            </div>
+                    <!-- Lesson Navigation -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pt-8 border-t border-gray-200">
+                        <!-- Previous Lesson -->
+                        <div class="flex-1">
+                            @if(isset($prevContent))
+                            <a href="{{ route('dashboard.course.learning', [
+                                    'course' => $course->slug,
+                                    'courseSection' => $prevContent->course_section_id,
+                                    'sectionContent' => $prevContent->id,
+                                ]) }}" 
+                               class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-lochmara-600 transition-colors">
+                                <svg class="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                                <div class="text-left">
+                                    <div class="text-xs text-gray-500">Previous</div>
+                                    <div class="font-semibold line-clamp-1">{{ $prevContent->name ?? 'Previous Lesson' }}</div>
+                                </div>
+                            </a>
+                            @endif
+                        </div>
+                        
+                        <!-- Next Lesson -->
+                        <div class="flex-1 text-right">
+                            @if(isset($nextContent))
+                            <a href="{{ route('dashboard.course.learning', [
+                                    'course' => $course->slug,
+                                    'courseSection' => $nextContent->course_section_id,
+                                    'sectionContent' => $nextContent->id,
+                                ]) }}" 
+                               class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-lochmara-600 transition-colors">
+                                <div class="text-right mr-2">
+                                    <div class="text-xs text-gray-500">Next</div>
+                                    <div class="font-semibold line-clamp-1">{{ $nextContent->name ?? 'Next Lesson' }}</div>
+                                </div>
+                                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                            @endif
                         </div>
                     </div>
                 </div>
-                </div>
-            </div>
+            </article>
         </main>
-                
-                <!-- Action Buttons Below Content -->
-                <div class="mt-8 lg:mt-12">
-                    <div class="content-card rounded-2xl">
-                        <div class="px-6 sm:px-8 lg:px-10 py-6 lg:py-8">
-                            <div class="flex flex-col sm:flex-row items-stretch gap-4">
-                                <!-- Mark Complete Button -->
-                                <button 
-                                    @click="markLessonComplete()" 
-                                    :disabled="isLessonCompleted || isLoading"
-                                    class="inline-flex items-center justify-center px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 min-w-[180px]"
-                                    :class="isLessonCompleted ? 
-                                        'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' : 
-                                        isLoading ? 'bg-gray-100 text-gray-500 border border-gray-300 cursor-not-allowed' :
-                                        'border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400'"
-                                >
-                                    <!-- Loading Spinner -->
-                                    <div x-show="isLoading" class="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
-                                    
-                                    <!-- Checkmark Icon -->
-                                    <svg x-show="!isLoading" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    
-                                    <!-- Button Text -->
-                                    <span x-text="isLoading ? 'Saving...' : (isLessonCompleted ? 'Completed ✅' : 'Mark as Complete')"></span>
-                                </button>
-                                
-                                <!-- Continue Learning Button -->
-                                @if (!$isFinished && isset($nextContent))
-                                <a href="{{ route('dashboard.course.learning', [
-                                            'course' => $course->slug,
-                                            'courseSection' => $nextContent->course_section_id,
-                                            'sectionContent' => $nextContent->id,
-                                        ]) }}" 
-                                   class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white text-sm font-medium rounded-lg hover:from-lochmara-700 hover:to-lochmara-800 transition-all duration-200">
-                                    <span>Continue Learning</span>
-                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                                    </svg>
-                                </a>
-                                @elseif ($isFinished)
-                                <a href="{{ route('dashboard.course.learning.finished', $course->slug) }}" 
-                                   class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white text-sm font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    <span>Complete Course</span>
-                                </a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
     </div>
     
     <!-- Mobile Overlay -->
@@ -523,33 +494,16 @@ class="bg-gray-50 min-h-screen">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="{{ asset('css/content.css') }}">
     <style>
-        /* Unified Layout - Single Container Design */
+        /* Unified Layout - Clean Design */
         body, html {
             font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
         }
         
-        /* Remove all visual separations */
+        /* Clean content flow - no visual separations */
         .content-card {
             background: transparent;
             border: none;
             box-shadow: none;
-        }
-        
-        /* Seamless content flow */
-        .main-content-wrapper {
-            max-width: 100%;
-            margin: 0;
-        }
-        
-        .content-inner {
-            max-width: 100%;
-            margin: 0;
-            width: 100%;
-        }
-        
-        /* Content Area */
-        .content-area {
-            background: #ffffff;
         }
         
         /* Fixed Sidebar Positioning */
@@ -579,10 +533,45 @@ class="bg-gray-50 min-h-screen">
             }
         }
         
-        /* Typography */
+        /* Typography - matching Free Preview */
         .content-typography {
             line-height: 1.75;
             font-size: 1.125rem;
+        }
+        
+        .content-typography h1,
+        .content-typography h2,
+        .content-typography h3 {
+            font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .content-typography p {
+            margin-bottom: 1.25rem;
+            color: #374151;
+        }
+        
+        .content-typography ul,
+        .content-typography ol {
+            margin: 1.25rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .content-typography code {
+            background-color: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        
+        .content-typography pre {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
         }
         
         @media (max-width: 640px) {
@@ -592,12 +581,27 @@ class="bg-gray-50 min-h-screen">
             }
         }
         
-        /* Enhanced prose styling */
-        .prose {
-            color: #374151;
-            max-width: none;
-            font-size: 1.125rem;
-            line-height: 1.75;
+        /* Sidebar Scrollbar Styling */
+        .sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #e5e7eb #f9fafb;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: #f9fafb;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 3px;
+        }
+        
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background: #d1d5db;
         }
         
         .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
@@ -759,20 +763,6 @@ class="bg-gray-50 min-h-screen">
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
         
-        /* Section accordion animation */
-        .section-content {
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
-            overflow: hidden;
-        }
-        
-        .section-arrow {
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .section-arrow.expanded {
-            transform: rotate(180deg);
-        }
-        
         /* Mobile optimizations */
         @media (max-width: 640px) {
             .prose {
@@ -883,15 +873,6 @@ class="bg-gray-50 min-h-screen">
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize sidebar state
-    function initializeSidebar() {
-        const alpineData = document.querySelector('[x-data]').__x?.$data;
-        if (alpineData && window.innerWidth < 1024) {
-            alpineData.sidebarOpen = false;
-        }
-    }
-    
-    initializeSidebar();
     
     // Enhanced code highlighting with multiple languages
     document.querySelectorAll('pre').forEach(pre => {
@@ -903,66 +884,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     hljs.highlightAll();
-    
-    // Enhanced accordion functionality
-    function initializeAccordions() {
-        document.querySelectorAll('[data-expand]').forEach(button => {
-            const targetId = button.getAttribute('data-expand');
-            const targetElement = document.getElementById(targetId);
-            const arrow = button.querySelector('.section-arrow');
-            
-            if (!targetElement) return;
-            
-            // Set initial state
-            const hasActiveLesson = targetElement.querySelector('.group a[href*="{{ $currentContent->id }}"]');
-            const isInitiallyExpanded = hasActiveLesson;
-            
-            if (isInitiallyExpanded) {
-                targetElement.style.maxHeight = targetElement.scrollHeight + 'px';
-                targetElement.style.opacity = '1';
-                arrow?.classList.add('expanded');
-            } else {
-                targetElement.style.maxHeight = '0px';
-                targetElement.style.opacity = '0';
-            }
-            
-            // Add click listener
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const isExpanded = targetElement.style.maxHeight && targetElement.style.maxHeight !== '0px';
-                
-                // Close all other sections first
-                document.querySelectorAll('[data-expand]').forEach(otherButton => {
-                    if (otherButton !== button) {
-                        const otherId = otherButton.getAttribute('data-expand');
-                        const otherElement = document.getElementById(otherId);
-                        const otherArrow = otherButton.querySelector('.section-arrow');
-                        
-                        if (otherElement && otherElement.style.maxHeight !== '0px') {
-                            otherElement.style.maxHeight = '0px';
-                            otherElement.style.opacity = '0';
-                            otherArrow?.classList.remove('expanded');
-                        }
-                    }
-                });
-                
-                // Toggle current section
-                if (isExpanded) {
-                    targetElement.style.maxHeight = '0px';
-                    targetElement.style.opacity = '0';
-                    arrow?.classList.remove('expanded');
-                } else {
-                    targetElement.style.maxHeight = targetElement.scrollHeight + 'px';
-                    targetElement.style.opacity = '1';
-                    arrow?.classList.add('expanded');
-                }
-            });
-        });
-    }
-    
-    // Initialize accordions
-    initializeAccordions();
     
     // Auto-close mobile sidebar when clicking on a lesson
     function handleMobileSidebarClose() {
@@ -1061,13 +982,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (alpineData && window.innerWidth < 1024) {
             alpineData.sidebarOpen = false;
         }
-        
-        // Recalculate accordion heights
-        document.querySelectorAll('.section-content').forEach(element => {
-            if (element.style.maxHeight && element.style.maxHeight !== '0px') {
-                element.style.maxHeight = element.scrollHeight + 'px';
-            }
-        });
     });
     
     // Add loading states to navigation buttons
