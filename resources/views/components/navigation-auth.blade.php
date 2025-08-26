@@ -27,24 +27,6 @@
 
             <!-- Desktop Actions & Profile -->
             <div class="hidden lg:flex items-center space-x-4">
-                <!-- Action Icons -->
-                <a href="#" class="p-2 text-gray-500 hover:text-lochmara-600 transition-colors duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
-                </a>
-                <a href="#" class="p-2 text-gray-500 hover:text-lochmara-600 transition-colors duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2l1.5 3h5L16.5 4h2a2 2 0 012 2v2M4 6v10a2 2 0 002 2h12a2 2 0 002-2V6M4 6h16M10 11V9m4 2V9"/>
-                    </svg>
-                </a>
-                <a href="#" class="p-2 text-gray-500 hover:text-lochmara-600 transition-colors duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h1l10.5-10.5a1.5 1.5 0 00-2.12-2.12L3 17v2z"/>
-                    </svg>
-                </a>
-
-                <div class="h-6 w-px bg-gray-300"></div>
 
                 <!-- Profile Dropdown -->
                 <div class="relative" x-data="{ profileOpen: false }">
@@ -80,9 +62,6 @@
                          class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                         <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200">
                             My Courses
-                        </a>
-                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200">
-                            Certificates
                         </a>
                         <a href="{{ route('dashboard.subscriptions') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200">
                             Subscriptions
@@ -160,9 +139,6 @@
                 <div class="mt-3 space-y-1">
                     <a href="{{ route('dashboard') }}" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200">
                         My Courses
-                    </a>
-                    <a href="#" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200">
-                        Certificates
                     </a>
                     <a href="{{ route('dashboard.subscriptions') }}" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200">
                         Subscriptions

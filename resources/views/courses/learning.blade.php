@@ -98,7 +98,6 @@ class="bg-gray-50 min-h-screen">
             <!-- Course Progress Header -->
             <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
                 <div class="mb-3">
-                    <h2 class="font-semibold text-lg truncate">{{ $course->name }}</h2>
                     <p class="text-lochmara-100 text-sm mt-1">Course Progress</p>
                 </div>
                 
