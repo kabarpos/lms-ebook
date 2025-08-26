@@ -5,27 +5,40 @@
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 
 @theme {
-  --font-family-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   
-  /* Custom Colors for Obito Theme */
-  --color-obito-green: #2f6a62;
-  --color-obito-light-green: #e0eae8;
-  --color-obito-grey: #eaecee;
+  /* Lochmara Brand Colors */
+  --color-lochmara-50: #f0f9ff;
+  --color-lochmara-100: #e0f2fe;
+  --color-lochmara-200: #b9e6fe;
+  --color-lochmara-300: #7cd4fd;
+  --color-lochmara-400: #36bffa;
+  --color-lochmara-500: #0ca8eb;
+  --color-lochmara-600: #007ebd;
+  --color-lochmara-700: #016aa3;
+  --color-lochmara-800: #065a86;
+  --color-lochmara-900: #0b4b6f;
+  --color-lochmara-950: #072f4a;
+  
+  /* Legacy Obito Colors for Backward Compatibility */
+  --color-obito-green: #007ebd;
+  --color-obito-light-green: #e0f2fe;
+  --color-obito-grey: #f3f4f6;
   --color-obito-text-secondary: #6b7280;
   --color-obito-text-grey: #9ca3af;
   --color-obito-red: #ef4444;
   --color-obito-light-red: #ffe3e1;
   --color-obito-black: #1f2937;
   
-  /* Enhanced spacing for better design */
+  /* Clean Design Spacing */
   --spacing-18: 4.5rem;
   --spacing-22: 5.5rem;
   
-  /* Custom shadows */
-  --shadow-effect: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-drop: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  /* Subtle Shadows for Clean Design */
+  --shadow-effect: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-drop: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   
-  /* Enhanced gradient colors */
+  /* Clean gradient colors */
   --color-gradient-emerald-start: #10b981;
   --color-gradient-emerald-end: #059669;
   --color-gradient-blue-start: #3b82f6;

@@ -30,10 +30,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard/courses/', [CourseController::class, 'index'])
         ->name('dashboard');
 
-        // slug web-design
-        Route::get('/dashboard/course/{course:slug}', [CourseController::class, 'details'])
-        ->name('dashboard.course.details');
-
         Route::get('/dashboard/search/courses', [CourseController::class, 'search_courses'])
         ->name('dashboard.search.courses');
 

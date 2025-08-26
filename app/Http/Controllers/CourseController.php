@@ -37,18 +37,6 @@ class CourseController extends Controller
     //     return view('courses.index', compact('coursesByCategory'));
     // }
 
-    public function details(Course $course)
-    {
-        // eager loading
-        $course->load([
-            'category',
-            'benefits',
-            'courseSections.sectionContents',
-            'courseMentors.mentor'
-        ]);
-        return view('courses.details', compact('course'));
-    }
-
     public function join(Course $course)
     {
         $studentName = $this->courseService->enrollUser($course);
