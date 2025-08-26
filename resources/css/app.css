@@ -6,4 +6,32 @@
 
 @theme {
   --font-family-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  
+  /* Custom Colors for Obito Theme */
+  --color-obito-green: #2f6a62;
+  --color-obito-light-green: #e0eae8;
+  --color-obito-grey: #eaecee;
+  --color-obito-text-secondary: #6b7280;
+  --color-obito-text-grey: #9ca3af;
+  --color-obito-red: #ef4444;
+  --color-obito-light-red: #ffe3e1;
+  --color-obito-black: #1f2937;
+  
+  /* Enhanced spacing for better design */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+  
+  /* Custom shadows */
+  --shadow-effect: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-drop: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  /* Enhanced gradient colors */
+  --color-gradient-emerald-start: #10b981;
+  --color-gradient-emerald-end: #059669;
+  --color-gradient-blue-start: #3b82f6;
+  --color-gradient-blue-end: #1d4ed8;
+  
+  /* Modern border radius */
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
 }

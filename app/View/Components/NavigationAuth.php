@@ -15,7 +15,6 @@ class NavigationAuth extends Component
      */
     public function __construct()
     {
-        //
         $this->user = Auth::check() ? Auth::user() : null;
     }
 
@@ -24,6 +23,11 @@ class NavigationAuth extends Component
      */
     public function render(): View|Closure|string
     {
+        // If user is not authenticated, redirect to login
+        if (!$this->user) {
+            return redirect()->route('login');
+        }
+        
         return view('components.navigation-auth');
     }
 }

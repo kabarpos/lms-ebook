@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/pricing', [FrontController::class, 'pricing'])->name('front.pricing');
+Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');
 
 Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
 [FrontController::class, 'paymentMidtransNotification'])
@@ -18,7 +19,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::middleware('role:student')->group(function () {
+    Route::middleware(['role:student|admin|super-admin'])->group(function () {
         Route::get('/dashboard/subscriptions/', [DashboardController::class, 'subscriptions'])
         ->name('dashboard.subscriptions');
 
@@ -36,7 +37,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard/search/courses', [CourseController::class, 'search_courses'])
         ->name('dashboard.search.courses');
 
-        Route::middleware(['check.subscription'])->group(function () {
+        // Admin can access all learning content without subscription check
+        Route::middleware(['check.subscription.or.admin'])->group(function () {
             Route::get('/dashboard/join/{course:slug}', [CourseController::class, 'join'])
             ->name('dashboard.course.join');
 

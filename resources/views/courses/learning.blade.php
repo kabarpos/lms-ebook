@@ -16,7 +16,17 @@
             </ul>
             <header class="flex flex-col gap-[12px]">
                 <div class="flex justify-center items-center overflow-hidden w-full h-[100px] rounded-[14px]">
-                    <img src="{{ Storage::url($course->thumbnail) }}" alt="image" class="w-full h-full object-cover" />
+                    @if($course->thumbnail)
+                        @if(str_starts_with($course->thumbnail, 'http'))
+                            <img src="{{ $course->thumbnail }}" alt="image" class="w-full h-full object-cover" />
+                        @else
+                            <img src="{{ Storage::url($course->thumbnail) }}" alt="image" class="w-full h-full object-cover" />
+                        @endif
+                    @else
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-obito-green to-green-600">
+                            <span class="text-white font-bold text-lg">{{ substr($course->name, 0, 2) }}</span>
+                        </div>
+                    @endif
                 </div>
                 <h1 class="font-bold">{{ $course->name }}</h1>
             </header>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Pricing;
+use App\Services\CourseService;
 use App\Services\PaymentService;
 use App\Services\PricingService;
 use App\Services\TransactionService;
@@ -16,28 +17,48 @@ class FrontController extends Controller
     protected $transactionService;
     protected $paymentService;
     protected $pricingService;
+    protected $courseService;
 
     public function __construct(
         PaymentService $paymentService,
         TransactionService $transactionService,
-        PricingService $pricingService
+        PricingService $pricingService,
+        CourseService $courseService
     ) {
         $this->paymentService = $paymentService;
         $this->transactionService = $transactionService;
         $this->pricingService = $pricingService;
+        $this->courseService = $courseService;
     }
 
     //
     public function index()
     {
-        return view('front.index');
+        // Get featured courses to display on homepage
+        $featuredCourses = $this->courseService->getFeaturedCourses(6);
+        $totalStudents = \App\Models\User::role('student')->count();
+        $totalCourses = \App\Models\Course::count();
+        
+        return view('front.index', compact('featuredCourses', 'totalStudents', 'totalCourses'));
     }
 
     public function pricing()
     {
         $pricing_packages = $this->pricingService->getAllPackages();
-        $user = Auth::user(); // Get the logged-in user
-        return view('front.pricing', compact('pricing_packages', 'user'));
+        $user = Auth::user();
+        $totalCourses = \App\Models\Course::count();
+        $totalStudents = \App\Models\User::role('student')->count();
+        
+        return view('front.pricing', compact('pricing_packages', 'user', 'totalCourses', 'totalStudents'));
+    }
+
+    public function courseDetails(\App\Models\Course $course)
+    {
+        $course->load(['category', 'courseSections.sectionContents', 'courseStudents', 'benefits']);
+        $user = Auth::user();
+        $pricing_packages = $this->pricingService->getAllPackages();
+        
+        return view('front.course-details', compact('course', 'user', 'pricing_packages'));
     }
 
     public function checkout(Pricing $pricing)

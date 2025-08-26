@@ -26,12 +26,20 @@
             <div class="h-[50px] flex shrink-0 bg-obito-grey w-px"></div>
             <div id="profile-dropdown" class="relative flex items-center gap-[14px]">
                 <div class="flex shrink-0 w-[50px] h-[50px] rounded-full overflow-hidden bg-obito-grey">
-                    <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="photo">
+                    @if($user && $user->photo)
+                        <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="photo">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-obito-green to-green-600">
+                            <span class="text-white font-bold text-lg">{{ $user ? substr($user->name, 0, 2) : 'U' }}</span>
+                        </div>
+                    @endif
                 </div>
+                @if($user)
                 <div>
                     <p class="font-semibold text-lg">{{ $user->name }}</p>
-                    <p class="text-sm text-obito-text-secondary">{{ $user->occupation }}</p>
+                    <p class="text-sm text-obito-text-secondary">{{ $user->occupation ?? 'Student' }}</p>
                 </div>
+                @endif
                 <button id="dropdown-opener" class="flex shrink-0 w-6 h-6">
                     <img src="{{ asset('assets/images/icons/arrow-circle-down.svg') }}" class="w-6 h-6" alt="icon">
                 </button>
@@ -46,20 +54,20 @@
                         <li class="hover:text-obito-green transition-all duration-300">
                             <a href="{{ route('dashboard.subscriptions') }}">Subscriptions</a>
                         </li>
+                        @if($user && ($user->hasRole('admin') || $user->hasRole('super-admin')))
                         <li class="hover:text-obito-green transition-all duration-300">
-                            <a href="#">Settings</a>
+                            <a href="/admin" target="_blank">Admin Panel</a>
+                        </li>
+                        @endif
+                        <li class="hover:text-obito-green transition-all duration-300">
+                            <a href="{{ route('profile.edit') }}">Settings</a>
                         </li>
                         <li class="hover:text-obito-green transition-all duration-300">
-
-                            <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-
-                                <a href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();">
-                                    {{ __('Logout') }}
-                            </a>
+                                <button type="submit" class="w-full text-left">
+                                    Logout
+                                </button>
                             </form>
                         </li>
                     </ul>

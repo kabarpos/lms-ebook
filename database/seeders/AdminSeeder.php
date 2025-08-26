@@ -15,37 +15,26 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create permissions if they don't exist
-        $permissions = [
-            'manage users',
-            'manage courses',
-            'manage categories',
-            'manage transactions',
-            'manage pricing',
-            'manage mentors',
-            'view reports',
-            'system settings',
-        ];
-
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+        // Get existing roles (should be created by RolePermissionSeeder)
+        $superAdminRole = Role::where('name', 'super-admin')->first();
+        $adminRole = Role::where('name', 'admin')->first();
+        
+        // If roles don't exist, create them (fallback)
+        if (!$superAdminRole) {
+            $superAdminRole = Role::create(['name' => 'super-admin', 'guard_name' => 'web']);
+            $superAdminRole->syncPermissions(Permission::all());
         }
-
-        // Create super admin role with all permissions
-        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
-        $superAdminRole->syncPermissions(Permission::all());
-
-        // Create admin role with limited permissions
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $adminRole->syncPermissions([
-            'manage users',
-            'manage courses',
-            'manage categories',
-            'manage transactions',
-            'manage pricing',
-            'manage mentors',
-            'view reports',
-        ]);
+        
+        if (!$adminRole) {
+            $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'web']);
+            // Assign admin permissions (excluding critical system permissions)
+            $adminPermissions = Permission::whereNotIn('name', [
+                'backup system',
+                'system settings',
+                'delete users',
+            ])->get();
+            $adminRole->syncPermissions($adminPermissions);
+        }
 
         // Create Super Admin User
         $superAdmin = User::firstOrCreate(

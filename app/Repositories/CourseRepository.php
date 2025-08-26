@@ -18,4 +18,13 @@ class CourseRepository implements CourseRepositoryInterface
     {
         return Course::with('category')->latest()->get();
     }
+
+    public function getFeaturedCourses(int $limit = 6): Collection
+    {
+        return Course::with(['category', 'courseSections', 'courseStudents'])
+            ->withCount('courseStudents')
+            ->orderBy('course_students_count', 'desc')
+            ->limit($limit)
+            ->get();
+    }
 }

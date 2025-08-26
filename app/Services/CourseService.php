@@ -98,4 +98,21 @@ class CourseService
             });
         });
     }
+
+    public function getFeaturedCourses($limit = 6)
+    {
+        return Cache::remember('featured_courses', 3600, function () use ($limit) {
+            return $this->courseRepository->getFeaturedCourses($limit);
+        });
+    }
+
+    public function getPopularCourses($limit = 6)
+    {
+        return Cache::remember('popular_courses', 3600, function () use ($limit) {
+            return Course::withCount('courseStudents')
+                ->orderBy('course_students_count', 'desc')
+                ->limit($limit)
+                ->get();
+        });
+    }
 }

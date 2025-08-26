@@ -13,7 +13,17 @@
         </div>
         <div id="card" class="flex items-center pt-[10px] pb-[10px] pl-[10px] pr-4 border border-obito-grey rounded-[20px] gap-4">
             <div class="flex justify-center items-center overflow-hidden shrink-0 w-[180px] h-[130px] rounded-[14px]">
-                <img src="{{ Storage::url($course->thumbnail) }}" alt="image" class="w-full h-full object-cover" />
+                @if($course->thumbnail)
+                    @if(str_starts_with($course->thumbnail, 'http'))
+                        <img src="{{ $course->thumbnail }}" alt="image" class="w-full h-full object-cover" />
+                    @else
+                        <img src="{{ Storage::url($course->thumbnail) }}" alt="image" class="w-full h-full object-cover" />
+                    @endif
+                @else
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-obito-green to-green-600">
+                        <span class="text-white font-bold text-lg">{{ substr($course->name, 0, 2) }}</span>
+                    </div>
+                @endif
             </div>
             <div class="flex flex-col gap-[10px]">
                 <h2 class="font-bold">{{ $course->name }}</h2>

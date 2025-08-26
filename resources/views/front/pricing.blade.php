@@ -14,7 +14,7 @@
                 <p class="leading-[28px] text-obito-text-secondary text-center">Harga yang kami tetapkan tergolong murah
                     namun mentor tetap memberikan kualitas standard internasional</p>
             </div>
-            <div class="flex items-center gap-5">
+            <div class="flex flex-wrap justify-center items-center gap-5">
                 <div
                     class="price-card-reguler flex flex-col h-fit w-full max-w-[314px] shrink-0 rounded-[20px] p-5 border border-obito-grey gap-5 bg-white">
                     <div class="flex items-center gap-[14px]">
@@ -29,7 +29,7 @@
                     <div class="flex flex-col gap-4">
                         <p class="flex items-center gap-2">
                             <img src="{{ asset('assets/images/icons/tick-circle-green-fill.svg') }}" class="flex shrink-0" alt="icon">
-                            <span class="font-semibold">Access 100+ Online Courses</span>
+                            <span class="font-semibold">Access {{ min($totalCourses ?? 10, 100) }}+ Online Courses</span>
                         </p>
                         <p class="flex items-center gap-2">
                             <img src="{{ asset('assets/images/icons/tick-circle-green-fill.svg') }}" class="flex shrink-0" alt="icon">
@@ -62,7 +62,7 @@
                             <p class="flex items-center gap-2">
                                 <img src="{{ asset('assets/images/icons/tick-circle-green-fill.svg') }}" class="flex shrink-0"
                                     alt="icon">
-                                <span class="font-semibold">Access 1500+ Online Courses</span>
+                                <span class="font-semibold">Access {{ $totalCourses ?? 100 }}+ Online Courses</span>
                             </p>
                             <p class="flex items-center gap-2">
                                 <img src="{{ asset('assets/images/icons/tick-circle-green-fill.svg') }}" class="flex shrink-0"
