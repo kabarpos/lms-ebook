@@ -2,27 +2,24 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Schemas\Schema;
 use App\Models\CourseSection;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\RichEditor;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Actions\EditAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use App\Filament\Resources\SectionContentResource\Pages\ListSectionContents;
-use App\Filament\Resources\SectionContentResource\Pages\CreateSectionContent;
-use App\Filament\Resources\SectionContentResource\Pages\EditSectionContent;
-use App\Filament\Resources\SectionContentResource\Pages;
-use App\Filament\Resources\SectionContentResource\RelationManagers;
 use App\Models\SectionContent;
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -35,35 +32,58 @@ class SectionContentResource extends Resource
 
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
 
-
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                //
                 Select::make('course_section_id')
-                ->label('Course Section')
-                ->options(function () {
-                    return CourseSection::with('course')
-                        ->get()
-                        ->mapWithKeys(function ($section) {
-                            return [
-                                $section->id => $section->course
-                                    ? "{$section->course->name} - {$section->name}"
-                                    : $section->name, // Fallback if course is null
-                            ];
-                        })
-                        ->toArray(); // Convert the collection to an array
-                })
-                ->searchable()
-                ->required(),
+                    ->label('Course Section')
+                    ->options(function () {
+                        return CourseSection::with('course')
+                            ->get()
+                            ->mapWithKeys(function ($section) {
+                                return [
+                                    $section->id => $section->course
+                                        ? "{$section->course->name} - {$section->name}"
+                                        : $section->name,
+                                ];
+                            })
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->required(),
 
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
 
+                Select::make('is_free')
+                    ->label('Free Preview')
+                    ->options([
+                        true => 'Yes - Allow free preview',
+                        false => 'No - Premium only',
+                    ])
+                    ->default(false)
+                    ->required(),
+
                 RichEditor::make('content')
                     ->columnSpanFull()
+                    ->toolbarButtons([
+                        'attachFiles',
+                        'blockquote',
+                        'bold',
+                        'bulletList',
+                        'codeBlock',
+                        'h2',
+                        'h3',
+                        'italic',
+                        'link',
+                        'orderedList',
+                        'redo',
+                        'strike',
+                        'underline',
+                        'undo',
+                    ])
                     ->required(),
             ]);
     }
@@ -72,16 +92,22 @@ class SectionContentResource extends Resource
     {
         return $table
             ->columns([
-                //
                 TextColumn::make('name')
-                ->sortable()
+                    ->sortable()
                     ->searchable(),
 
+                IconColumn::make('is_free')
+                    ->label('Free Preview')
+                    ->boolean()
+                    ->sortable(),
+
                 TextColumn::make('courseSection.name')
+                    ->label('Section')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('courseSection.course.name')
+                    ->label('Course')
                     ->sortable()
                     ->searchable(),
             ])
@@ -110,9 +136,9 @@ class SectionContentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListSectionContents::route('/'),
-            'create' => CreateSectionContent::route('/create'),
-            'edit' => EditSectionContent::route('/{record}/edit'),
+            'index' => \App\Filament\Resources\SectionContentResource\Pages\ListSectionContents::route('/'),
+            'create' => \App\Filament\Resources\SectionContentResource\Pages\CreateSectionContent::route('/create'),
+            'edit' => \App\Filament\Resources\SectionContentResource\Pages\EditSectionContent::route('/{record}/edit'),
         ];
     }
 

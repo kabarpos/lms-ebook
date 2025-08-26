@@ -15,6 +15,7 @@ class SectionContent extends Model
         'name',
         'course_section_id',
         'content',
+        'is_free',
     ];
 
     public function courseSection(): BelongsTo

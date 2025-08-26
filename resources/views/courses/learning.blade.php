@@ -1,6 +1,27 @@
-@extends('front.layouts.app')
-@section('title', $currentContent->name . ' - ' . $course->name)
-@section('content')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $currentContent->name }} - {{ $course->name }}</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <style>
+        body {
+            font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
 <div x-data="{ 
     sidebarOpen: false,
     currentProgress: {{ $progressPercentage ?? 0 }},
@@ -495,7 +516,8 @@ class="bg-gray-50 min-h-screen">
 </div>
 
 
-@endsection
+</body>
+</html>
 
 @push('after-styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">

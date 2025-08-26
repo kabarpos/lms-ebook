@@ -61,6 +61,24 @@ class FrontController extends Controller
         return view('front.course-details', compact('course', 'user', 'pricing_packages'));
     }
 
+    public function previewContent(\App\Models\Course $course, \App\Models\SectionContent $sectionContent)
+    {
+        // Check if the content is marked as free preview
+        if (!$sectionContent->is_free) {
+            abort(403, 'This content is not available for preview.');
+        }
+
+        // Check if the content belongs to the course
+        if ($sectionContent->courseSection->course_id !== $course->id) {
+            abort(404, 'Content not found in this course.');
+        }
+
+        $course->load(['category', 'courseSections.sectionContents', 'courseStudents', 'benefits']);
+        $currentSection = $sectionContent->courseSection;
+        
+        return view('front.course-preview', compact('course', 'currentSection', 'sectionContent'));
+    }
+
     public function checkout(Pricing $pricing)
     {
         $checkoutData = $this->transactionService->prepareCheckout($pricing);

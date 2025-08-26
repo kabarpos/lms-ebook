@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/pricing', [FrontController::class, 'pricing'])->name('front.pricing');
 Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');
+Route::get('/course/{course:slug}/preview/{sectionContent}', [FrontController::class, 'previewContent'])->name('front.course.preview');
 
 Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
 [FrontController::class, 'paymentMidtransNotification'])
