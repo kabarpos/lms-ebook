@@ -1,36 +1,81 @@
-<nav id="nav-guest" class="flex w-full bg-white border-b border-obito-grey">
-    <div class="flex w-[1280px] px-[75px] py-5 items-center justify-between mx-auto">
-        <div class="flex items-center gap-[50px]">
-            <a href="{{ route('front.index') }}" class="flex shrink-0">
-                <img src="{{ asset('assets/images/logos/logo.svg') }}" class="flex shrink-0" alt="logo">
-            </a>
-            <ul class="flex items-center gap-10">
-                <li class="{{request()->routeIs('front.index') ? ' font-semibold' : '' }} hover:font-semibold transition-all duration-300 ">
-                    <a href="{{ route('front.index') }}">Home</a>
-                </li>
-                <li class="{{request()->routeIs('front.pricing') ? ' font-semibold' : '' }} hover:font-semibold transition-all duration-300">
-                    <a href="{{ route('front.pricing') }}">Pricing</a>
-                </li>
-                <li class="hover:font-semibold transition-all duration-300">
-                    <a href="#">Features</a>
-                </li>
-                <li class="hover:font-semibold transition-all duration-300">
-                    <a href="#">Testimonials</a>
-                </li>
-            </ul>
+<nav id="nav-guest" class="bg-white border-b border-gray-100 shadow-sm" x-data="{ open: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <a href="{{ route('front.index') }}" class="flex-shrink-0">
+                    <img src="{{ asset('assets/images/logos/logo.svg') }}" class="h-8 w-auto" alt="logo">
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200">
+                    Home
+                </a>
+                <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200">
+                    Pricing
+                </a>
+                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200">
+                    Features
+                </a>
+                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200">
+                    Testimonials
+                </a>
+            </div>
+
+            <!-- Desktop Action Buttons -->
+            <div class="hidden lg:flex items-center space-x-4">
+                <a href="#" class="text-gray-500 hover:text-lochmara-600 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </a>
+                <div class="h-6 w-px bg-gray-300"></div>
+                <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
+                    Sign Up
+                </a>
+                <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                    My Account
+                </a>
+            </div>
+
+            <!-- Mobile menu button -->
+            <div class="lg:hidden">
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-lochmara-500">
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
         </div>
-        <div class="flex items-center gap-5 justify-end">
-            <a href="#" class="flex shrink-0">
-                <img src="{{ asset('assets/images/icons/device-message.svg') }}" class="flex shrink-0" alt="icon">
+    </div>
+
+    <!-- Mobile menu -->
+    <div :class="{'block': open, 'hidden': !open}" class="hidden lg:hidden">
+        <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-100">
+            <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200">
+                Home
             </a>
-            <div class="h-[50px] flex shrink-0 bg-obito-grey w-px"></div>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('register') }}" class="rounded-full border border-obito-grey py-3 px-5 gap-[10px] bg-white hover:border-obito-green transition-all duration-300">
-                    <span class="font-semibold">Sign Up</span>
-                </a>
-                <a href="{{ route('login') }}" class="rounded-full py-3 px-5 gap-[10px] bg-obito-green hover:drop-shadow-effect transition-all duration-300">
-                    <span class="font-semibold text-white">My Account</span>
-                </a>
+            <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200">
+                Pricing
+            </a>
+            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200">
+                Features
+            </a>
+            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200">
+                Testimonials
+            </a>
+            <div class="pt-4 pb-3 border-t border-gray-200">
+                <div class="flex items-center px-3 space-x-3">
+                    <a href="{{ route('register') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
+                        Sign Up
+                    </a>
+                    <a href="{{ route('login') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                        My Account
+                    </a>
+                </div>
             </div>
         </div>
     </div>
