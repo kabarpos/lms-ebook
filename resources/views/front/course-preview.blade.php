@@ -4,6 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="description" content="{{ $sectionContent->name }} - Learn {{ $course->name }} with comprehensive lessons and practical examples.">
+    <meta name="keywords" content="{{ $course->name }}, online learning, course, {{ $sectionContent->name }}">
+    <meta name="author" content="{{ config('app.name') }}">
+    <meta property="og:title" content="{{ $sectionContent->name }} - {{ $course->name }}">
+    <meta property="og:description" content="Learn {{ $course->name }} with comprehensive lessons and practical examples.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $sectionContent->name }} - {{ $course->name }}">
+    <meta name="twitter:description" content="Learn {{ $course->name }} with comprehensive lessons and practical examples.">
     <title>{{ $course->name }} - {{ $sectionContent->name }} @if(!$sectionContent->is_free && !auth()->check()) - Premium Locked @elseif(!$sectionContent->is_free && $isAdmin) - Admin Access @elseif(!$sectionContent->is_free) - Learning @else - Preview @endif</title>
     
     <!-- Fonts -->
@@ -14,18 +24,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Alpine.js CDN Fallback -->
-    <script>
-        // Ensure Alpine.js is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof window.Alpine === 'undefined') {
-                const script = document.createElement('script');
-                script.src = 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js';
-                script.defer = true;
-                document.head.appendChild(script);
-            }
-        });
-    </script>
+
     
     <style>
         body {
@@ -70,68 +69,7 @@
                 </button>
             </div>
             
-            <!-- Course Info Header -->
-            <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
-                
-                @if(!$sectionContent->is_free && !auth()->check())
-                    <!-- Premium Locked Notice -->
-                    <div class="bg-red-800 rounded-lg p-3">
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-red-300 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            <div>
-                                <p class="text-sm font-medium text-white">Premium Content Locked</p>
-                                <p class="text-xs text-red-100 mt-1">This lesson requires a premium subscription. Sign up to unlock full access.</p>
-                            </div>
-                        </div>
-                    </div>
-                @elseif(!$sectionContent->is_free && auth()->check())
-                    <!-- Dashboard Learning Mode -->
-                    @if($isAdmin)
-                        <!-- Admin Access Mode -->
-                        <div class="bg-purple-800 rounded-lg p-3">
-                            <div class="flex items-start">
-                                <svg class="w-5 h-5 text-purple-300 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 2L3 7v3c0 5.25 3.99 7.68 7 8 3.01-.32 7-2.75 7-8V7l-7-5z" clip-rule="evenodd"/>
-                                </svg>
-                                <div>
-                                    <p class="text-sm font-medium text-white">👑 Admin Access</p>
-                                    <p class="text-xs text-purple-100 mt-1">You're accessing this premium content with admin privileges.</p>
-                                </div>
-                            </div>
-                        </div>
-                    @else
-                        <!-- Regular Premium Learning -->
-                        <div class="bg-lochmara-800 rounded-lg p-3">
-                            <div class="flex items-start">
-                                <svg class="w-5 h-5 text-green-300 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <div>
-                                    <p class="text-sm font-medium text-white">Premium Learning</p>
-                                    <p class="text-xs text-lochmara-100 mt-1">You have full access to this premium content. Continue your learning journey!</p>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                    
-                    @if(isset($currentProgress))
-                    <!-- Progress Info -->
-                    <div class="mt-3 p-3 bg-lochmara-800 rounded-lg">
-                        <div class="flex items-center justify-between text-sm text-white mb-2">
-                            <span>Course Progress</span>
-                            <span x-text="`${completedLessons} of ${totalLessons} lessons`"></span>
-                        </div>
-                        <div class="w-full bg-lochmara-900 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full transition-all duration-500" 
-                                 :style="`width: ${currentProgress}%`"></div>
-                        </div>
-                        <div class="text-xs text-lochmara-100 mt-1" x-text="`${currentProgress}% Complete`"></div>
-                    </div>
-                    @endif
-                @endif
-            </div>
+
             
             <!-- Course Sections Navigation -->
             <div class="flex-1 overflow-y-auto sidebar-scroll">
@@ -463,20 +401,7 @@
                             </div>
                         @elseif(!$sectionContent->is_free && (auth()->check() || $isAdmin))
                             @if($isAdmin)
-                                <!-- Admin Access Content -->
-                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-8">
-                                    <div class="flex items-start">
-                                        <svg class="w-6 h-6 text-purple-600 mt-1 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 2L3 7v3c0 5.25 3.99 7.68 7 8 3.01-.32 7-2.75 7-8V7l-7-5z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <div class="flex-1">
-                                            <h3 class="text-lg font-semibold text-purple-900 mb-2">👑 Admin Access Mode</h3>
-                                            <p class="text-purple-800 text-sm leading-relaxed mb-4">
-                                                You're accessing this premium content with administrator privileges. This content is normally restricted to subscribers only.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Admin has direct access without notification -->
                             @else
                                 <!-- Premium Learning Content -->
                                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
@@ -565,10 +490,7 @@
     </div>
     
     <style>
-    /* Force Manrope Font Implementation */
-    body, html, * {
-        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
-    }
+
     
     /* Sidebar Scrollbar Styling */
     .sidebar-scroll {
@@ -780,45 +702,7 @@
         padding: 0;
     }
     
-    /* Content Typography */
-    .content-typography {
-        line-height: 1.75;
-    }
-    
-    .content-typography h1,
-    .content-typography h2,
-    .content-typography h3 {
-        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
-        font-weight: 700;
-        color: #1f2937;
-    }
-    
-    .content-typography p {
-        margin-bottom: 1.25rem;
-        color: #374151;
-    }
-    
-    .content-typography ul,
-    .content-typography ol {
-        margin: 1.25rem 0;
-        padding-left: 1.5rem;
-    }
-    
-    .content-typography code {
-        background-color: #f3f4f6;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-    }
-    
-    .content-typography pre {
-        background-color: #1f2937;
-        color: #f9fafb;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        overflow-x: auto;
-        margin: 1.5rem 0;
-    }
+
     </style>
     
     <!-- TipTap Content Processing Script -->
@@ -921,12 +805,43 @@ function courseData() {
                     this.isLessonCompleted = true;
                     this.completedLessons++;
                     this.currentProgress = Math.round((this.completedLessons / this.totalLessons) * 100);
+                    
+                    // Success notification
+                    this.showNotification('Lesson marked as completed!', 'success');
+                } else {
+                    throw new Error('Failed to mark lesson as complete');
                 }
             } catch (error) {
                 console.error('Error marking lesson complete:', error);
+                this.showNotification('Failed to mark lesson as complete. Please try again.', 'error');
             } finally {
                 this.isLoading = false;
             }
+        },
+        
+        // Simple notification system
+        showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
         }
     }
 }
