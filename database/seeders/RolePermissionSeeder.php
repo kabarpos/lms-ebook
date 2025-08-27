@@ -137,7 +137,7 @@ class RolePermissionSeeder extends Seeder
                 'name' => 'Team LMS',
                 'password' => Hash::make('123123123'),
                 'email_verified_at' => now(),
-                'occupation' => 'Administrator',
+                'whatsapp_number' => '+62812345678',
             ]
         );
         $user->assignRole($adminRole);

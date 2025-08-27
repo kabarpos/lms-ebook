@@ -43,7 +43,7 @@ class AdminSeeder extends Seeder
                 'name' => 'Super Administrator',
                 'password' => Hash::make('SuperAdmin123!'),
                 'email_verified_at' => now(),
-                'occupation' => 'System Administrator',
+                'whatsapp_number' => '+6281234567800',
             ]
         );
         $superAdmin->assignRole($superAdminRole);
@@ -55,7 +55,7 @@ class AdminSeeder extends Seeder
                 'name' => 'Administrator',
                 'password' => Hash::make('Admin123!'),
                 'email_verified_at' => now(),
-                'occupation' => 'Administrator',
+                'whatsapp_number' => '+6281234567801',
             ]
         );
         $admin->assignRole($adminRole);
@@ -67,7 +67,7 @@ class AdminSeeder extends Seeder
                 'name' => 'Demo Admin',
                 'password' => Hash::make('Demo123!'),
                 'email_verified_at' => now(),
-                'occupation' => 'Demo Administrator',
+                'whatsapp_number' => '+6281234567802',
             ]
         );
         $demoAdmin->assignRole($adminRole);

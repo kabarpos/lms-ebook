@@ -22,21 +22,21 @@ class UserSeeder extends Seeder
                 'email' => 'instructor1@example.com',
                 'password' => Hash::make('password'),
                 'photo' => 'https://via.placeholder.com/200x200/6366f1/ffffff?text=John',
-                'occupation' => 'Senior Full Stack Developer',
+                'whatsapp_number' => '+6281234567890',
             ],
             [
                 'name' => 'Jane Smith',
                 'email' => 'instructor2@example.com',
                 'password' => Hash::make('password'),
                 'photo' => 'https://via.placeholder.com/200x200/ec4899/ffffff?text=Jane',
-                'occupation' => 'UI/UX Design Expert',
+                'whatsapp_number' => '+6281234567891',
             ],
             [
                 'name' => 'David Wilson',
                 'email' => 'instructor3@example.com',
                 'password' => Hash::make('password'),
                 'photo' => 'https://via.placeholder.com/200x200/10b981/ffffff?text=David',
-                'occupation' => 'Data Science Specialist',
+                'whatsapp_number' => '+6281234567892',
             ],
         ];
 

@@ -345,8 +345,8 @@
                         </div>
                         
                         <!-- Lesson Content -->
-                        <div class="prose prose-lg max-w-none content-typography">
-                            {!! $sectionContent->content !!}
+                        <div class="filament-rich-content prose prose-lg max-w-none content-typography">
+                            {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content)->toHtml() !!}
                         </div>
                     </div>
                 </article>
@@ -419,6 +419,193 @@
     
     .sidebar-scroll::-webkit-scrollbar-thumb:hover {
         background: #d1d5db;
+    }
+    
+    
+    /* Filament Rich Content Specific Styling */
+    .filament-rich-content {
+        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
+    }
+    
+    /* Enhanced blockquote styling for TipTap output */
+    .filament-rich-content blockquote {
+        border-left: 4px solid #0f4c7a;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        padding: 1.5rem;
+        margin: 2rem 0;
+        border-radius: 0.75rem;
+        font-style: italic;
+        position: relative;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        color: #374151;
+        font-size: 1.125rem;
+        line-height: 1.75;
+    }
+    
+    .filament-rich-content blockquote::before {
+        content: '"';
+        position: absolute;
+        top: -0.5rem;
+        left: 1rem;
+        font-size: 4rem;
+        color: #0f4c7a;
+        opacity: 0.3;
+        font-family: Georgia, serif;
+    }
+    
+    .filament-rich-content blockquote p {
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* Enhanced paragraph styling */
+    .filament-rich-content p {
+        margin-bottom: 1.25rem;
+        color: #374151;
+        line-height: 1.75;
+        text-align: justify;
+    }
+    
+    /* Enhanced list styling - Override global reset */
+    .filament-rich-content ul, 
+    .filament-rich-content ol {
+        margin: 1.5rem 0 !important;
+        padding-left: 2rem !important;
+        list-style: revert !important; /* Force list styles to show */
+    }
+    
+    .filament-rich-content ul {
+        list-style-type: disc !important;
+    }
+    
+    .filament-rich-content ol {
+        list-style-type: decimal !important;
+    }
+    
+    .filament-rich-content li {
+        margin-bottom: 0.75rem !important;
+        line-height: 1.75 !important;
+        display: list-item !important; /* Ensure list item display */
+        list-style: inherit !important; /* Inherit parent list style */
+    }
+    
+    .filament-rich-content li::marker {
+        color: #0f4c7a !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Nested lists with stronger specificity */
+    .filament-rich-content ul ul {
+        list-style-type: circle !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .filament-rich-content ul ul ul {
+        list-style-type: square !important;
+    }
+    
+    .filament-rich-content ol ol {
+        list-style-type: lower-alpha !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .filament-rich-content ol ol ol {
+        list-style-type: lower-roman !important;
+    }
+    
+    /* Task list styling */
+    .filament-rich-content ul[data-type="taskList"] {
+        list-style: none !important;
+        padding-left: 0 !important;
+    }
+    
+    .filament-rich-content ul[data-type="taskList"] li {
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+    }
+    
+    .filament-rich-content ul[data-type="taskList"] li input[type="checkbox"] {
+        margin-top: 0.125rem !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* Enhanced heading styling */
+    .filament-rich-content h1,
+    .filament-rich-content h2,
+    .filament-rich-content h3 {
+        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
+        font-weight: 700;
+        color: #1f2937;
+        letter-spacing: -0.025em;
+    }
+    
+    .filament-rich-content h1 {
+        font-size: 2.25rem;
+        line-height: 1.2;
+        margin: 2rem 0 1rem;
+        background: linear-gradient(135deg, #0f4c7a 0%, #1d4ed8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .filament-rich-content h2 {
+        font-size: 1.875rem;
+        line-height: 1.3;
+        margin: 1.75rem 0 1rem;
+        color: #0f4c7a;
+    }
+    
+    .filament-rich-content h3 {
+        font-size: 1.5rem;
+        line-height: 1.4;
+        margin: 1.5rem 0 0.75rem;
+        color: #1e40af;
+    }
+    
+    /* Enhanced link styling */
+    .filament-rich-content a {
+        color: #0f4c7a;
+        text-decoration: none;
+        font-weight: 500;
+        border-bottom: 1px solid transparent;
+        transition: all 0.2s ease;
+    }
+    
+    .filament-rich-content a:hover {
+        color: #0c3d61;
+        border-bottom-color: #0f4c7a;
+    }
+    
+    /* Enhanced code styling */
+    .filament-rich-content code {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        color: #dc2626;
+        font-weight: 500;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    
+    .filament-rich-content pre {
+        background: #1e293b;
+        color: #f1f5f9;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        overflow-x: auto;
+        margin: 2rem 0;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #334155;
+    }
+    
+    .filament-rich-content pre code {
+        background: transparent;
+        border: none;
+        color: inherit;
+        padding: 0;
     }
     
     /* Content Typography */
