@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Password::defaults()],
-            'occupation' => ['required', 'string', 'max:255'],
+            'whatsapp_number' => ['required', 'string', 'max:20', 'regex:/^[+]?[0-9\s\-\(\)]+$/'],
             'photo' => ['required', 'image', 'mimes:png,jpg,jpeg'],
         ]);
 
@@ -47,7 +47,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'occupation' => $request->occupation,
+            'whatsapp_number' => $request->whatsapp_number,
             'photo' => $photoPath,
         ]);
 

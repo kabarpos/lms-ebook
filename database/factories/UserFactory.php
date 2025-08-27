@@ -23,17 +23,6 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $occupations = [
-            'Software Developer',
-            'Web Designer',
-            'Data Analyst',
-            'Product Manager',
-            'Marketing Specialist',
-            'Student',
-            'Freelancer',
-            'Business Owner'
-        ];
-
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -41,7 +30,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'photo' => 'https://via.placeholder.com/200x200/6366f1/ffffff?text=User',
-            'occupation' => fake()->randomElement($occupations),
+            'whatsapp_number' => '+62' . fake()->numerify('8#########'),
         ];
     }
 

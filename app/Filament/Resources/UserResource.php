@@ -55,14 +55,11 @@ class UserResource extends Resource
                 ->minLength(9) // Minimum length for the password
                 ->maxLength(255),
 
-                Select::make('occupation')
-                ->options([
-                    'Developer' => 'Developer',
-                    'Designer' => 'Designer',
-                    'Marketer' => 'Marketer',
-                    'Cyber Security' => 'Cyber Security',
-                    'Project Manager' => 'Project Manager',
-                ])
+                TextInput::make('whatsapp_number')
+                ->label('WhatsApp Number')
+                ->placeholder('+62812345678')
+                ->tel()
+                ->maxLength(20)
                 ->required(),
 
                 Select::make('roles')
@@ -84,6 +81,10 @@ class UserResource extends Resource
                 ImageColumn::make('photo'),
 
                 TextColumn::make('name')
+                    ->searchable(),
+
+                TextColumn::make('whatsapp_number')
+                    ->label('WhatsApp')
                     ->searchable(),
 
                 TextColumn::make('roles.name'),

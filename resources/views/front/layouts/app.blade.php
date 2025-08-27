@@ -30,7 +30,12 @@
         <meta property="og:type" content="website">
     </head>
     <body>
-        @yield('content')
+        <div class="min-h-screen flex flex-col">
+            <div class="flex-1">
+                @yield('content')
+            </div>
+            <x-simple-footer />
+        </div>
 
         <script src="{{ asset('js/dropdown-navbar.js') }}"></script>
         @stack('after-scripts')

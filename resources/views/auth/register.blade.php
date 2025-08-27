@@ -1,15 +1,15 @@
 @extends('front.layouts.app')
-@section('title', 'Register - Obito BuildWithAngga')
+@section('title', 'Register - LMS EBook')
 
 @section('content')
     <x-nav-guest />
-    <main class="relative flex flex-1 h-full">
-        <section class="flex flex-1 items-center py-5 px-5 pl-[calc(((100%-1280px)/2)+75px)]">
+    <main class="min-h-screen flex items-center justify-center py-12 px-5">
+        <section class="w-full max-w-lg">
             <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data"
-                class="flex flex-col h-fit w-[510px] shrink-0 rounded-[20px] border border-obito-grey p-5 gap-4 bg-white">
+                class="flex flex-col w-full rounded-[20px] border border-obito-grey p-8 gap-4 bg-white shadow-lg">
                 @csrf
-                <h1 class="font-bold text-[22px] leading-[33px]">Upgrade Your Skills</h1>
-                <label class="relative flex items-center gap-3">
+                <h1 class="font-bold text-[22px] leading-[33px] text-center mb-4" style="font-family: 'Manrope', sans-serif;">Upgrade Your Skills</h1>
+                <label class="relative flex items-center gap-3 justify-center">
                     <button id="upload-photo" type="button"
                         class="relative w-[90px] h-[90px] flex rounded-full overflow-hidden border border-obito-grey focus:ring-obito-green transition-all duration-300">
                         <span
@@ -26,9 +26,9 @@
                 </label>
                 <x-input-error :messages="$errors->get('photo')" class="mt-2" />
                 <div class="flex flex-col gap-2">
-                    <p>Complete Name</p>
+                    <p style="font-family: 'Manrope', sans-serif;">Complete Name</p>
                     <label class="relative group">
-                        <input name="name" type="text"
+                        <input name="name" type="text" required
                             class="appearance-none outline-none w-full rounded-full border border-obito-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-obito-text-secondary group-focus-within:border-obito-green transition-all duration-300"
                             placeholder="Type your complete name">
                         <img src="{{ asset('assets/images/icons/profile.svg') }}""
@@ -37,20 +37,21 @@
                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p>Occupation</p>
+                    <p style="font-family: 'Manrope', sans-serif;">WhatsApp Number</p>
                     <label class="relative group">
-                        <input name="occupation" type="text"
+                        <input name="whatsapp_number" type="tel" required
                             class="appearance-none outline-none w-full rounded-full border border-obito-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-obito-text-secondary group-focus-within:border-obito-green transition-all duration-300"
-                            placeholder="Type your ocupation">
-                        <img src="{{ asset('assets/images/icons/briefcase.svg') }}""
-                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5" alt="icon">
+                            placeholder="e.g., +62812345678">
+                        <svg class="absolute w-5 h-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        </svg>
                     </label>
-                    <x-input-error :messages="$errors->get('occupation')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('whatsapp_number')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p>Email Address</p>
+                    <p style="font-family: 'Manrope', sans-serif;">Email Address</p>
                     <label class="relative group">
-                        <input name="email" type="email"
+                        <input name="email" type="email" required
                             class="appearance-none outline-none w-full rounded-full border border-obito-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-obito-text-secondary group-focus-within:border-obito-green transition-all duration-300"
                             placeholder="Type your valid email address">
                         <img src="{{ asset('assets/images/icons/sms.svg') }}""
@@ -59,9 +60,9 @@
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p>Password</p>
+                    <p style="font-family: 'Manrope', sans-serif;">Password</p>
                     <label class="relative group">
-                        <input name="password" type="password"
+                        <input name="password" type="password" required
                             class="appearance-none outline-none w-full rounded-full border border-obito-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-obito-text-secondary group-focus-within:border-obito-green transition-all duration-300"
                             placeholder="Type your password">
                         <img src="{{ asset('assets/images/icons/shield-security.svg') }}""
@@ -70,11 +71,11 @@
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p>Confirm Password</p>
+                    <p style="font-family: 'Manrope', sans-serif;">Confirm Password</p>
                     <label class="relative group">
-                        <input name="password_confirmation" type="password"
+                        <input name="password_confirmation" type="password" required
                             class="appearance-none outline-none w-full rounded-full border border-obito-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-obito-text-secondary group-focus-within:border-obito-green transition-all duration-300"
-                            placeholder="Type your password">
+                            placeholder="Confirm your password">
                         <img src="{{ asset('assets/images/icons/shield-security.svg') }}""
                             class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5" alt="icon">
                     </label>
@@ -86,12 +87,7 @@
                 </button>
             </form>
         </section>
-        <div class="relative flex w-1/2 shrink-0">
-            <div id="background-banner" class="absolute flex w-full h-full overflow-hidden">
-                <img src="{{ asset('assets/images/backgrounds/banner-subscription.png') }}""
-                    class="w-full h-full object-cover" alt="banner">
-            </div>
-        </div>
+        
     </main>
     <script src="{{ asset('js/photo-upload.js') }}"></script>
 @endsection
