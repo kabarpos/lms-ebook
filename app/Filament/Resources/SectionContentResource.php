@@ -70,21 +70,23 @@ class SectionContentResource extends Resource
                     ->required(),
 
                 RichEditor::make('content')
+                    ->label('Content')
                     ->columnSpanFull()
+                    ->extraInputAttributes(['style' => 'min-height: 20rem;'])
                     ->toolbarButtons([
                         'undo',
                         'redo',
-                        'h1',
-                        'h2', 
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        'h2',
                         'h3',
                         'bulletList',
                         'orderedList',
-                        'bold',
-                        'italic',
-                        'strike',
-                        'underline',
-                        'codeBlock',
                         'blockquote',
+                        'codeBlock',
+                        'code',
                         'link',
                         'attachFiles',
                         'table',

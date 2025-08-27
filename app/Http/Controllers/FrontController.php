@@ -61,11 +61,18 @@ class FrontController extends Controller
         return view('front.course-details', compact('course', 'user', 'pricing_packages'));
     }
 
-    public function previewContent(\App\Models\Course $course, \App\Models\SectionContent $sectionContent)
-    {
-        // Check if the content is marked as free preview
-        if (!$sectionContent->is_free) {
-            abort(403, 'This content is not available for preview.');
+    public function previewContent(
+        \App\Models\Course $course, 
+        $courseSectionOrSectionContent, 
+        \App\Models\SectionContent $sectionContent = null
+    ) {
+        // Handle both route patterns: preview/{sectionContent} and learning/{courseSection}/{sectionContent}
+        if ($sectionContent === null) {
+            // Preview route: course/{course}/preview/{sectionContent}
+            $sectionContent = $courseSectionOrSectionContent;
+        } else {
+            // Legacy learning route redirect handled in routes
+            $sectionContent = $sectionContent;
         }
 
         // Check if the content belongs to the course
@@ -73,10 +80,41 @@ class FrontController extends Controller
             abort(404, 'Content not found in this course.');
         }
 
+        // UNIFIED ACCESS CONTROL: Check if user can access premium content
+        $user = auth()->user();
+        $isAdmin = $user && ($user->hasRole('admin') || $user->hasRole('super-admin'));
+        
+        // For premium content, check access rights
+        if (!$sectionContent->is_free && !$isAdmin) {
+            // Check if user is authenticated and has subscription
+            if (!$user) {
+                // Guest user trying to access premium content - show locked view
+            } elseif (!$user->hasActiveSubscription()) {
+                // Authenticated user without subscription - redirect to pricing
+                return redirect()->route('front.pricing')
+                    ->with('error', 'You need an active subscription to access this premium content.');
+            }
+        }
+
         $course->load(['category', 'courseSections.sectionContents', 'courseStudents', 'benefits']);
         $currentSection = $sectionContent->courseSection;
         
-        return view('front.course-preview', compact('course', 'currentSection', 'sectionContent'));
+        // Prepare base data
+        $viewData = compact('course', 'currentSection', 'sectionContent');
+        
+        // Add learning data for authenticated users (including admin)
+        if ($user) {
+            $learningData = $this->courseService->getLearningData(
+                $course, 
+                $currentSection->id, 
+                $sectionContent->id
+            );
+            
+            // Merge learning data with existing view data
+            $viewData = array_merge($viewData, $learningData);
+        }
+        
+        return view('front.course-preview', $viewData);
     }
 
     public function checkout(Pricing $pricing)

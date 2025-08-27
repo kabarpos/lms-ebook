@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $course->name }} - {{ $sectionContent->name }} Preview</title>
+    <title>{{ $course->name }} - {{ $sectionContent->name }} @if(!$sectionContent->is_free && !auth()->check()) - Premium Locked @elseif(!$sectionContent->is_free && $isAdmin) - Admin Access @elseif(!$sectionContent->is_free) - Learning @else - Preview @endif</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,10 +25,46 @@
     <!-- Main Learning Interface -->
     <div class="min-h-screen bg-gray-50" x-data="{ 
         sidebarOpen: false,
+        isLoading: false,
+        @if(isset($currentProgress))
+        currentProgress: {{ $currentProgress ?? 0 }},
+        totalLessons: {{ $totalLessons ?? 1 }},
+        completedLessons: {{ count($completedLessons ?? []) }},
+        isLessonCompleted: {{ isset($isCompleted) && $isCompleted ? 'true' : 'false' }},
+        @endif
         openSections: {
             @foreach($course->courseSections as $section)
-            'section_{{ $section->id }}': {{ $section->sectionContents->where('is_free', true)->count() > 0 ? 'true' : 'false' }},
+            'section_{{ $section->id }}': {{ $currentSection && $currentSection->id == $section->id ? 'true' : 'false' }},
             @endforeach
+        },
+        // Mark lesson as complete function
+        async markLessonComplete() {
+            if (this.isLessonCompleted || this.isLoading) return;
+            
+            this.isLoading = true;
+            
+            try {
+                const response = await fetch('{{ route('api.lesson-progress.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        section_content_id: {{ $sectionContent->id }}
+                    })
+                });
+                
+                if (response.ok) {
+                    this.isLessonCompleted = true;
+                    this.completedLessons++;
+                    this.currentProgress = Math.round((this.completedLessons / this.totalLessons) * 100);
+                }
+            } catch (error) {
+                console.error('Error marking lesson complete:', error);
+            } finally {
+                this.isLoading = false;
+            }
         }
     }" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
         
@@ -66,23 +102,66 @@
             
             <!-- Course Info Header -->
             <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
-                <div class="mb-3">
-                    <h2 class="text-lg font-bold line-clamp-1">{{ $course->name }}</h2>
-                    <p class="text-lochmara-100 text-sm mt-1">Free Preview Mode</p>
-                </div>
+                <h2 class="text-lg font-bold text-white mb-2 truncate">{{ $course->name }}</h2>
                 
-                <!-- Preview Notice -->
-                <div class="bg-lochmara-800 rounded-lg p-3">
-                    <div class="flex items-start">
-                        <svg class="w-5 h-5 text-yellow-300 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-white">Limited Preview</p>
-                            <p class="text-xs text-lochmara-100 mt-1">This is a free preview lesson. Sign up to access the full course.</p>
+                @if(!$sectionContent->is_free && !auth()->check())
+                    <!-- Premium Locked Notice -->
+                    <div class="bg-red-800 rounded-lg p-3">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-red-300 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-medium text-white">Premium Content Locked</p>
+                                <p class="text-xs text-red-100 mt-1">This lesson requires a premium subscription. Sign up to unlock full access.</p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @elseif(!$sectionContent->is_free && auth()->check())
+                    <!-- Dashboard Learning Mode -->
+                    @if($isAdmin)
+                        <!-- Admin Access Mode -->
+                        <div class="bg-purple-800 rounded-lg p-3">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 text-purple-300 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 2L3 7v3c0 5.25 3.99 7.68 7 8 3.01-.32 7-2.75 7-8V7l-7-5z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-medium text-white">👑 Admin Access</p>
+                                    <p class="text-xs text-purple-100 mt-1">You're accessing this premium content with admin privileges.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Regular Premium Learning -->
+                        <div class="bg-lochmara-800 rounded-lg p-3">
+                            <div class="flex items-start">
+                                <svg class="w-5 h-5 text-green-300 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-medium text-white">Premium Learning</p>
+                                    <p class="text-xs text-lochmara-100 mt-1">You have full access to this premium content. Continue your learning journey!</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                    
+                    @if(isset($currentProgress))
+                    <!-- Progress Info -->
+                    <div class="mt-3 p-3 bg-lochmara-800 rounded-lg">
+                        <div class="flex items-center justify-between text-sm text-white mb-2">
+                            <span>Course Progress</span>
+                            <span x-text="`${completedLessons} of ${totalLessons} lessons`"></span>
+                        </div>
+                        <div class="w-full bg-lochmara-900 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full transition-all duration-500" 
+                                 :style="`width: ${currentProgress}%`"></div>
+                        </div>
+                        <div class="text-xs text-lochmara-100 mt-1" x-text="`${currentProgress}% Complete`"></div>
+                    </div>
+                    @endif
+                @endif
             </div>
             
             <!-- Course Sections Navigation -->
@@ -139,28 +218,56 @@
                                     @php
                                         $isActive = $currentSection && $section->id == $currentSection->id && $sectionContent->id == $content->id;
                                         $lessonNumber = $contentIndex + 1;
+                                        
+                                        // Determine if user can access this content
+                                        $canAccess = $content->is_free || auth()->check();
+                                        
+                                        // Admin and super-admin can access all content
+                                        $isAdmin = auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('super-admin'));
+                                        
+                                        // Determine route - UNIFIED ROUTING: everyone uses preview route
+                                        $routeName = 'front.course.preview';
+                                        $routeParams = ['course' => $course->slug, 'sectionContent' => $content->id];
+                                        
+                                        // Check if lesson is completed (for authenticated users)
+                                        $isCompleted = false;
+                                        if (auth()->check() && isset($completedLessons) && is_array($completedLessons)) {
+                                            $isCompleted = in_array($content->id, $completedLessons);
+                                        }
                                     @endphp
-                                    @if($content->is_free)
-                                        <!-- Free Content - Clickable -->
-                                        <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $content->id]) }}" 
+                                    
+                                    @if($routeName)
+                                        <!-- All Content - Unified Route -->
+                                        <a href="{{ route($routeName, $routeParams) }}" 
                                            @click="sidebarOpen = false" 
                                            class="group block cursor-pointer">
                                             <div class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-lochmara-50 border border-lochmara-200' : 'hover:bg-gray-50 border border-transparent hover:border-gray-200' }}">
                                                 <!-- Lesson Status Icon -->
-                                                <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 
-                                                    @if($isActive) 
-                                                        bg-lochmara-600 text-white
-                                                    @else 
-                                                        bg-green-100 text-green-600 group-hover:bg-lochmara-100 group-hover:text-lochmara-600
-                                                    @endif">
+                                                <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">
                                                     @if($isActive)
-                                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                            <path d="M8 5v14l11-7z"/>
-                                                        </svg>
+                                                        <div class="w-6 h-6 bg-lochmara-600 text-white rounded-full flex items-center justify-center">
+                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M8 5v14l11-7z"/>
+                                                            </svg>
+                                                        </div>
+                                                    @elseif($isCompleted)
+                                                        <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center">
+                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                            </svg>
+                                                        </div>
+                                                    @elseif($content->is_free)
+                                                        <div class="w-6 h-6 bg-green-100 text-green-600 group-hover:bg-lochmara-100 group-hover:text-lochmara-600 rounded-full flex items-center justify-center">
+                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                            </svg>
+                                                        </div>
                                                     @else
-                                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                                        </svg>
+                                                        <div class="w-6 h-6 bg-lochmara-100 text-lochmara-600 group-hover:bg-lochmara-200 rounded-full flex items-center justify-center">
+                                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M8 5v14l11-7z"/>
+                                                            </svg>
+                                                        </div>
                                                     @endif
                                                 </div>
                                                 
@@ -169,46 +276,36 @@
                                                     <h4 class="font-medium text-sm {{ $isActive ? 'text-lochmara-900' : 'text-gray-900 group-hover:text-lochmara-700' }} line-clamp-2 leading-tight">
                                                         {{ $lessonNumber }}. {{ $content->name }}
                                                     </h4>
-                                                    <div class="flex items-center text-xs {{ $isActive ? 'text-lochmara-600' : 'text-gray-500' }} mt-1">
-                                                        <span>Free Preview</span>
-                                                        <span class="mx-1">•</span>
-                                                        <span>8-12 min</span>
+                                                    <div class="flex items-center text-xs text-gray-500 mt-1">
+                                                        @if($content->is_free)
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                                                </svg>
+                                                                Free
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
+                                                                </svg>
+                                                                Premium
+                                                            </span>
+                                                        @endif
+                                                        @if($isCompleted)
+                                                            <span class="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                ✓ Completed
+                                                            </span>
+                                                        @endif
                                                     </div>
                                                 </div>
+                                                
+                                                <!-- Active Indicator -->
+                                                @if($isActive)
+                                                <div class="w-2 h-8 bg-lochmara-600 rounded-full flex-shrink-0"></div>
+                                                @endif
                                             </div>
                                         </a>
-                                    @else
-                                        <!-- Locked Content -->
-                                        <div class="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 opacity-60">
-                                            <!-- Lesson Icon -->
-                                            <div class="w-6 h-6 bg-gray-200 text-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
-                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                                                </svg>
-                                            </div>
-                                            
-                                            <!-- Lesson Info -->
-                                            <div class="flex-1 min-w-0">
-                                                <h4 class="font-medium text-sm text-gray-500 line-clamp-2 leading-tight">
-                                                    {{ $lessonNumber }}. {{ $content->name }}
-                                                </h4>
-                                                <div class="flex items-center text-xs text-gray-400 mt-1">
-                                                    <span>Premium Only</span>
-                                                    <span class="mx-1">•</span>
-                                                    <span>8-12 min</span>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Lock Icon -->
-                                            <div class="flex items-center space-x-2">
-                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                    Premium
-                                                </span>
-                                            </div>
-                                        </div>
                                     @endif
                                 @endforeach
                             </div>
@@ -217,35 +314,34 @@
                 </div>
                 
                 <!-- CTA Section -->
+                @if(!auth()->check())
                 <div class="p-6 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
                     <div class="text-center">
                         <h3 class="text-lg font-bold mb-2">Ready to Continue?</h3>
                         <p class="text-sm text-lochmara-100 mb-4">Get full access to all lessons, quizzes, and certificates.</p>
                         <div class="space-y-3">
-                            @auth
-                                <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                                   class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                    </svg>
-                                    Start Learning
-                                </a>
-                            @else
-                                <a href="{{ route('register') }}" 
-                                   class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                    Sign Up Now
-                                </a>
-                                <a href="{{ route('login') }}" 
-                                   class="w-full inline-flex items-center justify-center px-4 py-2 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-lochmara-700 transition-colors cursor-pointer">
-                                    Already have an account? Login
-                                </a>
-                            @endauth
+                            <a href="{{ route('dashboard.course.join', $course->slug) }}" 
+                               class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Start Learning
+                            </a>
+                            <a href="{{ route('register') }}" 
+                               class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                                Sign Up Now
+                            </a>
+                            <a href="{{ route('login') }}" 
+                               class="w-full inline-flex items-center justify-center px-4 py-2 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-lochmara-700 transition-colors cursor-pointer">
+                                Already have an account? Login
+                            </a>
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
         </aside>
         
@@ -290,68 +386,177 @@
                     <div>
                         <h1 class="text-2xl font-bold text-gray-900">{{ $sectionContent->name }}</h1>
                         <div class="flex items-center text-sm text-gray-600 mt-1">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-2">
-                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                Free Preview
-                            </span>
+                            @if(!$sectionContent->is_free && !auth()->check())
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 mr-2">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Premium Locked
+                                </span>
+                            @elseif(!$sectionContent->is_free && $isAdmin)
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 mr-2">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 2L3 7v3c0 5.25 3.99 7.68 7 8 3.01-.32 7-2.75 7-8V7l-7-5z" clip-rule="evenodd"/>
+                                    </svg>
+                                    👑 Admin Access
+                                </span>
+                            @elseif(!$sectionContent->is_free && auth()->check())
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Premium Learning
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-2">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Free Preview
+                                </span>
+                            @endif
                             <span>{{ $currentSection->name }}</span>
                         </div>
                     </div>
+                    
+                    @if(!$sectionContent->is_free && auth()->check() && isset($currentProgress))
+                    <!-- Progress Info -->                        
+                    <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
+                        <svg class="w-4 h-4 text-lochmara-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <span x-text="`Lesson ${completedLessons} of ${totalLessons}`"></span>
+                    </div>
+                    @endif
                 </div>
+                
+                @if(!$sectionContent->is_free && auth()->check() && isset($currentProgress))
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
+                    <div class="bg-gradient-to-r from-lochmara-600 to-lochmara-500 h-2 rounded-full transition-all duration-500" 
+                         :style="`width: ${currentProgress}%`"></div>
+                </div>
+                @endif
             </div>
             
             <!-- Lesson Content -->
             <div class="flex-1 bg-white">
                 <article class="max-w-4xl mx-auto">
                     <div class="px-6 sm:px-8 lg:px-10 py-8 lg:py-12">
-                        <!-- Free Preview Notice -->
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-8">
-                            <div class="flex items-start">
-                                <svg class="w-6 h-6 text-green-600 mt-1 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <div class="flex-1">
-                                    <h3 class="text-lg font-semibold text-green-900 mb-2">🎉 Free Preview Lesson</h3>
-                                    <p class="text-green-800 text-sm leading-relaxed mb-4">
-                                        You're viewing a free preview of this lesson. This gives you a taste of the high-quality content available in the full course.
-                                    </p>
-                                    <div class="flex flex-col sm:flex-row gap-3">
-                                        @auth
-                                            <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors cursor-pointer">
+                        @if(!$sectionContent->is_free && !auth()->check())
+                            <!-- Premium Locked Content -->
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                                <div class="flex items-start">
+                                    <svg class="w-6 h-6 text-red-600 mt-1 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-semibold text-red-900 mb-2">🔒 Premium Content Locked</h3>
+                                        <p class="text-red-800 text-sm leading-relaxed mb-4">
+                                            This lesson contains premium content that requires authentication. Please login or create an account to access this material.
+                                        </p>
+                                        <div class="flex flex-col sm:flex-row gap-3">
+                                            <a href="{{ route('login') }}" 
+                                               class="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                                                 </svg>
-                                                Join Full Course
+                                                Login to Access
                                             </a>
-                                        @else
                                             <a href="{{ route('register') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors cursor-pointer">
+                                               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                 </svg>
-                                                Create Free Account
+                                                Create Account
                                             </a>
-                                        @endauth
-                                        <a href="{{ route('front.pricing') }}" 
-                                           class="inline-flex items-center px-4 py-2 border border-green-600 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors cursor-pointer">
-                                            View Pricing Plans
-                                        </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Lesson Content -->
-                        <div class="filament-rich-content prose prose-lg max-w-none content-typography">
-                            {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content)->toHtml() !!}
-                        </div>
+                            
+                            <!-- Blurred Content Preview -->
+                            <div class="relative">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white z-10"></div>
+                                <div class="blur-sm opacity-30 pointer-events-none">
+                                    <div class="filament-rich-content prose prose-lg max-w-none content-typography">
+                                        {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
+                                    </div>
+                                </div>
+                            </div>
+                        @elseif(!$sectionContent->is_free && (auth()->check() || $isAdmin))
+                            @if($isAdmin)
+                                <!-- Admin Access Content -->
+                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-6 mb-8">
+                                    <div class="flex items-start">
+                                        <svg class="w-6 h-6 text-purple-600 mt-1 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 2L3 7v3c0 5.25 3.99 7.68 7 8 3.01-.32 7-2.75 7-8V7l-7-5z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-semibold text-purple-900 mb-2">👑 Admin Access Mode</h3>
+                                            <p class="text-purple-800 text-sm leading-relaxed mb-4">
+                                                You're accessing this premium content with administrator privileges. This content is normally restricted to subscribers only.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Premium Learning Content -->
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+                                    <div class="flex items-start">
+                                        <svg class="w-6 h-6 text-blue-600 mt-1 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-semibold text-blue-900 mb-2">🎓 Premium Learning</h3>
+                                            <p class="text-blue-800 text-sm leading-relaxed mb-4">
+                                                You have access to this premium content. Continue your learning journey and track your progress.
+                                            </p>
+                                            @if(isset($nextContent) && !$isAdmin)
+                                            <div class="flex flex-col sm:flex-row gap-3">
+                                                <button 
+                                                    @click="markLessonComplete()" 
+                                                    :disabled="isLessonCompleted || isLoading"
+                                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                                    :class="isLessonCompleted ? 
+                                                        'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' : 
+                                                        isLoading ? 'bg-gray-100 text-gray-500 border border-gray-300 cursor-not-allowed' :
+                                                        'border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400'">
+                                                    <div x-show="isLoading" class="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
+                                                    <svg x-show="!isLoading" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    <span x-text="isLoading ? 'Saving...' : (isLessonCompleted ? 'Completed ✅' : 'Mark as Complete')"></span>
+                                                </button>
+                                                <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $nextContent->id]) }}" 
+                                                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                                                    <span>Continue Learning</span>
+                                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            <!-- Premium Content -->
+                            <div class="filament-rich-content prose prose-lg max-w-none content-typography tiptap-content">
+                                {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
+                            </div>
+                        @else
+                            <!-- Free Content -->
+                            <div class="filament-rich-content prose prose-lg max-w-none content-typography">
+                                {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
+                            </div>
+                        @endif
                     </div>
                 </article>
             </div>
             
+            @if($sectionContent->is_free)
             <!-- CTA Footer -->
             <div class="bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white p-6">
                 <div class="max-w-4xl mx-auto text-center">
@@ -378,6 +583,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
         
         <!-- Mobile Overlay -->
@@ -648,5 +854,62 @@
         margin: 1.5rem 0;
     }
     </style>
+    
+    <!-- TipTap Content Processing Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Process TipTap content
+        const contentContainers = document.querySelectorAll('.tiptap-content, .filament-rich-content');
+        
+        contentContainers.forEach(container => {
+            if (container.dataset.debug) {
+                console.log('Processing TipTap content container:', container);
+            }
+            
+            // Process YouTube embeds
+            const youtubeIframes = container.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
+            youtubeIframes.forEach(iframe => {
+                // Create responsive wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 'responsive-video-wrapper';
+                wrapper.style.cssText = `
+                    position: relative;
+                    padding-bottom: 56.25%;
+                    height: 0;
+                    overflow: hidden;
+                    max-width: 100%;
+                    margin: 2rem 0;
+                    border-radius: 0.75rem;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                `;
+                
+                iframe.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    border-radius: 0.75rem;
+                `;
+                
+                // Wrap iframe
+                iframe.parentNode.insertBefore(wrapper, iframe);
+                wrapper.appendChild(iframe);
+                
+                if (container.dataset.debug) {
+                    console.log('Processed YouTube iframe:', iframe.src);
+                }
+            });
+            
+            // Ensure content visibility
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
+        });
+        
+        // Log completion
+        console.log('TipTap content processing completed');
+    });
+    </script>
 </body>
 </html>

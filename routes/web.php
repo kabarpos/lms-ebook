@@ -12,6 +12,11 @@ Route::get('/pricing', [FrontController::class, 'pricing'])->name('front.pricing
 Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');
 Route::get('/course/{course:slug}/preview/{sectionContent}', [FrontController::class, 'previewContent'])->name('front.course.preview');
 
+// Redirect old dashboard learning route to unified preview route
+Route::get('/dashboard/learning/{course:slug}/{courseSection}/{sectionContent}', function(\App\Models\Course $course, $courseSection, \App\Models\SectionContent $sectionContent) {
+    return redirect()->route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $sectionContent->id]);
+})->middleware(['auth'])->name('dashboard.course.learning');
+
 Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
 [FrontController::class, 'paymentMidtransNotification'])
     ->name('front.payment_midtrans_notification');
@@ -40,9 +45,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/dashboard/join/{course:slug}', [CourseController::class, 'join'])
             ->name('dashboard.course.join');
 
-            // web-design-hack/1/12
-            Route::get('/dashboard/learning/{course:slug}/{courseSection}/{sectionContent}', [CourseController::class, 'learning'])
-            ->name('dashboard.course.learning');
+
 
             Route::get('/dashboard/learning/{course:slug}/finished', [CourseController::class, 'learning_finished'])
             ->name('dashboard.course.learning.finished');

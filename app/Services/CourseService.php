@@ -64,8 +64,9 @@ class CourseService
             return $section->sectionContents->count();
         });
         
-        $completedLessons = $userProgress->where('is_completed', true)->count();
-        $progressPercentage = $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100, 2) : 0;
+        $completedLessonsCount = $userProgress->where('is_completed', true)->count();
+        $completedLessons = $userProgress->where('is_completed', true)->pluck('section_content_id')->toArray();
+        $progressPercentage = $totalLessons > 0 ? round(($completedLessonsCount / $totalLessons) * 100, 2) : 0;
 
         // Check if current lesson is completed
         $isCurrentCompleted = $currentContent && isset($userProgress[$currentContent->id]) 
@@ -121,10 +122,10 @@ class CourseService
             'nextContent' => $nextContent,
             'prevContent' => $prevContent,
             'isFinished' => !$nextContent,
-            'progressPercentage' => $progressPercentage,
+            'currentProgress' => $progressPercentage,
             'totalLessons' => $totalLessons,
             'completedLessons' => $completedLessons,
-            'isCurrentCompleted' => $isCurrentCompleted,
+            'isCompleted' => $isCurrentCompleted,
             'userProgress' => $userProgress
         ];
     }
