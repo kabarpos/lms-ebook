@@ -14,6 +14,19 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <!-- Alpine.js CDN Fallback -->
+    <script>
+        // Ensure Alpine.js is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.Alpine === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js';
+                script.defer = true;
+                document.head.appendChild(script);
+            }
+        });
+    </script>
+    
     <style>
         body {
             font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;
@@ -23,57 +36,14 @@
 <body class="antialiased">
 
     <!-- Main Learning Interface -->
-    <div class="min-h-screen bg-gray-50" x-data="{ 
-        sidebarOpen: false,
-        isLoading: false,
-        @if(isset($currentProgress))
-        currentProgress: {{ $currentProgress ?? 0 }},
-        totalLessons: {{ $totalLessons ?? 1 }},
-        completedLessons: {{ count($completedLessons ?? []) }},
-        isLessonCompleted: {{ isset($isCompleted) && $isCompleted ? 'true' : 'false' }},
-        @endif
-        openSections: {
-            @foreach($course->courseSections as $section)
-            'section_{{ $section->id }}': {{ $currentSection && $currentSection->id == $section->id ? 'true' : 'false' }},
-            @endforeach
-        },
-        // Mark lesson as complete function
-        async markLessonComplete() {
-            if (this.isLessonCompleted || this.isLoading) return;
-            
-            this.isLoading = true;
-            
-            try {
-                const response = await fetch('{{ route('api.lesson-progress.store') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        section_content_id: {{ $sectionContent->id }}
-                    })
-                });
-                
-                if (response.ok) {
-                    this.isLessonCompleted = true;
-                    this.completedLessons++;
-                    this.currentProgress = Math.round((this.completedLessons / this.totalLessons) * 100);
-                }
-            } catch (error) {
-                console.error('Error marking lesson complete:', error);
-            } finally {
-                this.isLoading = false;
-            }
-        }
-    }" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
+    <div class="min-h-screen bg-gray-50" x-data="courseData()" x-init="initializeCourse()" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
         
         <!-- Fixed Sidebar -->
         <aside :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" 
                class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white w-80 lg:w-96 h-screen border-r border-gray-200 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
         
             <!-- Back to Course Details/Dashboard -->
-            <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-lochmara-600 to-lochmara-700">
+            <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700">
                 @auth
                     <a href="{{ route('dashboard') }}" class="inline-flex items-center text-white hover:text-lochmara-100 transition-colors cursor-pointer">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,7 +72,6 @@
             
             <!-- Course Info Header -->
             <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
-                <h2 class="text-lg font-bold text-white mb-2 truncate">{{ $course->name }}</h2>
                 
                 @if(!$sectionContent->is_free && !auth()->check())
                     <!-- Premium Locked Notice -->
@@ -175,7 +144,7 @@
                         <div class="mb-6 last:mb-0">
                             <!-- Section Header (Clickable) -->
                             <button type="button" 
-                                    @click="openSections['{{ $sectionId }}'] = !openSections['{{ $sectionId }}']"
+                                    @click="toggleSection('{{ $sectionId }}')"
                                     class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-8 h-8 rounded-lg bg-lochmara-100 flex items-center justify-center flex-shrink-0">
@@ -221,9 +190,6 @@
                                         
                                         // Determine if user can access this content
                                         $canAccess = $content->is_free || auth()->check();
-                                        
-                                        // Admin and super-admin can access all content
-                                        $isAdmin = auth()->check() && (auth()->user()->hasRole('admin') || auth()->user()->hasRole('super-admin'));
                                         
                                         // Determine route - UNIFIED ROUTING: everyone uses preview route
                                         $routeName = 'front.course.preview';
@@ -912,4 +878,66 @@
     });
     </script>
 </body>
+<script>
+// Alpine.js Data Function
+function courseData() {
+    return {
+        sidebarOpen: false,
+        isLoading: false,
+        @if(isset($currentProgress))
+        currentProgress: {{ $currentProgress ?? 0 }},
+        totalLessons: {{ $totalLessons ?? 1 }},
+        completedLessons: {{ count($completedLessons ?? []) }},
+        isLessonCompleted: {{ isset($isCompleted) && $isCompleted ? 'true' : 'false' }},
+        @endif
+        openSections: {
+            @if($course->courseSections->count() > 0)
+                @foreach($course->courseSections as $loop_index => $section)
+                'section_{{ $section->id }}': {{ $currentSection && $currentSection->id == $section->id ? 'true' : 'false' }}{{ !$loop->last ? ',' : '' }}
+                @endforeach
+            @endif
+        },
+        
+        // Toggle section function
+        toggleSection(sectionId) {
+            this.openSections[sectionId] = !this.openSections[sectionId];
+        },
+        
+        // Mark lesson as complete function
+        async markLessonComplete() {
+            if (this.isLessonCompleted || this.isLoading) return;
+            
+            this.isLoading = true;
+            
+            try {
+                const response = await fetch('{{ route('api.lesson-progress.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        section_content_id: {{ $sectionContent->id }}
+                    })
+                });
+                
+                if (response.ok) {
+                    this.isLessonCompleted = true;
+                    this.completedLessons++;
+                    this.currentProgress = Math.round((this.completedLessons / this.totalLessons) * 100);
+                }
+            } catch (error) {
+                console.error('Error marking lesson complete:', error);
+            } finally {
+                this.isLoading = false;
+            }
+        }
+    }
+}
+
+// Initialize function
+function initializeCourse() {
+    // Alpine.js component initialized
+}
+</script>
 </html>

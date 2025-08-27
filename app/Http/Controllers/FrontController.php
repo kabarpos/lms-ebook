@@ -84,6 +84,9 @@ class FrontController extends Controller
         $user = auth()->user();
         $isAdmin = $user && ($user->hasRole('admin') || $user->hasRole('super-admin'));
         
+        // Ensure $isAdmin is always a boolean
+        $isAdmin = (bool) $isAdmin;
+        
         // For premium content, check access rights
         if (!$sectionContent->is_free && !$isAdmin) {
             // Check if user is authenticated and has subscription
@@ -100,7 +103,7 @@ class FrontController extends Controller
         $currentSection = $sectionContent->courseSection;
         
         // Prepare base data
-        $viewData = compact('course', 'currentSection', 'sectionContent');
+        $viewData = compact('course', 'currentSection', 'sectionContent', 'isAdmin');
         
         // Add learning data for authenticated users (including admin)
         if ($user) {
