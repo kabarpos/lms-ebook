@@ -14,94 +14,144 @@
     </div>
     @endif
 
-    <!-- YouTube Player Container -->
-    <div class="relative w-full" style="padding-bottom: 56.25%; /* 16:9 aspect ratio */">
-        <div class="absolute inset-0 rounded-lg overflow-hidden shadow-lg bg-black">
-            <!-- Loading State -->
-            <div id="youtube-loading-{{ $videoId }}" class="absolute inset-0 flex items-center justify-center bg-gray-900">
-                <div class="text-center">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-                    <p class="text-white text-sm">Loading video...</p>
-                </div>
-            </div>
-            
-            <!-- YouTube Iframe -->
-            <iframe 
-                id="youtube-iframe-{{ $videoId }}"
-                class="absolute inset-0 w-full h-full"
-                src="https://www.youtube.com/embed/{{ $videoId }}?enablejsapi=1&origin={{ url('/') }}&rel=0&modestbranding=1&showinfo=0"
-                title="{{ $title }}"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen
-                onload="document.getElementById('youtube-loading-{{ $videoId }}').style.display='none'"
-                style="display: none;">
-            </iframe>
-        </div>
+    <!-- YouTube Player Container - BULLETPROOF -->
+    <div class="youtube-player-wrapper relative w-full overflow-hidden rounded-lg shadow-lg" 
+         style="padding-bottom: 56.25%; height: 0; position: relative; z-index: 1; background: #000;"
+         data-youtube-component="true">
+        <!-- YouTube Iframe - IMMEDIATELY VISIBLE - BULLETPROOF -->
+        <iframe 
+            id="youtube-iframe-{{ $videoId }}"
+            class="absolute top-0 left-0 w-full h-full border-0 youtube-component-iframe"
+            style="display: block !important; visibility: visible !important; opacity: 1 !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; border: none !important; z-index: 2 !important; background: #000 !important;"
+            src="https://www.youtube.com/embed/{{ $videoId }}?rel=0&modestbranding=1&controls=1&playsinline=1&enablejsapi=0"
+            title="{{ $title }}"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allowfullscreen
+            webkitallowfullscreen
+            mozallowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+            data-youtube-processed="true">
+        </iframe>
     </div>
 
-    <!-- Video Controls and Info -->
-    <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-        <!-- Video Info -->
-        <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
-            </svg>
-            <span>Video pembelajaran interaktif</span>
-        </div>
-
-        <!-- External Link -->
-        <a href="https://www.youtube.com/watch?v={{ $videoId }}" 
-           target="_blank" 
-           rel="noopener noreferrer"
-           class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer">
-            <span>Buka di YouTube</span>
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-            </svg>
-        </a>
-    </div>
+   
 </div>
 
 @push('after-styles')
 <style>
-    .youtube-player-container iframe {
-        transition: opacity 0.3s ease-in-out;
+    /* CRITICAL: YouTube Player Styling - Proper Z-Index */
+    .youtube-player-container {
+        position: relative !important;
+        z-index: 1 !important;
+        background: transparent !important;
     }
     
-    .youtube-player-container iframe[onload] {
-        opacity: 0;
+    .youtube-player-wrapper {
+        background-color: #000 !important;
+        border-radius: 0.5rem !important;
+        overflow: hidden !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        position: relative !important;
+        z-index: 1 !important;
     }
     
-    .youtube-player-container iframe.loaded {
-        opacity: 1;
+    /* BULLETPROOF iframe styling - Proper Z-Index */
+    .youtube-player-wrapper iframe,
+    .youtube-player-container iframe,
+    iframe[id*="youtube-iframe"] {
         display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        border: none !important;
+        border-radius: 0.5rem !important;
+        z-index: 2 !important;
+        background: #000 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    /* Prevent any potential CSS resets */
+    .youtube-player-container .youtube-player-wrapper {
+        position: relative !important;
+        z-index: 1 !important;
+    }
+    
+    /* Prevent JavaScript wrapper interference */
+    .youtube-player-container .responsive-video-wrapper {
+        position: static !important;
+        padding-bottom: 0 !important;
+        height: auto !important;
     }
 </style>
 @endpush
 
 @push('scripts')
 <script>
+// CRITICAL: Following specification - iframe harus langsung visible tanpa display:none
 document.addEventListener('DOMContentLoaded', function() {
     const iframe = document.getElementById('youtube-iframe-{{ $videoId }}');
-    const loading = document.getElementById('youtube-loading-{{ $videoId }}');
     
-    if (iframe && loading) {
-        iframe.addEventListener('load', function() {
-            loading.style.display = 'none';
-            iframe.style.display = 'block';
-            iframe.classList.add('loaded');
-        });
+    if (iframe) {
+        // BULLETPROOF visibility enforcement
+        iframe.style.cssText = `
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+            border-radius: 0.5rem !important;
+            z-index: 2 !important;
+            background: #000 !important;
+            pointer-events: auto !important;
+        `;
         
-        // Fallback to show iframe after 3 seconds
-        setTimeout(function() {
-            if (loading.style.display !== 'none') {
-                loading.style.display = 'none';
-                iframe.style.display = 'block';
-                iframe.classList.add('loaded');
-            }
-        }, 3000);
+        // Mark this iframe as processed to prevent TipTap interference
+        iframe.setAttribute('data-youtube-processed', 'true');
+        iframe.classList.add('youtube-component-iframe');
+        
+        // Ensure parent container is not interfered with
+        const container = iframe.closest('.youtube-player-container');
+        if (container) {
+            container.setAttribute('data-youtube-component', 'true');
+        }
     }
+    
+    // PREVENT TipTap script interference with our YouTube component
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1 && node.classList && node.classList.contains('responsive-video-wrapper')) {
+                        // Check if this wrapper is trying to wrap our component iframe
+                        const componentIframe = node.querySelector('iframe[data-youtube-processed="true"]');
+                        if (componentIframe) {
+                            // Unwrap it immediately
+                            const originalParent = node.parentNode;
+                            originalParent.insertBefore(componentIframe, node);
+                            originalParent.removeChild(node);
+                        }
+                    }
+                });
+            }
+        });
+    });
+    
+    // Observe the entire document for interference
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 });
 </script>
 @endpush

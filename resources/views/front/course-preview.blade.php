@@ -445,17 +445,20 @@
                             <div class="relative">
                                 <!-- YouTube Player (if available) -->
                                 @if($sectionContent->youtube_url && $sectionContent->getYoutubeVideoId())
-                                    <x-youtube-player 
-                                        :videoId="$sectionContent->getYoutubeVideoId()" 
-                                        :title="$sectionContent->name" 
-                                    />
+                                    <div class="relative z-20 mb-6">
+                                        <x-youtube-player 
+                                            :videoId="$sectionContent->getYoutubeVideoId()" 
+                                            :title="$sectionContent->name" 
+                                        />
+                                    </div>
                                 @endif
                                 
-                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white z-10"></div>
-                                <div class="blur-sm opacity-30 pointer-events-none">
-                                    <div class="filament-rich-content prose prose-lg max-w-none content-typography">
+                                <!-- Content with overlay (only after YouTube) -->
+                                <div class="relative">
+                                    <div class="filament-rich-content prose prose-lg max-w-none content-typography blur-sm opacity-30 pointer-events-none">
                                         {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
                                     </div>
+                                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white pointer-events-none"></div>
                                 </div>
                             </div>
                         @elseif(!$sectionContent->is_free && (auth()->check() || $isAdmin))
@@ -825,14 +828,17 @@
         const contentContainers = document.querySelectorAll('.tiptap-content, .filament-rich-content');
         
         contentContainers.forEach(container => {
-            if (container.dataset.debug) {
-                console.log('Processing TipTap content container:', container);
-            }
-            
-            // Process YouTube embeds
-            const youtubeIframes = container.querySelectorAll('iframe[src*="youtube.com"], iframe[src*="youtu.be"]');
+            // Process YouTube embeds in content BUT IGNORE our YouTube component iframes
+            const youtubeIframes = container.querySelectorAll('iframe[src*="youtube.com"]:not([data-youtube-processed="true"]), iframe[src*="youtu.be"]:not([data-youtube-processed="true"])');
             youtubeIframes.forEach(iframe => {
-                // Create responsive wrapper
+                // Skip if this is a YouTube component iframe
+                if (iframe.hasAttribute('data-youtube-processed') || 
+                    iframe.classList.contains('youtube-component-iframe') ||
+                    iframe.closest('.youtube-player-container[data-youtube-component="true"]')) {
+                    return; // Skip processing this iframe
+                }
+                
+                // Create responsive wrapper for non-component YouTube iframes
                 const wrapper = document.createElement('div');
                 wrapper.className = 'responsive-video-wrapper';
                 wrapper.style.cssText = `
@@ -859,19 +865,12 @@
                 // Wrap iframe
                 iframe.parentNode.insertBefore(wrapper, iframe);
                 wrapper.appendChild(iframe);
-                
-                if (container.dataset.debug) {
-                    console.log('Processed YouTube iframe:', iframe.src);
-                }
             });
             
             // Ensure content visibility
             container.style.visibility = 'visible';
             container.style.opacity = '1';
         });
-        
-        // Log completion
-        console.log('TipTap content processing completed');
     });
     </script>
 </body>
