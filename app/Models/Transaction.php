@@ -11,7 +11,7 @@ class Transaction extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'booking_trx_id', // OBITO12345
+        'booking_trx_id', // LMS12345
         'user_id',
         'pricing_id',
         'sub_total_amount',

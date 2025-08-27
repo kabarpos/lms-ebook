@@ -1232,12 +1232,12 @@ video {
   border-bottom-width: 1px;
 }
 
-.border-obito-green {
+.border-LMS-green {
   --tw-border-opacity: 1;
   border-color: rgb(47 106 98 / var(--tw-border-opacity, 1));
 }
 
-.border-obito-grey {
+.border-LMS-grey {
   --tw-border-opacity: 1;
   border-color: rgb(234 236 238 / var(--tw-border-opacity, 1));
 }
@@ -1247,22 +1247,22 @@ video {
   background-color: rgb(248 250 249 / var(--tw-bg-opacity, 1));
 }
 
-.bg-obito-green {
+.bg-LMS-green {
   --tw-bg-opacity: 1;
   background-color: rgb(47 106 98 / var(--tw-bg-opacity, 1));
 }
 
-.bg-obito-grey {
+.bg-LMS-grey {
   --tw-bg-opacity: 1;
   background-color: rgb(234 236 238 / var(--tw-bg-opacity, 1));
 }
 
-.bg-obito-light-green {
+.bg-LMS-light-green {
   --tw-bg-opacity: 1;
   background-color: rgb(224 234 232 / var(--tw-bg-opacity, 1));
 }
 
-.bg-obito-light-red {
+.bg-LMS-light-red {
   --tw-bg-opacity: 1;
   background-color: rgb(255 227 225 / var(--tw-bg-opacity, 1));
 }
@@ -1552,27 +1552,27 @@ video {
   line-height: 65px;
 }
 
-.text-obito-green {
+.text-LMS-green {
   --tw-text-opacity: 1;
   color: rgb(47 106 98 / var(--tw-text-opacity, 1));
 }
 
-.text-obito-grey {
+.text-LMS-grey {
   --tw-text-opacity: 1;
   color: rgb(234 236 238 / var(--tw-text-opacity, 1));
 }
 
-.text-obito-red {
+.text-LMS-red {
   --tw-text-opacity: 1;
   color: rgb(239 55 43 / var(--tw-text-opacity, 1));
 }
 
-.text-obito-text-grey {
+.text-LMS-text-grey {
   --tw-text-opacity: 1;
   color: rgb(135 137 140 / var(--tw-text-opacity, 1));
 }
 
-.text-obito-text-secondary {
+.text-LMS-text-secondary {
   --tw-text-opacity: 1;
   color: rgb(106 111 124 / var(--tw-text-opacity, 1));
 }
@@ -1603,7 +1603,7 @@ video {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
-.ring-obito-grey {
+.ring-LMS-grey {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(234 236 238 / var(--tw-ring-opacity, 1));
 }
@@ -1701,12 +1701,12 @@ article ol {
   font-weight: 400;
 }
 
-.placeholder\:text-obito-text-secondary::-moz-placeholder {
+.placeholder\:text-LMS-text-secondary::-moz-placeholder {
   --tw-text-opacity: 1;
   color: rgb(106 111 124 / var(--tw-text-opacity, 1));
 }
 
-.placeholder\:text-obito-text-secondary::placeholder {
+.placeholder\:text-LMS-text-secondary::placeholder {
   --tw-text-opacity: 1;
   color: rgb(106 111 124 / var(--tw-text-opacity, 1));
 }
@@ -1715,7 +1715,7 @@ article ol {
   font-weight: 600;
 }
 
-.hover\:border-obito-green:hover {
+.hover\:border-LMS-green:hover {
   --tw-border-opacity: 1;
   border-color: rgb(47 106 98 / var(--tw-border-opacity, 1));
 }
@@ -1724,7 +1724,7 @@ article ol {
   font-weight: 600;
 }
 
-.hover\:text-obito-green:hover {
+.hover\:text-LMS-green:hover {
   --tw-text-opacity: 1;
   color: rgb(47 106 98 / var(--tw-text-opacity, 1));
 }
@@ -1737,22 +1737,22 @@ article ol {
   box-shadow: 0px 12px 30px 0px #2F6A6280;
 }
 
-.focus\:ring-obito-green:focus {
+.focus\:ring-LMS-green:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(47 106 98 / var(--tw-ring-opacity, 1));
 }
 
-.group:focus-within .group-focus-within\:border-obito-green {
+.group:focus-within .group-focus-within\:border-LMS-green {
   --tw-border-opacity: 1;
   border-color: rgb(47 106 98 / var(--tw-border-opacity, 1));
 }
 
-.group:focus-within .group-focus-within\:ring-obito-green {
+.group:focus-within .group-focus-within\:ring-LMS-green {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(47 106 98 / var(--tw-ring-opacity, 1));
 }
 
-.group:hover .group-hover\:bg-obito-black {
+.group:hover .group-hover\:bg-LMS-black {
   --tw-bg-opacity: 1;
   background-color: rgb(10 7 35 / var(--tw-bg-opacity, 1));
 }
@@ -1766,22 +1766,22 @@ article ol {
   border-color: transparent;
 }
 
-.group.active .group-\[\.active\]\:border-obito-light-green {
+.group.active .group-\[\.active\]\:border-LMS-light-green {
   --tw-border-opacity: 1;
   border-color: rgb(224 234 232 / var(--tw-border-opacity, 1));
 }
 
-.group.active .group-\[\&\.active\]\:bg-obito-black {
+.group.active .group-\[\&\.active\]\:bg-LMS-black {
   --tw-bg-opacity: 1;
   background-color: rgb(10 7 35 / var(--tw-bg-opacity, 1));
 }
 
-.group.active .group-\[\.active\]\:bg-obito-black {
+.group.active .group-\[\.active\]\:bg-LMS-black {
   --tw-bg-opacity: 1;
   background-color: rgb(10 7 35 / var(--tw-bg-opacity, 1));
 }
 
-.group.active .group-\[\.active\]\:bg-obito-light-green {
+.group.active .group-\[\.active\]\:bg-LMS-light-green {
   --tw-bg-opacity: 1;
   background-color: rgb(224 234 232 / var(--tw-bg-opacity, 1));
 }

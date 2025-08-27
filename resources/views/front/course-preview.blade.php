@@ -39,14 +39,14 @@
             <!-- Back to Course Details/Dashboard -->
             <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-lochmara-600 to-lochmara-700">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center text-white hover:text-lochmara-100 transition-colors">
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center text-white hover:text-lochmara-100 transition-colors cursor-pointer">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                         Back to Dashboard
                     </a>
                 @else
-                    <a href="{{ route('front.course.details', $course->slug) }}" class="inline-flex items-center text-white hover:text-lochmara-100 transition-colors">
+                    <a href="{{ route('front.course.details', $course->slug) }}" class="inline-flex items-center text-white hover:text-lochmara-100 transition-colors cursor-pointer">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
@@ -57,7 +57,7 @@
         
             <!-- Mobile Close Button -->
             <div class="lg:hidden flex items-center justify-end px-4 py-3 border-b border-gray-100">
-                <button @click="sidebarOpen = false" class="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+                <button @click="sidebarOpen = false" class="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -97,7 +97,7 @@
                             <!-- Section Header (Clickable) -->
                             <button type="button" 
                                     @click="openSections['{{ $sectionId }}'] = !openSections['{{ $sectionId }}']"
-                                    class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                                    class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-8 h-8 rounded-lg bg-lochmara-100 flex items-center justify-center flex-shrink-0">
                                         <span class="text-lochmara-700 font-semibold text-sm">{{ $sectionIndex + 1 }}</span>
@@ -144,7 +144,7 @@
                                         <!-- Free Content - Clickable -->
                                         <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $content->id]) }}" 
                                            @click="sidebarOpen = false" 
-                                           class="group block">
+                                           class="group block cursor-pointer">
                                             <div class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-lochmara-50 border border-lochmara-200' : 'hover:bg-gray-50 border border-transparent hover:border-gray-200' }}">
                                                 <!-- Lesson Status Icon -->
                                                 <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 
@@ -224,7 +224,7 @@
                         <div class="space-y-3">
                             @auth
                                 <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                                   class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                                   class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                     </svg>
@@ -232,14 +232,14 @@
                                 </a>
                             @else
                                 <a href="{{ route('register') }}" 
-                                   class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                                   class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                     </svg>
                                     Sign Up Now
                                 </a>
                                 <a href="{{ route('login') }}" 
-                                   class="w-full inline-flex items-center justify-center px-4 py-2 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-lochmara-700 transition-colors">
+                                   class="w-full inline-flex items-center justify-center px-4 py-2 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-lochmara-700 transition-colors cursor-pointer">
                                     Already have an account? Login
                                 </a>
                             @endauth
@@ -253,7 +253,7 @@
         <div class="lg:ml-96 min-h-screen flex flex-col">
             <!-- Mobile Header -->
             <div class="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
-                <button @click="sidebarOpen = true" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                <button @click="sidebarOpen = true" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors cursor-pointer">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -267,17 +267,17 @@
                 <!-- Breadcrumb Navigation -->
                 <nav class="flex items-center space-x-2 text-sm mb-3">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors">Dashboard</a>
+                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors cursor-pointer">Dashboard</a>
                         <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
-                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors truncate max-w-xs">{{ $course->name }}</a>
+                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors truncate max-w-xs cursor-pointer">{{ $course->name }}</a>
                     @else
-                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-lochmara-600 transition-colors">Course Details</a>
+                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-lochmara-600 transition-colors cursor-pointer">Course Details</a>
                         <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
-                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-lochmara-600 transition-colors truncate max-w-xs">{{ $course->name }}</a>
+                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-lochmara-600 transition-colors truncate max-w-xs cursor-pointer">{{ $course->name }}</a>
                     @endauth
                     <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -320,7 +320,7 @@
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         @auth
                                             <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors">
+                                               class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                                 </svg>
@@ -328,7 +328,7 @@
                                             </a>
                                         @else
                                             <a href="{{ route('register') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors">
+                                               class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                 </svg>
@@ -336,7 +336,7 @@
                                             </a>
                                         @endauth
                                         <a href="{{ route('front.pricing') }}" 
-                                           class="inline-flex items-center px-4 py-2 border border-green-600 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors">
+                                           class="inline-flex items-center px-4 py-2 border border-green-600 text-green-600 font-medium rounded-lg hover:bg-green-50 transition-colors cursor-pointer">
                                             View Pricing Plans
                                         </a>
                                     </div>
@@ -360,7 +360,7 @@
                     <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
                         @auth
                             <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                               class="inline-flex items-center justify-center px-6 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                 </svg>
@@ -368,7 +368,7 @@
                             </a>
                         @else
                             <a href="{{ route('register') }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                               class="inline-flex items-center justify-center px-6 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>

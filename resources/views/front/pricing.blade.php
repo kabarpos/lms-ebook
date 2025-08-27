@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', 'Pricing - Obito BuildWithAngga')
+@section('title', 'Pricing - LMS DripCourse')
 
 @section('content')
     <style>
@@ -142,7 +142,7 @@
                         </button>
                     @else
                         <a href="{{ route('front.checkout', $package) }}" 
-                           class="block w-full py-3 px-4 bg-lochmara-600 text-white font-semibold rounded-lg text-center hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl">
+                           class="block w-full py-3 px-4 bg-lochmara-600 text-white font-semibold rounded-lg text-center hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer">
                             Get Pro
                         </a>
                     @endif
@@ -173,7 +173,7 @@
                     </div>
                     
                     <a href="#" 
-                       class="block w-full py-3 px-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg text-center hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
+                       class="block w-full py-3 px-4 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg text-center hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
                         Contact Sales
                     </a>
                 </div>

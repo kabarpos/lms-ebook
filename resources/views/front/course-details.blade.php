@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', $course->name . ' - Obito BuildWithAngga')
+@section('title', $course->name . ' - LMS DripCourse')
 
 @section('content')
     <x-nav-guest />
@@ -57,7 +57,7 @@
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
                         @auth
                             <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                               class="inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                 </svg>
@@ -65,14 +65,14 @@
                             </a>
                         @else
                             <a href="{{ route('register') }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                               class="inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                                 </svg>
                                 Start Learning
                             </a>
                             <a href="{{ route('login') }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                               class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
                                 Sign In
                             </a>
                         @endauth
@@ -131,7 +131,7 @@
                                             <!-- Section Header (Clickable) -->
                                             <button 
                                                 @click="openSections['{{ $sectionId }}'] = !openSections['{{ $sectionId }}']"
-                                                class="w-full bg-gray-50 px-6 py-4 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lochmara-500 focus:ring-inset">
+                                                class="w-full bg-gray-50 px-6 py-4 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lochmara-500 focus:ring-inset cursor-pointer">
                                                 <div class="flex items-center justify-between">
                                                     <div class="flex items-center">
                                                         <!-- Section Number -->

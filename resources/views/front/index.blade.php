@@ -41,11 +41,11 @@
                     <!-- CTA Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="{{ route('register') }}" 
-                           class="inline-flex items-center justify-center px-8 py-4 bg-lochmara-600 text-white font-semibold text-lg rounded-lg hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl">
+                           class="inline-flex items-center justify-center px-8 py-4 bg-lochmara-600 text-white font-semibold text-lg rounded-lg hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer">
                             Get Started
                         </a>
                         <a href="{{ route('front.pricing') }}" 
-                           class="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold text-lg rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
+                           class="inline-flex items-center justify-center px-8 py-4 border-2 border-gray-300 text-gray-700 font-semibold text-lg rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
                             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M19 10a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -141,7 +141,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($featuredCourses as $course)
                     <a href="{{ route('front.course.details', $course->slug) }}" 
-                       class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-lochmara-300 transition-all duration-300">
+                       class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-lochmara-300 transition-all duration-300 cursor-pointer">
                         <!-- Course Image -->
                         <div class="aspect-video bg-gray-100 overflow-hidden">
                             @if($course->thumbnail)
@@ -206,7 +206,7 @@
                 <!-- View All Button -->
                 <div class="text-center mt-12">
                     <a href="{{ route('front.pricing') }}" 
-                       class="inline-flex items-center px-8 py-3 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl">
+                       class="inline-flex items-center px-8 py-3 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer">
                         View All Courses
                     </a>
                 </div>

@@ -43,15 +43,15 @@ body {
   --color-lochmara-900: #0b4b6f;
   --color-lochmara-950: #072f4a;
   
-  /* Legacy Obito Colors for Backward Compatibility */
-  --color-obito-green: #007ebd;
-  --color-obito-light-green: #e0f2fe;
-  --color-obito-grey: #f3f4f6;
-  --color-obito-text-secondary: #6b7280;
-  --color-obito-text-grey: #9ca3af;
-  --color-obito-red: #ef4444;
-  --color-obito-light-red: #ffe3e1;
-  --color-obito-black: #1f2937;
+  /* Legacy LMS Colors for Backward Compatibility */
+  --color-LMS-green: #007ebd;
+  --color-LMS-light-green: #e0f2fe;
+  --color-LMS-grey: #f3f4f6;
+  --color-LMS-text-secondary: #6b7280;
+  --color-LMS-text-grey: #9ca3af;
+  --color-LMS-red: #ef4444;
+  --color-LMS-light-red: #ffe3e1;
+  --color-LMS-black: #1f2937;
   
   /* Clean Design Spacing */
   --spacing-18: 4.5rem;

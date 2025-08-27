@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', 'My Subscriptions - Obito BuildWithAngga')
+@section('title', 'My Subscriptions - LMS DripCourse')
 @section('content')
     <x-navigation-auth />
 
@@ -89,7 +89,7 @@
                             <!-- Action Button -->
                             <div class="flex justify-center lg:justify-end">
                                 <a href="{{ route('dashboard.subscription.details', $transaction) }}" 
-                                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
+                                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
                                     View Details
                                 </a>
                             </div>
@@ -106,7 +106,7 @@
                         <h3 class="text-lg font-semibold text-gray-900 mb-2">No Subscriptions Found</h3>
                         <p class="text-gray-600 mb-6">You haven't purchased any subscription packages yet.</p>
                         <a href="{{ route('front.pricing') }}" 
-                           class="inline-flex items-center px-6 py-3 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                           class="inline-flex items-center px-6 py-3 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
                             View Pricing Plans
                         </a>
                     </div>

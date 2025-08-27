@@ -3,46 +3,46 @@
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
             <div class="flex items-center">
-                <a href="{{ route('front.index') }}" class="flex-shrink-0">
+                <a href="{{ route('front.index') }}" class="flex-shrink-0 cursor-pointer">
                     <img src="{{ asset('assets/images/logos/logo.png') }}" class="h-10 w-auto" alt="logo">
                 </a>
             </div>
 
             <!-- Desktop Navigation -->
             <div class="hidden lg:flex items-center space-x-8">
-                <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200">
+                <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
                     Home
                 </a>
-                <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200">
+                <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
                     Pricing
                 </a>
-                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200">
+                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
                     Features
                 </a>
-                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200">
+                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
                     Testimonials
                 </a>
             </div>
 
             <!-- Desktop Action Buttons -->
             <div class="hidden lg:flex items-center space-x-4">
-                <a href="#" class="text-gray-500 hover:text-lochmara-600 transition-colors duration-200">
+                <a href="#" class="text-gray-500 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                     </svg>
                 </a>
                 <div class="h-6 w-px bg-gray-300"></div>
-                <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
+                <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
                     Sign Up
                 </a>
-                <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
                     My Account
                 </a>
             </div>
 
             <!-- Mobile menu button -->
             <div class="lg:hidden">
-                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-lochmara-500">
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-lochmara-500 cursor-pointer">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -55,24 +55,24 @@
     <!-- Mobile menu -->
     <div :class="{'block': open, 'hidden': !open}" class="hidden lg:hidden">
         <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-100">
-            <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200">
+            <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
                 Home
             </a>
-            <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200">
+            <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
                 Pricing
             </a>
-            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200">
+            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
                 Features
             </a>
-            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200">
+            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
                 Testimonials
             </a>
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-3 space-x-3">
-                    <a href="{{ route('register') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200">
+                    <a href="{{ route('register') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
                         Sign Up
                     </a>
-                    <a href="{{ route('login') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                    <a href="{{ route('login') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
                         My Account
                     </a>
                 </div>

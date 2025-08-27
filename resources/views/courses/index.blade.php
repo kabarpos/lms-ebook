@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', 'My Courses - BuildWithAngga')
+@section('title', 'My Courses - DripCourse')
 @section('content')
     <x-navigation-auth />
     

@@ -14,3 +14,4 @@ alwaysApply: true
 - Hindari downgrade versi libary, package, dan lain-lain
 - Project ini Laravel 12, jadi jangan menggunakan versi lain
 - Arsitektur menggunakan repository pattern (WAJIB)
+- Selalu gunakan UI class cursor-pointer untuk setiap link, tombol dan seluruh event yang memiliki fungsi klik

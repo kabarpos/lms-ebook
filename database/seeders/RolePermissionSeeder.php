@@ -132,9 +132,9 @@ class RolePermissionSeeder extends Seeder
 
         // Create default admin user for backward compatibility
         $user = User::firstOrCreate(
-            ['email' => 'team@obito.com'],
+            ['email' => 'team@LMS.com'],
             [
-                'name' => 'Team Obito',
+                'name' => 'Team LMS',
                 'password' => Hash::make('123123123'),
                 'email_verified_at' => now(),
                 'occupation' => 'Administrator',
