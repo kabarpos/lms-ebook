@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use BackedEnum;
+use UnitEnum;
+
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -31,7 +34,7 @@ class CourseMentorResource extends Resource
 {
     protected static ?string $model = CourseMentor::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
 

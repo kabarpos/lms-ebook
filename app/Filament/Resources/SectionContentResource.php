@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use BackedEnum;
+use UnitEnum;
+
 use App\Models\CourseSection;
 use App\Models\SectionContent;
 use Filament\Forms;
@@ -28,7 +31,7 @@ class SectionContentResource extends Resource
 {
     protected static ?string $model = SectionContent::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
 

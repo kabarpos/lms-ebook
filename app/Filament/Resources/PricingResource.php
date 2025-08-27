@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use BackedEnum;
+use UnitEnum;
+
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
@@ -29,7 +32,7 @@ class PricingResource extends Resource
 {
     protected static ?string $model = Pricing::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Managements';
 
