@@ -60,6 +60,13 @@ class SectionContentResource extends Resource
                     ->required()
                     ->maxLength(255),
 
+                TextInput::make('youtube_url')
+                    ->label('YouTube URL')
+                    ->url()
+                    ->placeholder('https://www.youtube.com/watch?v=...')
+                    ->helperText('Optional: Add a YouTube video URL to display a player above the content')
+                    ->maxLength(500),
+
                 Select::make('is_free')
                     ->label('Free Preview')
                     ->options([
@@ -108,6 +115,12 @@ class SectionContentResource extends Resource
                 IconColumn::make('is_free')
                     ->label('Free Preview')
                     ->boolean()
+                    ->sortable(),
+
+                IconColumn::make('youtube_url')
+                    ->label('Has Video')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => !empty($record->youtube_url))
                     ->sortable(),
 
                 TextColumn::make('courseSection.name')

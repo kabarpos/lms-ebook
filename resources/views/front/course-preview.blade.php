@@ -443,6 +443,14 @@
                             
                             <!-- Blurred Content Preview -->
                             <div class="relative">
+                                <!-- YouTube Player (if available) -->
+                                @if($sectionContent->youtube_url && $sectionContent->getYoutubeVideoId())
+                                    <x-youtube-player 
+                                        :videoId="$sectionContent->getYoutubeVideoId()" 
+                                        :title="$sectionContent->name" 
+                                    />
+                                @endif
+                                
                                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white z-10"></div>
                                 <div class="blur-sm opacity-30 pointer-events-none">
                                     <div class="filament-rich-content prose prose-lg max-w-none content-typography">
@@ -508,11 +516,27 @@
                                 </div>
                             @endif
                             
+                            <!-- YouTube Player (if available) -->
+                            @if($sectionContent->youtube_url && $sectionContent->getYoutubeVideoId())
+                                <x-youtube-player 
+                                    :videoId="$sectionContent->getYoutubeVideoId()" 
+                                    :title="$sectionContent->name" 
+                                />
+                            @endif
+                            
                             <!-- Premium Content -->
                             <div class="filament-rich-content prose prose-lg max-w-none content-typography tiptap-content">
                                 {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
                             </div>
                         @else
+                            <!-- YouTube Player (if available) -->
+                            @if($sectionContent->youtube_url && $sectionContent->getYoutubeVideoId())
+                                <x-youtube-player 
+                                    :videoId="$sectionContent->getYoutubeVideoId()" 
+                                    :title="$sectionContent->name" 
+                                />
+                            @endif
+                            
                             <!-- Free Content -->
                             <div class="filament-rich-content prose prose-lg max-w-none content-typography">
                                 {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
@@ -522,34 +546,7 @@
                 </article>
             </div>
             
-            @if($sectionContent->is_free)
-            <!-- CTA Footer -->
-            <div class="bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white p-6">
-                <div class="max-w-4xl mx-auto text-center">
-                    <h2 class="text-xl font-bold mb-2">Enjoyed this preview?</h2>
-                    <p class="text-lochmara-100 mb-6">Get unlimited access to all {{ $course->courseSections->sum(fn($section) => $section->sectionContents->count()) }} lessons, downloadable resources, and certificates.</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                        @auth
-                            <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
-                                Access Full Course
-                            </a>
-                        @else
-                            <a href="{{ route('register') }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                Sign Up Free
-                            </a>
-                        @endauth
-                    </div>
-                </div>
-            </div>
-            @endif
+           
         </div>
         
         <!-- Mobile Overlay -->

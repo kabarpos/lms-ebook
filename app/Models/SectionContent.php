@@ -15,6 +15,7 @@ class SectionContent extends Model
         'name',
         'course_section_id',
         'content',
+        'youtube_url',
         'is_free',
     ];
 
@@ -34,5 +35,24 @@ class SectionContent extends Model
             ->where('user_id', $userId)
             ->where('is_completed', true)
             ->exists();
+    }
+
+    /**
+     * Extract YouTube video ID from URL
+     */
+    public function getYoutubeVideoId()
+    {
+        if (!$this->youtube_url) {
+            return null;
+        }
+
+        $url = $this->youtube_url;
+        
+        // Handle different YouTube URL formats
+        if (preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $url, $matches)) {
+            return $matches[1];
+        }
+        
+        return null;
     }
 }
