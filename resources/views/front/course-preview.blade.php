@@ -709,7 +709,7 @@
     
     .filament-rich-content h1 {
         font-size: 2.25rem;
-        line-height: 1.2rem;
+        line-height: 2.75rem;
         margin: 2rem 0 1rem;
         background: linear-gradient(135deg, #0f4c7a 0%, #1d4ed8 100%);
         -webkit-background-clip: text;
