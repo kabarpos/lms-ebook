@@ -189,7 +189,7 @@
                                                                 Free
                                                             </span>
                                                         @else
-                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-lochmara-100 text-lochmara-800">
                                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
                                                                 </svg>
@@ -305,7 +305,7 @@
                                     👑 Admin Access
                                 </span>
                             @elseif(!$sectionContent->is_free && auth()->check())
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-lochmara-100 text-lochmara-800 mr-2">
                                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
                                     </svg>
@@ -368,7 +368,7 @@
                                                 Login to Access
                                             </a>
                                             <a href="{{ route('register') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                                               class="inline-flex items-center px-4 py-2 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                 </svg>
@@ -379,72 +379,16 @@
                                 </div>
                             </div>
                             
-                            <!-- Blurred Content Preview -->
+                            <!-- Blurred Content Preview - NO YOUTUBE FOR PUBLIC -->
                             <div class="relative">
-                                <!-- YouTube Player (if available) -->
-                                @if($sectionContent->youtube_url && $sectionContent->getYoutubeVideoId())
-                                    <div class="relative z-20 mb-6">
-                                        <x-youtube-player 
-                                            :videoId="$sectionContent->getYoutubeVideoId()" 
-                                            :title="$sectionContent->name" 
-                                        />
-                                    </div>
-                                @endif
-                                
-                                <!-- Content with overlay (only after YouTube) -->
-                                <div class="relative">
-                                    <div class="filament-rich-content prose prose-lg max-w-none content-typography blur-sm opacity-30 pointer-events-none">
-                                        {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
-                                    </div>
-                                    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white pointer-events-none"></div>
+                                <div class="filament-rich-content prose prose-lg max-w-none content-typography blur-sm opacity-30 pointer-events-none">
+                                    {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
                                 </div>
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white to-white pointer-events-none"></div>
                             </div>
-                        @elseif(!$sectionContent->is_free && (auth()->check() || $isAdmin))
-                            @if($isAdmin)
-                                <!-- Admin has direct access without notification -->
-                            @else
-                                <!-- Premium Learning Content -->
-                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-                                    <div class="flex items-start">
-                                        <svg class="w-6 h-6 text-blue-600 mt-1 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <div class="flex-1">
-                                            <h3 class="text-lg font-semibold text-blue-900 mb-2">🎓 Premium Learning</h3>
-                                            <p class="text-blue-800 text-sm leading-relaxed mb-4">
-                                                You have access to this premium content. Continue your learning journey and track your progress.
-                                            </p>
-                                            @if(isset($nextContent) && !$isAdmin)
-                                            <div class="flex flex-col sm:flex-row gap-3">
-                                                <button 
-                                                    @click="markLessonComplete()" 
-                                                    :disabled="isLessonCompleted || isLoading"
-                                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-                                                    :class="isLessonCompleted ? 
-                                                        'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' : 
-                                                        isLoading ? 'bg-gray-100 text-gray-500 border border-gray-300 cursor-not-allowed' :
-                                                        'border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400'">
-                                                    <div x-show="isLoading" class="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
-                                                    <svg x-show="!isLoading" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                    </svg>
-                                                    <span x-text="isLoading ? 'Saving...' : (isLessonCompleted ? 'Completed ✅' : 'Mark as Complete')"></span>
-                                                </button>
-                                                <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $nextContent->id]) }}" 
-                                                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
-                                                    <span>Continue Learning</span>
-                                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-                                                    </svg>
-                                                </a>
-                                            </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                            
-                            <!-- YouTube Player (if available) -->
+                        @elseif(!$sectionContent->is_free)
+                            <!-- Premium Content for Authenticated Users -->
+                            <!-- YouTube Player (if available) - ONLY FOR AUTHENTICATED USERS -->
                             @if($sectionContent->youtube_url && $sectionContent->getYoutubeVideoId())
                                 <x-youtube-player 
                                     :videoId="$sectionContent->getYoutubeVideoId()" 
@@ -455,6 +399,65 @@
                             <!-- Premium Content -->
                             <div class="filament-rich-content prose prose-lg max-w-none content-typography tiptap-content">
                                 {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
+                            </div>
+                            
+                            <!-- Course Navigation Buttons - Bottom -->
+                            <div class="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
+                                <button 
+                                    @click="markLessonComplete()" 
+                                    :disabled="isLessonCompleted || isLoading"
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                    :class="isLessonCompleted ? 
+                                        'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' : 
+                                        isLoading ? 'bg-gray-100 text-gray-500 border border-gray-300 cursor-not-allowed' :
+                                        'border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400'">
+                                    <div x-show="isLoading" class="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
+                                    <svg x-show="!isLoading" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span x-text="isLoading ? 'Saving...' : (isLessonCompleted ? 'Completed ✅' : 'Mark as Complete')"></span>
+                                </button>
+                                
+                                @php
+                                    // Find next content manually if not provided
+                                    $nextContentToShow = null;
+                                    if (isset($nextContent)) {
+                                        $nextContentToShow = $nextContent;
+                                    } else {
+                                        // Find next content in current section
+                                        $currentSectionContents = $currentSection->sectionContents()->orderBy('id')->get();
+                                        $currentIndex = $currentSectionContents->search(function($item) use ($sectionContent) {
+                                            return $item->id === $sectionContent->id;
+                                        });
+                                        
+                                        if ($currentIndex !== false && $currentIndex + 1 < $currentSectionContents->count()) {
+                                            $nextContentToShow = $currentSectionContents[$currentIndex + 1];
+                                        } else {
+                                            // Find first content in next section
+                                            $nextSection = $course->courseSections()->where('id', '>', $currentSection->id)->orderBy('id')->first();
+                                            if ($nextSection) {
+                                                $nextContentToShow = $nextSection->sectionContents()->orderBy('id')->first();
+                                            }
+                                        }
+                                    }
+                                @endphp
+                                
+                                @if($nextContentToShow)
+                                <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $nextContentToShow->id]) }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors cursor-pointer">
+                                    <span>Continue Learning</span>
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                </a>
+                                @else
+                                <button class="inline-flex items-center px-4 py-2 bg-gray-400 text-white font-semibold rounded-lg cursor-not-allowed" disabled>
+                                    <span>Course Complete</span>
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </button>
+                                @endif
                             </div>
                         @else
                             <!-- YouTube Player (if available) -->
@@ -468,6 +471,65 @@
                             <!-- Free Content -->
                             <div class="filament-rich-content prose prose-lg max-w-none content-typography">
                                 {!! \Filament\Forms\Components\RichEditor\RichContentRenderer::make($sectionContent->content ?? '')->toHtml() !!}
+                            </div>
+                            
+                            <!-- Course Navigation Buttons - Bottom -->
+                            <div class="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t border-gray-200">
+                                <button 
+                                    @click="markLessonComplete()" 
+                                    :disabled="isLessonCompleted || isLoading"
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                                    :class="isLessonCompleted ? 
+                                        'bg-green-100 text-green-800 border border-green-300 cursor-not-allowed' : 
+                                        isLoading ? 'bg-gray-100 text-gray-500 border border-gray-300 cursor-not-allowed' :
+                                        'border border-green-300 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-400'">
+                                    <div x-show="isLoading" class="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-gray-300 border-t-green-600"></div>
+                                    <svg x-show="!isLoading" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <span x-text="isLoading ? 'Saving...' : (isLessonCompleted ? 'Completed ✅' : 'Mark as Complete')"></span>
+                                </button>
+                                
+                                @php
+                                    // Find next content manually for free content
+                                    $nextContentToShow = null;
+                                    if (isset($nextContent)) {
+                                        $nextContentToShow = $nextContent;
+                                    } else {
+                                        // Find next content in current section
+                                        $currentSectionContents = $currentSection->sectionContents()->orderBy('id')->get();
+                                        $currentIndex = $currentSectionContents->search(function($item) use ($sectionContent) {
+                                            return $item->id === $sectionContent->id;
+                                        });
+                                        
+                                        if ($currentIndex !== false && $currentIndex + 1 < $currentSectionContents->count()) {
+                                            $nextContentToShow = $currentSectionContents[$currentIndex + 1];
+                                        } else {
+                                            // Find first content in next section
+                                            $nextSection = $course->courseSections()->where('id', '>', $currentSection->id)->orderBy('id')->first();
+                                            if ($nextSection) {
+                                                $nextContentToShow = $nextSection->sectionContents()->orderBy('id')->first();
+                                            }
+                                        }
+                                    }
+                                @endphp
+                                
+                                @if($nextContentToShow)
+                                <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $nextContentToShow->id]) }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors cursor-pointer">
+                                    <span>Continue Learning</span>
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                    </svg>
+                                </a>
+                                @else
+                                <button class="inline-flex items-center px-4 py-2 bg-gray-400 text-white font-semibold rounded-lg cursor-not-allowed" disabled>
+                                    <span>Course Complete</span>
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </button>
+                                @endif
                             </div>
                         @endif
                     </div>
@@ -826,7 +888,7 @@ function courseData() {
             notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
                 type === 'success' ? 'bg-green-500 text-white' : 
                 type === 'error' ? 'bg-red-500 text-white' : 
-                'bg-blue-500 text-white'
+                'bg-lochmara-500 text-white'
             }`;
             notification.textContent = message;
             
