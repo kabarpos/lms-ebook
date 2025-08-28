@@ -23,17 +23,17 @@ Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
 [FrontController::class, 'paymentMidtransNotification'])
     ->name('front.payment_midtrans_notification');
 
-// Verification routes (public)
+// WhatsApp Verification routes (public)
 Route::get('/verify/{id}/{token}', [VerificationController::class, 'verify'])
-    ->name('verification.verify')
+    ->name('whatsapp.verification.verify')
     ->where(['id' => '[0-9]+', 'token' => '[a-zA-Z0-9]+']);
 
 Route::post('/verification/resend', [VerificationController::class, 'resend'])
-    ->name('verification.resend');
+    ->name('whatsapp.verification.resend');
 
 Route::get('/verification/status', [VerificationController::class, 'status'])
     ->middleware('auth')
-    ->name('verification.status');
+    ->name('whatsapp.verification.status');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -8,6 +8,7 @@ use Filament\Actions\RestoreAction;
 use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditUser extends EditRecord
 {
@@ -16,9 +17,53 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
-            ForceDeleteAction::make(),
-            RestoreAction::make(),
+            \Filament\Actions\DeleteAction::make(),
+            \Filament\Actions\ForceDeleteAction::make(),
+            \Filament\Actions\RestoreAction::make(),
         ];
+    }
+    
+    protected function fillForm(): void
+    {
+        $data = $this->record->attributesToArray();
+        
+        // Convert datetime fields to boolean for toggles
+        $data['email_verified_at'] = $this->record->email_verified_at !== null;
+        $data['whatsapp_verified_at'] = $this->record->whatsapp_verified_at !== null;
+        
+        $this->form->fill($data);
+    }
+    
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        // Handle verification toggles - convert boolean to datetime
+        if (isset($data['email_verified_at'])) {
+            if ($data['email_verified_at']) {
+                $data['email_verified_at'] = $record->email_verified_at ?: now();
+            } else {
+                $data['email_verified_at'] = null;
+            }
+        }
+        
+        if (isset($data['whatsapp_verified_at'])) {
+            if ($data['whatsapp_verified_at']) {
+                $data['whatsapp_verified_at'] = $record->whatsapp_verified_at ?: now();
+            } else {
+                $data['whatsapp_verified_at'] = null;
+            }
+        }
+        
+        // Auto-set is_account_active based on verification status
+        if ($data['email_verified_at'] || $data['whatsapp_verified_at']) {
+            // If user has at least one verification, allow is_account_active to be set
+            $data['is_account_active'] = $data['is_account_active'] ?? false;
+        } else {
+            // If user has no verification, force is_account_active to false
+            $data['is_account_active'] = false;
+        }
+        
+        $record->update($data);
+        
+        return $record;
     }
 }

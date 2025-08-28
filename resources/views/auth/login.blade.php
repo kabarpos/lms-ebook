@@ -44,7 +44,7 @@
                 <h3 class="font-bold text-lg mb-4 text-yellow-800">Kirim Ulang Verifikasi</h3>
                 <p class="text-sm text-yellow-700 mb-4">Jika Anda belum menerima link verifikasi di WhatsApp, masukkan email Anda di bawah ini untuk mengirim ulang.</p>
                 
-                <form method="POST" action="{{ route('verification.resend') }}" class="space-y-4">
+                <form method="POST" action="{{ route('whatsapp.verification.resend') }}" class="space-y-4">
                     @csrf
                     <div>
                         <label class="relative group">

@@ -41,7 +41,7 @@ class WhatsappNotificationService
             }
 
             // Create verification link
-            $verificationLink = URL::signedRoute('verification.verify', [
+            $verificationLink = route('whatsapp.verification.verify', [
                 'id' => $user->id,
                 'token' => $user->verification_token
             ]);
