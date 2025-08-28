@@ -34,6 +34,10 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'photo',
         'whatsapp_number',
+        'verification_token',
+        'email_verified_at',
+        'whatsapp_verified_at',
+        'is_account_active',
     ];
 
     /**
@@ -55,7 +59,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return [
             'email_verified_at' => 'datetime',
+            'whatsapp_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_account_active' => 'boolean',
         ];
     }
 
@@ -106,5 +112,53 @@ class User extends Authenticatable implements FilamentUser
             'completed' => $completedLessons,
             'percentage' => $totalLessons > 0 ? round(($completedLessons / $totalLessons) * 100, 2) : 0
         ];
+    }
+
+    /**
+     * Generate verification token for user
+     */
+    public function generateVerificationToken(): string
+    {
+        $token = bin2hex(random_bytes(32));
+        $this->update(['verification_token' => $token]);
+        return $token;
+    }
+
+    /**
+     * Verify email
+     */
+    public function verifyEmail(): void
+    {
+        $this->update([
+            'email_verified_at' => now(),
+            'is_account_active' => $this->whatsapp_verified_at ? true : false
+        ]);
+    }
+
+    /**
+     * Verify WhatsApp
+     */
+    public function verifyWhatsapp(): void
+    {
+        $this->update([
+            'whatsapp_verified_at' => now(),
+            'is_account_active' => $this->email_verified_at ? true : false
+        ]);
+    }
+
+    /**
+     * Check if both email and WhatsApp are verified
+     */
+    public function isFullyVerified(): bool
+    {
+        return $this->email_verified_at && $this->whatsapp_verified_at;
+    }
+
+    /**
+     * Check if account is active and fully verified
+     */
+    public function isAccountActive(): bool
+    {
+        return $this->is_account_active && $this->isFullyVerified();
     }
 }

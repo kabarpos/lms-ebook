@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
@@ -48,6 +49,25 @@ class LoginRequest extends FormRequest
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
+        }
+
+        // Check if user account is verified and active
+        $user = Auth::user();
+        if ($user && !$user->isAccountActive()) {
+            // Logout the user immediately
+            Auth::logout();
+            
+            // Check if user has verification token (needs verification)
+            if ($user->verification_token) {
+                throw ValidationException::withMessages([
+                    'email' => 'Akun Anda belum terverifikasi. Silakan periksa WhatsApp Anda untuk link verifikasi, atau gunakan form di bawah untuk mengirim ulang.',
+                ]);
+            } else {
+                // Account exists but not verified and no token (admin needs to activate)
+                throw ValidationException::withMessages([
+                    'email' => 'Akun Anda belum diaktifkan oleh administrator. Silakan hubungi tim support.',
+                ]);
+            }
         }
 
         RateLimiter::clear($this->throttleKey());

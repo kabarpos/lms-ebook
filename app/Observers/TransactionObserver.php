@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Helpers\TransactionHelper;
 use App\Models\Transaction;
+use App\Services\WhatsappNotificationService;
+use Illuminate\Support\Facades\Log;
 
 class TransactionObserver
 {
@@ -20,9 +22,30 @@ class TransactionObserver
      */
     public function created(Transaction $transaction): void
     {
-        //
-        //if transaction created successfully then update transaction status to pending
-        // or generate booking transaction id
+        // Send order completion notification via WhatsApp
+        try {
+            $whatsappService = app(WhatsappNotificationService::class);
+            $result = $whatsappService->sendOrderCompletion($transaction);
+            
+            if ($result['success']) {
+                Log::info('Order completion WhatsApp notification sent', [
+                    'transaction_id' => $transaction->id,
+                    'user_id' => $transaction->user_id
+                ]);
+            } else {
+                Log::warning('Failed to send order completion WhatsApp notification', [
+                    'transaction_id' => $transaction->id,
+                    'user_id' => $transaction->user_id,
+                    'error' => $result['message'] ?? 'Unknown error'
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Order completion WhatsApp notification exception', [
+                'transaction_id' => $transaction->id,
+                'user_id' => $transaction->user_id,
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     /**
@@ -30,7 +53,32 @@ class TransactionObserver
      */
     public function updated(Transaction $transaction): void
     {
-        //
+        // Check if payment status changed to paid
+        if ($transaction->isDirty('is_paid') && $transaction->is_paid) {
+            try {
+                $whatsappService = app(WhatsappNotificationService::class);
+                $result = $whatsappService->sendPaymentReceived($transaction);
+                
+                if ($result['success']) {
+                    Log::info('Payment received WhatsApp notification sent', [
+                        'transaction_id' => $transaction->id,
+                        'user_id' => $transaction->user_id
+                    ]);
+                } else {
+                    Log::warning('Failed to send payment received WhatsApp notification', [
+                        'transaction_id' => $transaction->id,
+                        'user_id' => $transaction->user_id,
+                        'error' => $result['message'] ?? 'Unknown error'
+                    ]);
+                }
+            } catch (\Exception $e) {
+                Log::error('Payment received WhatsApp notification exception', [
+                    'transaction_id' => $transaction->id,
+                    'user_id' => $transaction->user_id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
     }
 
     /**

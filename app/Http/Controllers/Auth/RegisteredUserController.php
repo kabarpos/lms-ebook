@@ -6,11 +6,13 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\WhatsappNotificationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -43,20 +45,56 @@ class RegisteredUserController extends Controller
             $photoPath = $request->file('photo')->store('photos', 'public');
         }
 
+        // Create user with inactive status
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'whatsapp_number' => $request->whatsapp_number,
             'photo' => $photoPath,
+            'is_account_active' => false, // Account not active until verified
         ]);
 
         $user->assignRole('student');
 
-        event(new Registered($user));
+        // Generate verification token
+        $user->generateVerificationToken();
 
-        Auth::login($user);
+        // Send WhatsApp verification
+        try {
+            $whatsappService = app(WhatsappNotificationService::class);
+            $result = $whatsappService->sendRegistrationVerification($user);
+            
+            if ($result['success']) {
+                Log::info('Registration verification WhatsApp sent successfully', [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+                
+                return redirect()->route('login')
+                    ->with('success', 'Pendaftaran berhasil! Link verifikasi telah dikirim ke WhatsApp Anda. Silakan klik link tersebut untuk mengaktifkan akun sebelum login.');
+            } else {
+                Log::warning('Registration successful but WhatsApp notification failed', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'error' => $result['message'] ?? 'Unknown error'
+                ]);
+                
+                return redirect()->route('login')
+                    ->with('warning', 'Pendaftaran berhasil, namun gagal mengirim notifikasi WhatsApp. Silakan hubungi administrator untuk mengaktifkan akun Anda.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Registration WhatsApp notification failed', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'error' => $e->getMessage()
+            ]);
+            
+            return redirect()->route('login')
+                ->with('warning', 'Pendaftaran berhasil, namun terjadi kesalahan saat mengirim verifikasi. Silakan hubungi administrator.');
+        }
 
-        return redirect(route('dashboard', absolute: false));
+        // Note: We don't fire the Registered event or auto-login the user
+        // until they verify their account
     }
 }

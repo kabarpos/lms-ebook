@@ -5,6 +5,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
@@ -21,6 +22,18 @@ Route::get('/dashboard/learning/{course:slug}/{courseSection}/{sectionContent}',
 Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
 [FrontController::class, 'paymentMidtransNotification'])
     ->name('front.payment_midtrans_notification');
+
+// Verification routes (public)
+Route::get('/verify/{id}/{token}', [VerificationController::class, 'verify'])
+    ->name('verification.verify')
+    ->where(['id' => '[0-9]+', 'token' => '[a-zA-Z0-9]+']);
+
+Route::post('/verification/resend', [VerificationController::class, 'resend'])
+    ->name('verification.resend');
+
+Route::get('/verification/status', [VerificationController::class, 'status'])
+    ->middleware('auth')
+    ->name('verification.status');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
