@@ -639,10 +639,11 @@
     }
     
     .filament-rich-content li {
-        margin-bottom: 0.75rem !important;
-        line-height: 1.75 !important;
+        line-height: 1.4 !important; /* Reduced from 1.75 to 1.4 for tighter spacing */
         display: list-item !important; /* Ensure list item display */
         list-style: inherit !important; /* Inherit parent list style */
+        text-align: justify; /* Match paragraph justification */
+        color: #374151; /* Match paragraph color */
     }
     
     .filament-rich-content li::marker {
@@ -667,6 +668,17 @@
     
     .filament-rich-content ol ol ol {
         list-style-type: lower-roman !important;
+    }
+    
+    /* Ensure nested list items also have proper line-height */
+    .filament-rich-content ul ul li,
+    .filament-rich-content ol ol li,
+    .filament-rich-content ul ol li,
+    .filament-rich-content ol ul li {
+        line-height: 1.4 !important;
+        margin-bottom: 0.5rem !important;
+        text-align: justify;
+        color: #374151;
     }
     
     /* Task list styling */
@@ -698,7 +710,7 @@
     
     .filament-rich-content h1 {
         font-size: 2.25rem;
-        line-height: 1.2;
+        line-height: 1.2rem;
         margin: 2rem 0 1rem;
         background: linear-gradient(135deg, #0f4c7a 0%, #1d4ed8 100%);
         -webkit-background-clip: text;
@@ -746,12 +758,15 @@
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
     
+    /* Enhanced pre code block styling with copy functionality */
     .filament-rich-content pre {
+        position: relative;
         background: #1e293b;
         color: #f1f5f9;
         padding: 1.5rem;
+        padding-top: 2.5rem; /* Reduced space for smaller copy button */
         border-radius: 0.75rem;
-        overflow-x: auto;
+        overflow: hidden; /* Changed from overflow-x: auto to prevent horizontal scroll */
         margin: 2rem 0;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         border: 1px solid #334155;
@@ -762,6 +777,74 @@
         border: none;
         color: inherit;
         padding: 0;
+        display: block;
+        white-space: pre-wrap; /* Enable text wrapping */
+        word-wrap: break-word; /* Break long words */
+        overflow-wrap: break-word; /* Modern alternative */
+        line-height: 1.6;
+    }
+    
+    /* Copy button styling */
+    .code-copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #93c5fd;
+        padding: 0.375rem; /* Equal padding on all sides for perfect symmetry */
+        border-radius: 0.25rem;
+        font-size: 0.625rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem; /* Consistent gap between icon and text for all states */
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        z-index: 10;
+        line-height: 1;
+        min-height: 1.5rem; /* Ensures consistent button height */
+        white-space: nowrap; /* Prevents text wrapping */
+        justify-content: center; /* Center content horizontally */
+    }
+    
+    .code-copy-btn:hover {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.5);
+        color: #dbeafe;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+    
+    .code-copy-btn.copied {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: rgba(34, 197, 94, 0.5);
+        color: #86efac;
+    }
+    
+    .code-copy-btn svg {
+        width: 0.75rem;
+        height: 0.75rem;
+        flex-shrink: 0;
+        display: block; /* Ensures consistent icon rendering */
+    }
+    
+    /* Language label styling */
+    .code-lang-label {
+        position: absolute;
+        top: 0.75rem;
+        left: 0.75rem;
+        background: rgba(148, 163, 184, 0.1);
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        color: #cbd5e1;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.625rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
     
 
@@ -813,9 +896,116 @@
                 wrapper.appendChild(iframe);
             });
             
+            // Enhanced Code Block Processing with Copy Functionality
+            const codeBlocks = container.querySelectorAll('pre code');
+            codeBlocks.forEach((codeElement, index) => {
+                const preElement = codeElement.parentElement;
+                
+                // Skip if already processed
+                if (preElement.querySelector('.code-copy-btn')) return;
+                
+                // Create copy button
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'code-copy-btn cursor-pointer';
+                copyBtn.innerHTML = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    copy
+                `;
+                
+                // Add copy functionality
+                copyBtn.addEventListener('click', async function() {
+                    try {
+                        const codeText = codeElement.textContent || codeElement.innerText;
+                        await navigator.clipboard.writeText(codeText);
+                        
+                        // Update button appearance
+                        copyBtn.classList.add('copied');
+                        copyBtn.innerHTML = `
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            copied
+                        `;
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            copyBtn.classList.remove('copied');
+                            copyBtn.innerHTML = `
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                                copy
+                            `;
+                        }, 2000);
+                        
+                    } catch (err) {
+                        console.error('Failed to copy code:', err);
+                        // Fallback: select text for manual copy
+                        const range = document.createRange();
+                        range.selectNodeContents(codeElement);
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                        
+                        // Show fallback message
+                        copyBtn.innerHTML = `
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Selected
+                        `;
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = `
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                                copy
+                            `;
+                        }, 2000);
+                    }
+                });
+                
+                // Add button to pre element
+                preElement.appendChild(copyBtn);
+                
+                // Try to detect language and add label
+                const className = codeElement.className || '';
+                const langMatch = className.match(/language-(\w+)/) || className.match(/lang-(\w+)/);
+                
+                if (langMatch && langMatch[1]) {
+                    const langLabel = document.createElement('span');
+                    langLabel.className = 'code-lang-label';
+                    langLabel.textContent = langMatch[1];
+                    preElement.appendChild(langLabel);
+                    
+                    // Adjust copy button position if language label exists
+                    copyBtn.style.top = '2.25rem';
+                }
+                
+                // Add unique identifier
+                preElement.setAttribute('data-code-block-id', `code-block-${index}`);
+            });
+            
             // Ensure content visibility
             container.style.visibility = 'visible';
             container.style.opacity = '1';
+        });
+        
+        // Add keyboard shortcut for copying focused code block (Ctrl+C)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                const focusedCodeBlock = document.activeElement.closest('pre');
+                if (focusedCodeBlock) {
+                    const copyBtn = focusedCodeBlock.querySelector('.code-copy-btn');
+                    if (copyBtn) {
+                        e.preventDefault();
+                        copyBtn.click();
+                    }
+                }
+            }
         });
     });
     </script>
