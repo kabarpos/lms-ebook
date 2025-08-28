@@ -13,7 +13,10 @@ class TransactionObserver
 
     public function creating($transaction)
     {
-        $transaction->booking_trx_id = TransactionHelper::generateUniqueTrxId();
+        // Only generate booking_trx_id if not already set (for manual creation)
+        if (empty($transaction->booking_trx_id)) {
+            $transaction->booking_trx_id = TransactionHelper::generateUniqueTrxId();
+        }
     }
 
 

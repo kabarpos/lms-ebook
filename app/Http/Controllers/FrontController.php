@@ -163,20 +163,33 @@ class FrontController extends Controller
 
     public function paymentMidtransNotification(Request $request)
     {
+        // Log all incoming webhook data for debugging
+        Log::info('Midtrans webhook received:', [
+            'headers' => $request->headers->all(),
+            'body' => $request->all(),
+            'method' => $request->method(),
+            'url' => $request->fullUrl(),
+            'ip' => $request->ip()
+        ]);
+        
         try {
             // Process the Midtrans notification through the service
             $transactionStatus = $this->paymentService->handlePaymentNotification();
 
             if (!$transactionStatus) {
+                Log::error('Invalid notification data received');
                 return response()->json(['error' => 'Invalid notification data.'], 400);
             }
 
-            // Respond with the status of the transaction
-
+            Log::info('Webhook processed successfully:', ['status' => $transactionStatus]);
+            
             // transaction has been created in database
             return response()->json(['status' => $transactionStatus]);
         } catch (Exception $e) {
-            Log::error('Failed to handle Midtrans notification:', ['error' => $e->getMessage()]);
+            Log::error('Failed to handle Midtrans notification:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return response()->json(['error' => 'Failed to process notification.'], 500);
         }
     }

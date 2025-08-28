@@ -13,7 +13,7 @@
     </div>
     <main class="flex flex-1 justify-center py-5 items-center">
         <div class="flex w-[1000px] !h-fit rounded-[20px] border border-LMS-grey gap-[40px] bg-white items-center p-5">
-            <form id="checkout-details" method="POST" class="w-full flex flex-col gap-5">
+            <form id="checkout-details" class="w-full flex flex-col gap-5">
                 @csrf
                 <input type="text" hidden name="payment_method" value="Midtrans">
                 <h1 class="font-bold text-[22px] leading-[33px]">Checkout Pro</h1>

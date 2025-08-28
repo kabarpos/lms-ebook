@@ -70,20 +70,33 @@ class PaymentService
 
     public function handlePaymentNotification()
     {
+        Log::info('Processing Midtrans notification...');
+        
         $notification = $this->midtransService->handleNotification();
+        
+        Log::info('Received Midtrans notification:', $notification);
 
         if (in_array($notification['transaction_status'], ['capture', 'settlement'])) {
+            Log::info('Transaction status is valid for processing: ' . $notification['transaction_status']);
+            
             $pricing = Pricing::findOrFail($notification['custom_field2']);
-            // $pricing = $this->pricingRepository->findById($notification['custom_field2']);
-            $this->createTransaction($notification, $pricing);
+            
+            Log::info('Found pricing:', ['id' => $pricing->id, 'name' => $pricing->name]);
+            
+            $result = $this->createTransaction($notification, $pricing);
+            
+            Log::info('Transaction creation result:', ['success' => $result !== null]);
+        } else {
+            Log::warning('Transaction status not processed: ' . $notification['transaction_status']);
         }
 
-        // ended here...
         return $notification['transaction_status'];
     }
 
     protected function createTransaction(array $notification, Pricing $pricing)
     {
+        Log::info('Creating transaction with data:', $notification);
+        
         $startedAt = now();
         $endedAt = $startedAt->copy()->addMonths($pricing->duration);
 
@@ -99,10 +112,26 @@ class PaymentService
             'started_at' => $startedAt,
             'ended_at' => $endedAt,
         ];
+        
+        Log::info('Transaction data to be created:', $transactionData);
 
-        $this->transactionRepository->create($transactionData);
-
-        Log::info('Transaction successfully created: ' . $notification['order_id']);
+        try {
+            $transaction = $this->transactionRepository->create($transactionData);
+            
+            Log::info('Transaction successfully created:', [
+                'id' => $transaction->id,
+                'booking_trx_id' => $transaction->booking_trx_id,
+                'user_id' => $transaction->user_id
+            ]);
+            
+            return $transaction;
+        } catch (Exception $e) {
+            Log::error('Failed to create transaction:', [
+                'error' => $e->getMessage(),
+                'data' => $transactionData
+            ]);
+            throw $e;
+        }
     }
 
 }

@@ -6,24 +6,17 @@
     
     <!-- Main Content -->
     <main class="min-h-screen bg-gray-50 relative">
-        <!-- Background Pattern (Hidden on mobile) -->
-        <div class="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-lochmara-50 to-transparent hidden lg:block">
-            <div class="absolute inset-0 opacity-10">
-                <img src="{{ asset('assets/images/backgrounds/banner-subscription.png') }}" 
-                     class="w-full h-full object-cover" 
-                     alt="background pattern">
-            </div>
-        </div>
+      
         
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Page Header -->
+            {{-- <!-- Page Header -->
             <div class="mb-8">
                 <h1 class="text-3xl lg:text-4xl font-bold text-gray-900">My Subscriptions</h1>
                 <p class="text-lg text-gray-600 mt-2">Manage your active and expired subscriptions</p>
-            </div>
+            </div> --}}
             
             <!-- Subscriptions List -->
-            <div class="max-w-4xl space-y-6">
+            <div class="max-w-4xl space-y-6 mx-auto">
                 @forelse($transactions as $transaction)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-shadow duration-200">
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-6">
