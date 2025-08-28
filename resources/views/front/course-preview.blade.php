@@ -616,7 +616,6 @@
     
     /* Enhanced paragraph styling */
     .filament-rich-content p {
-        margin-bottom: 1.25rem;
         color: #374151;
         line-height: 1.75;
         text-align: justify;
