@@ -52,6 +52,11 @@ class FrontController extends Controller
         return view('front.pricing', compact('pricing_packages', 'user', 'totalCourses', 'totalStudents'));
     }
 
+    public function termsOfService()
+    {
+        return view('front.terms-of-service');
+    }
+
     public function courseDetails(\App\Models\Course $course)
     {
         $course->load(['category', 'courseSections.sectionContents', 'courseStudents', 'benefits']);

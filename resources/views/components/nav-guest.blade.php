@@ -16,22 +16,15 @@
                 <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
                     Pricing
                 </a>
-                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
-                    Features
+                <a href="{{ route('front.terms-of-service') }}" class="{{ request()->routeIs('front.terms-of-service') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
+                    Peraturan
                 </a>
-                <a href="#" class="text-gray-700 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
-                    Testimonials
-                </a>
+
             </div>
 
             <!-- Desktop Action Buttons -->
             <div class="hidden lg:flex items-center space-x-4">
-                <a href="#" class="text-gray-500 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
-                </a>
-                <div class="h-6 w-px bg-gray-300"></div>
+               
                 <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
                     Sign Up
                 </a>
@@ -61,12 +54,10 @@
             <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
                 Pricing
             </a>
-            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
-                Features
+            <a href="{{ route('front.terms-of-service') }}" class="{{ request()->routeIs('front.terms-of-service') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
+                Peraturan
             </a>
-            <a href="#" class="text-gray-700 hover:bg-gray-50 hover:text-lochmara-600 block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
-                Testimonials
-            </a>
+
             <div class="pt-4 pb-3 border-t border-gray-200">
                 <div class="flex items-center px-3 space-x-3">
                     <a href="{{ route('register') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">

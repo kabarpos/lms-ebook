@@ -78,8 +78,8 @@
         <!-- Action Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Get Guidelines Button -->
-            <a href="#" class="w-full px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 text-center cursor-pointer">
-                Get Guidelines
+            <a href="{{ route('front.terms-of-service') }}" class="w-full px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 text-center cursor-pointer">
+                Term Of Services
             </a>
             
             <!-- Start Learning Button -->

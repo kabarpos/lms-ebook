@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/pricing', [FrontController::class, 'pricing'])->name('front.pricing');
+Route::get('/peraturan-layanan', [FrontController::class, 'termsOfService'])->name('front.terms-of-service');
 Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');
 Route::get('/course/{course:slug}/preview/{sectionContent}', [FrontController::class, 'previewContent'])->name('front.course.preview');
 
