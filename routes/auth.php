@@ -25,6 +25,13 @@ Route::middleware('guest')->group(function () {
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 
+    Route::get('password-reset-options', function () {
+        return view('auth.password-reset-options');
+    })->name('password.reset.options');
+
+    Route::post('password/whatsapp', [PasswordResetLinkController::class, 'sendWhatsAppReset'])
+        ->name('password.whatsapp');
+
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
         ->name('password.email');
 

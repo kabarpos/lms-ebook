@@ -31,13 +31,21 @@
                             alt="icon">
                     </label>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                    <a href="#" class="text-sm text-LMS-green hover:underline cursor-pointer">Forgot My Password</a>
+                    <a href="{{ route('password.reset.options') }}" class="text-sm text-LMS-green hover:underline cursor-pointer">Forgot My Password</a>
                 </div>
                 <button type="submit"
                     class="flex items-center justify-center gap-[10px] rounded-full py-[14px] px-5 bg-LMS-green hover:drop-shadow-effect transition-all duration-300 cursor-pointer">
                     <span class="font-semibold text-white">Sign In to My Account</span>
                 </button>
             </form>
+            
+            <!-- Register Link -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600" style="font-family: 'Manrope', sans-serif;">
+                    Belum punya akun? 
+                    <a href="{{ route('register') }}" class="text-LMS-green font-semibold hover:underline cursor-pointer">Daftar Sekarang</a>
+                </p>
+            </div>
             
             <!-- Resend Verification Section -->
             <div class="mt-6 p-6 bg-yellow-50 border border-yellow-200 rounded-[20px]" id="resend-section" style="display: none;">

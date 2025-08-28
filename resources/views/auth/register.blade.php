@@ -86,6 +86,14 @@
                     <span class="font-semibold text-white">Create My Account</span>
                 </button>
             </form>
+            
+            <!-- Login Link -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600" style="font-family: 'Manrope', sans-serif;">
+                    Sudah punya akun? 
+                    <a href="{{ route('login') }}" class="text-LMS-green font-semibold hover:underline cursor-pointer">Masuk Sekarang</a>
+                </p>
+            </div>
         </section>
         
     </main>

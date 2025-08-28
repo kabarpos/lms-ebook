@@ -300,6 +300,58 @@ class WhatsappNotificationService
     }
 
     /**
+     * Send password reset notification
+     */
+    public function sendPasswordResetMessage(User $user, string $resetUrl): array
+    {
+        try {
+            $template = WhatsappMessageTemplate::getByType(WhatsappMessageTemplate::TYPE_PASSWORD_RESET);
+            
+            if (!$template) {
+                // If template doesn't exist, create a default message
+                $message = "Halo {$user->name},\n\nAnda telah meminta reset password untuk akun Anda di " . config('app.name', 'LMS Ebook') . ".\n\nKlik link berikut untuk mereset password Anda:\n{$resetUrl}\n\nLink ini akan kedaluwarsa dalam 60 menit.\n\nJika Anda tidak meminta reset password, abaikan pesan ini.";
+            } else {
+                $messageData = [
+                    'user_name' => $user->name,
+                    'reset_url' => $resetUrl,
+                    'app_name' => config('app.name', 'LMS Ebook'),
+                    'expiry_time' => '60 menit'
+                ];
+                $message = $template->parseMessage($messageData);
+            }
+
+            if (!$user->whatsapp_number) {
+                throw new \Exception('User WhatsApp number is not available');
+            }
+
+            $result = $this->dripsenderService->sendMessage(
+                $user->whatsapp_number,
+                $message
+            );
+
+            Log::info('Password reset WhatsApp sent', [
+                'user_id' => $user->id,
+                'phone' => $user->whatsapp_number,
+                'result' => $result
+            ]);
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send password reset WhatsApp', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to send password reset message',
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
      * Test WhatsApp connection and configuration
      */
     public function testConnection(): array

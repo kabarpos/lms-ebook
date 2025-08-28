@@ -57,6 +57,20 @@ class WhatsappMessageTemplateSeeder extends Seeder
                 'is_active' => true,
                 'description' => 'Template untuk ucapan terima kasih setelah pembayaran dikonfirmasi oleh admin.',
             ],
+            [
+                'name' => 'Reset Password',
+                'type' => WhatsappMessageTemplate::TYPE_PASSWORD_RESET,
+                'subject' => 'Reset Password - {app_name}',
+                'message' => "Halo {user_name}! 🔐\n\nAnda telah meminta untuk mereset password akun Anda di {app_name}.\n\n🔗 Klik link berikut untuk mereset password:\n{reset_url}\n\n⚠️ Link ini akan kedaluwarsa dalam {expiry_time}.\n\n🛡️ Jika Anda tidak meminta reset password, abaikan pesan ini. Akun Anda tetap aman.\n\nTerima kasih! 🙏",
+                'variables' => [
+                    'user_name' => 'Nama pengguna',
+                    'reset_url' => 'Link untuk reset password',
+                    'app_name' => 'Nama aplikasi LMS',
+                    'expiry_time' => 'Waktu kedaluwarsa link',
+                ],
+                'is_active' => true,
+                'description' => 'Template untuk mengirim link reset password melalui WhatsApp.',
+            ],
         ];
 
         foreach ($templates as $template) {

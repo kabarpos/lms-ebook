@@ -28,6 +28,7 @@ class WhatsappMessageTemplate extends Model
     const TYPE_REGISTRATION_VERIFICATION = 'registration_verification';
     const TYPE_ORDER_COMPLETION = 'order_completion';
     const TYPE_PAYMENT_RECEIVED = 'payment_received';
+    const TYPE_PASSWORD_RESET = 'password_reset';
 
     /**
      * Get template by type
@@ -63,6 +64,7 @@ class WhatsappMessageTemplate extends Model
             self::TYPE_REGISTRATION_VERIFICATION => 'Verifikasi Pendaftaran',
             self::TYPE_ORDER_COMPLETION => 'Penyelesaian Order',
             self::TYPE_PAYMENT_RECEIVED => 'Pembayaran Diterima',
+            self::TYPE_PASSWORD_RESET => 'Reset Password',
         ];
     }
 
@@ -91,6 +93,12 @@ class WhatsappMessageTemplate extends Model
                 'course_name' => 'Nama Kursus',
                 'total_amount' => 'Total Pembayaran',
                 'app_name' => 'Nama aplikasi',
+            ],
+            self::TYPE_PASSWORD_RESET => [
+                'user_name' => 'Nama pengguna',
+                'reset_url' => 'Link reset password',
+                'app_name' => 'Nama aplikasi',
+                'expiry_time' => 'Waktu kedaluwarsa',
             ],
         ];
 
