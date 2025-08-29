@@ -95,10 +95,7 @@
                                 class="px-4 py-2 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
                             Check Browser Console
                         </button>
-                        <a href="/test-payment.html" 
-                           class="px-4 py-2 bg-orange-600 text-white rounded text-sm hover:bg-orange-700">
-                            Payment Test Page
-                        </a>
+
                     </div>
                 </div>
 

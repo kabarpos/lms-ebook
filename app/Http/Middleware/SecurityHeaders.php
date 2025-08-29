@@ -32,12 +32,18 @@ class SecurityHeaders
         // Content Security Policy - Basic but secure
         $csp = "default-src 'self'; " .
                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://app.sandbox.midtrans.com https://app.midtrans.com; " .
-               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " .
+               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; " .
                "font-src 'self' https://fonts.gstatic.com; " .
                "img-src 'self' data: https:; " .
-               "connect-src 'self' https://api.sandbox.midtrans.com https://api.midtrans.com";
+               "connect-src 'self' https://api.sandbox.midtrans.com https://api.midtrans.com ws: wss:; " .
+               "object-src 'none'; " .
+               "media-src 'self' https://www.youtube.com https://www.youtube-nocookie.com; " .
+               "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://app.sandbox.midtrans.com https://app.midtrans.com;";
         
-        $response->headers->set('Content-Security-Policy', $csp);
+        // Only apply CSP in production for security
+        if (config('app.env') === 'production') {
+            $response->headers->set('Content-Security-Policy', $csp);
+        }
         
         return $response;
     }
