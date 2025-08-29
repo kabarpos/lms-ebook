@@ -30,6 +30,8 @@ class MidtransSettingResource extends Resource
     
     protected static ?string $pluralModelLabel = 'Midtrans Settings';
     
+    protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
+    
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema

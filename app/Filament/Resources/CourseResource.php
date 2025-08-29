@@ -6,12 +6,12 @@ use BackedEnum;
 use UnitEnum;
 
 use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -48,19 +48,25 @@ class CourseResource extends Resource
     {
         return $schema
             ->components([
-                //
-                Fieldset::make('Details')
-                ->schema([
-                    // ...
-                    TextInput::make('name')
+                TextInput::make('name')
                     ->maxLength(255)
                     ->required(),
 
-                    FileUpload::make('thumbnail')
+                FileUpload::make('thumbnail')
                     ->required()
-                    ->image(),
+                    ->image()
+                    ->disk('public')
+                    ->directory('assets/images/thumbnails')
+                    ->visibility('public')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                    ->maxSize(2048)
+                    ->imageEditor()
+                    ->getUploadedFileNameForStorageUsing(
+                        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+                            ->prepend('thumbnail-'),
+                    ),
                     
-                    TextInput::make('price')
+                TextInput::make('price')
                     ->label('Course Price (Rp)')
                     ->numeric()
                     ->prefix('Rp')
@@ -69,35 +75,28 @@ class CourseResource extends Resource
                     ->helperText('Set to 0 for free courses')
                     ->required(),
 
-                ]),
-
-                Fieldset::make('Additional')
-                ->schema([
-                    // ...
-
-                    Repeater::make('benefits')
-                    ->relationship('benefits')
-                    ->schema([
-                        TextInput::make('name')
-                            ->required(),
-                    ]),
-
-                    Textarea::make('about')
+                Textarea::make('about')
                     ->required(),
 
-                    Select::make('is_popular')
+                Select::make('is_popular')
                     ->options([
                         true => 'Popular',
                         false => 'Not Popular',
                     ])
                     ->required(),
 
-                    Select::make('category_id')
+                Select::make('category_id')
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload()
                     ->required(),
-                ]),
+
+                Repeater::make('benefits')
+                    ->relationship('benefits')
+                    ->schema([
+                        TextInput::make('name')
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -106,7 +105,9 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 //
-                ImageColumn::make('thumbnail'),
+                ImageColumn::make('thumbnail')
+                    ->disk('public')
+                    ->visibility('public'),
 
                 TextColumn::make('name')
                     ->searchable(),

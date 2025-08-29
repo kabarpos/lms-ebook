@@ -11,7 +11,7 @@
                             loading="lazy" />
                     @else
                         <x-lazy-image 
-                            src="{{ Storage::url($course->thumbnail) }}" 
+                            src="{{ Storage::disk('public')->url($course->thumbnail) }}" 
                             alt="{{ $course->name }}" 
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             loading="lazy" />
