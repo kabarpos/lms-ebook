@@ -24,12 +24,9 @@
 
             <!-- Desktop Action Buttons -->
             <div class="hidden lg:flex items-center space-x-4">
-               
-                <a href="{{ route('register') }}" class="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
-                    Sign Up
-                </a>
+ 
                 <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
-                    My Account
+                    Login
                 </a>
             </div>
 
@@ -59,12 +56,12 @@
             </a>
 
             <div class="pt-4 pb-3 border-t border-gray-200">
-                <div class="flex items-center px-3 space-x-3">
-                    <a href="{{ route('register') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 cursor-pointer">
-                        Sign Up
+                <div class="px-3 space-y-3">
+                    <a href="{{ route('register') }}" class="block text-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                        Belum punya akun? Daftar di sini
                     </a>
-                    <a href="{{ route('login') }}" class="flex-1 text-center px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
-                        My Account
+                    <a href="{{ route('login') }}" class="block text-center px-4 py-2 text-sm font-medium text-white bg-lochmara-600 rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
+                        Login
                     </a>
                 </div>
             </div>
