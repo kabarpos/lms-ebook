@@ -14,6 +14,55 @@ Route::get('/peraturan-layanan', [FrontController::class, 'termsOfService'])->na
 Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');
 Route::get('/course/{course:slug}/preview/{sectionContent}', [FrontController::class, 'previewContent'])->name('front.course.preview');
 Route::get('/course/{course:slug}/checkout', [FrontController::class, 'courseCheckout'])->name('front.course.checkout');
+Route::post('/course/{course:slug}/checkout', function() {
+    return response()->json(['error' => 'Form submission not allowed. Please use the Pay Now button.'], 400);
+});
+
+// Debug route for checkout issues
+Route::get('/debug-checkout/{course:slug}', function(\App\Models\Course $course) {
+    return response()->json([
+        'course' => $course,
+        'authenticated' => auth()->check(),
+        'user_id' => auth()->id(),
+        'route_exists' => true
+    ]);
+});
+
+// Debug route for transactions
+Route::get('/debug-transactions', function() {
+    try {
+        $transactions = \App\Models\Transaction::with(['student', 'course'])
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function($tx) {
+                return [
+                    'id' => $tx->id,
+                    'booking_trx_id' => $tx->booking_trx_id,
+                    'user_id' => $tx->user_id,
+                    'user_name' => $tx->student->name ?? 'N/A',
+                    'course_id' => $tx->course_id,
+                    'course_name' => $tx->course->name ?? 'N/A',
+                    'grand_total_amount' => $tx->grand_total_amount,
+                    'is_paid' => $tx->is_paid,
+                    'payment_type' => $tx->payment_type,
+                    'created_at' => $tx->created_at,
+                ];
+            });
+        
+        return response()->json($transactions);
+    } catch (Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'message' => 'Database connection or model issue'
+        ], 500);
+    }
+});
+
+// Debug page for checkout
+Route::get('/debug-checkout-page', function() {
+    return view('debug.checkout');
+});
 
 // Redirect old dashboard learning route to unified preview route
 Route::get('/dashboard/learning/{course:slug}/{courseSection}/{sectionContent}', function(\App\Models\Course $course, $courseSection, \App\Models\SectionContent $sectionContent) {
@@ -61,6 +110,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/dashboard/search/courses', [CourseController::class, 'search_courses'])
         ->name('dashboard.search.courses');
+        
+        Route::get('/dashboard/purchases', [CourseController::class, 'purchases'])
+        ->name('dashboard.purchases');
 
         // Course access routes - per-course purchase model only
         Route::middleware(['check.course.access'])->group(function () {

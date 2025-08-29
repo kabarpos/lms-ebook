@@ -29,29 +29,10 @@
                                 <p class="text-gray-600 mt-2">Complete your purchase to get lifetime access to this course</p>
                             </div>
                             
-                            <!-- Course Access -->
-                            <section class="space-y-4">
-                                <h2 class="text-lg font-semibold text-gray-900">Course Access For</h2>
-                                <div class="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-12 h-12 bg-lochmara-100 rounded-full flex items-center justify-center">
-                                            @if($user->photo)
-                                                <img src="{{ Storage::url($user->photo) }}" alt="{{ $user->name }}" class="w-full h-full rounded-full object-cover">
-                                            @else
-                                                <span class="text-lochmara-600 font-bold text-lg">{{ substr($user->name, 0, 1) }}</span>
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <h3 class="font-semibold text-gray-900">{{ $user->name }}</h3>
-                                            <p class="text-sm text-gray-600">{{ $user->email }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
+
                             
                             <!-- Order Summary -->
                             <section class="space-y-4">
-                                <h2 class="text-lg font-semibold text-gray-900">Order Summary</h2>
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                         <div class="flex items-center space-x-2">
@@ -93,7 +74,7 @@
                             </section>
                             
                             <!-- Payment Button -->
-                            <button type="submit" id="pay-button" 
+                            <button type="button" id="pay-button" 
                                     class="w-full py-4 bg-lochmara-600 text-white font-bold rounded-lg hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer">
                                 <div class="flex items-center justify-center space-x-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -201,65 +182,92 @@
     <!-- Midtrans Snap JS -->
     <script type="text/javascript" 
             src="https://app.sandbox.midtrans.com/snap/snap.js" 
-            data-client-key="{{ config('midtrans.clientKey') }}"></script>
+            data-client-key="{{ $midtrans_client_key ?? config('midtrans.clientKey') }}"></script>
 
     <script type="text/javascript">
-        const payButton = document.getElementById('pay-button');
-        payButton.addEventListener('click', function(e) {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            const payButton = document.getElementById('pay-button');
+            
+            if (payButton) {
+                payButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    handlePayment();
+                });
+            }
+        });
+        
+        function handlePayment() {
+            const payButton = document.getElementById('pay-button');
             
             // Show loading state
             payButton.disabled = true;
             payButton.innerHTML = '<div class="flex items-center justify-center space-x-2"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Processing...</span></div>';
             
-            // Fetch the Snap token from your backend
+            // Get CSRF token
+            const tokenInput = document.querySelector('input[name="_token"]');
+            if (!tokenInput) {
+                alert('Session expired. Please refresh the page.');
+                resetButton();
+                return;
+            }
+            
+            // Make payment request
             fetch('{{ route('front.payment_store_courses_midtrans') }}', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
-                    },
-                    body: JSON.stringify({
-                        // Any additional data you want to send with the request
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Reset button state
-                    payButton.disabled = false;
-                    payButton.innerHTML = '<div class="flex items-center justify-center space-x-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg><span>Pay Now</span></div>';
-                    
-                    if (data.snap_token) {
-                        // Trigger Midtrans Snap payment popup
-                        snap.pay(data.snap_token, {
-                            onSuccess: function(result) {
-                                window.location.href = "{{ route('front.checkout.success') }}";
-                            },
-                            onPending: function(result) {
-                                alert('Payment pending! Please complete your payment.');
-                                window.location.href = "{{ route('front.course.details', $course->slug) }}";
-                            },
-                            onError: function(result) {
-                                alert('Payment failed: ' + result.status_message);
-                                window.location.href = "{{ route('front.course.details', $course->slug) }}";
-                            },
-                            onClose: function() {
-                                // User closed the popup without completing payment
-                                console.log('Payment popup closed');
-                            }
-                        });
-                    } else {
-                        alert('Error: ' + (data.error || 'Unable to process payment'));
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': tokenInput.value
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                resetButton();
+                
+                if (data.snap_token) {
+                    if (typeof snap === 'undefined') {
+                        alert('Payment system not ready. Please refresh the page.');
+                        return;
                     }
-                })
-                .catch(error => {
-                    // Reset button state
-                    payButton.disabled = false;
-                    payButton.innerHTML = '<div class="flex items-center justify-center space-x-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg><span>Pay Now</span></div>';
                     
-                    console.error('Error:', error);
-                    alert('Network error. Please try again.');
-                });
-        });
+                    // Open Midtrans payment popup
+                    snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            window.location.href = "{{ route('front.checkout.success') }}";
+                        },
+                        onPending: function(result) {
+                            alert('Payment is pending. Please complete your payment.');
+                            window.location.href = "{{ route('front.course.details', $course->slug) }}";
+                        },
+                        onError: function(result) {
+                            alert('Payment failed. Please try again.');
+                            window.location.href = "{{ route('front.course.details', $course->slug) }}";
+                        },
+                        onClose: function() {
+                            // User closed popup without completing payment
+                        }
+                    });
+                } else {
+                    alert('Error: ' + (data.error || 'Unable to process payment'));
+                }
+            })
+            .catch(error => {
+                resetButton();
+                alert('Network error. Please try again.');
+            });
+        }
+        
+        function resetButton() {
+            const payButton = document.getElementById('pay-button');
+            if (payButton) {
+                payButton.disabled = false;
+                payButton.innerHTML = '<div class="flex items-center justify-center space-x-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 003 3v8a3 3 0 003 3z"/></svg><span>Pay Now</span></div>';
+            }
+        }
     </script>
 @endpush

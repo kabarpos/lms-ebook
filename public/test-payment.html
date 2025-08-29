@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Payment Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-step {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #3b82f6;
+            background: #f8fafc;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fef2f2; color: #991b1b; }
+        .warning { background: #fef3c7; color: #92400e; }
+        .info { background: #e0f2fe; color: #0c4a6e; }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 10px 10px 0;
+        }
+        .btn:hover {
+            background: #2563eb;
+        }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Checkout Payment Flow</h1>
+        <p>Halaman ini untuk menguji apakah flow pembayaran di checkout sudah berfungsi dengan benar.</p>
+
+        <div class="test-step">
+            <h3>📋 Langkah-langkah Test:</h3>
+            <ol>
+                <li>Login ke sistem sebagai user yang belum membeli course</li>
+                <li>Buka halaman detail course</li>
+                <li>Klik tombol "Buy Now"</li>
+                <li>Di halaman checkout, klik tombol "Pay Now"</li>
+                <li>Pastikan popup Midtrans muncul (bukan redirect ke URL dengan parameter)</li>
+            </ol>
+        </div>
+
+        <div class="test-step">
+            <h3>🔗 Test Links:</h3>
+            <a href="/course/modern-uiux-design-fundamentals" class="btn" target="_blank">Course Detail Page</a>
+            <a href="/course/modern-uiux-design-fundamentals/checkout" class="btn" target="_blank">Checkout Page</a>
+        </div>
+
+        <div class="test-step">
+            <h3>✅ Expected Behavior:</h3>
+            <div class="status success">
+                <strong>✓ Correct:</strong> Tombol "Pay Now" membuka popup pembayaran Midtrans
+            </div>
+            <div class="status error">
+                <strong>✗ Incorrect:</strong> Tombol "Pay Now" redirect ke URL dengan parameter seperti:<br>
+                <code>/course/modern-uiux-design-fundamentals/checkout?_token=...&payment_method=Midtrans</code>
+            </div>
+        </div>
+
+        <div class="test-step">
+            <h3>🐛 Debugging Information:</h3>
+            <div class="status info">
+                <strong>Browser Console:</strong> Buka Developer Tools (F12) dan lihat tab Console untuk debug message
+            </div>
+            <div id="debug-info">
+                <p>Debug messages yang harus muncul di console:</p>
+                <pre>🟢 DOM Content Loaded - Setting up payment handler
+🟢 Form found, preventing submissions  
+🟢 Pay button found, attaching click handler
+🟡 Payment button clicked
+🚀 Starting payment request...</pre>
+            </div>
+        </div>
+
+        <div class="test-step">
+            <h3>🔧 Recent Fixes Applied:</h3>
+            <ul>
+                <li>✅ Enhanced form submission prevention</li>
+                <li>✅ Added multiple event handlers to prevent form submission</li>
+                <li>✅ Added POST route handler for form submission fallback</li>
+                <li>✅ Enhanced JavaScript debugging with console logs</li>
+                <li>✅ Cleared application cache (optimize:clear)</li>
+            </ul>
+        </div>
+
+        <div class="test-step">
+            <h3>📝 Test Results:</h3>
+            <textarea id="test-results" placeholder="Paste hasil test di sini..." style="width: 100%; height: 120px; font-family: monospace;"></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Auto-detect current environment
+        const currentHost = window.location.host;
+        const protocol = window.location.protocol;
+        
+        // Update links with current host
+        document.querySelectorAll('a[href^="/"]').forEach(link => {
+            link.href = `${protocol}//${currentHost}${link.getAttribute('href')}`;
+        });
+
+        // Add timestamp
+        document.addEventListener('DOMContentLoaded', function() {
+            const debugInfo = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleString('id-ID');
+            debugInfo.innerHTML += `<p><strong>Test Time:</strong> ${timestamp}</p>`;
+        });
+    </script>
+</body>
+</html>

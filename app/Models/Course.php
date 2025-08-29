@@ -105,7 +105,7 @@ class Course extends Model
      */
     public function isPurchasedByUser($userId)
     {
-        return Transaction::where('user_id', $userId)
+        return \App\Models\Transaction::where('user_id', $userId)
             ->where('course_id', $this->id)
             ->where('is_paid', true)
             ->exists();
@@ -117,8 +117,8 @@ class Course extends Model
     public function purchasedBy()
     {
         return $this->hasManyThrough(
-            User::class,
-            Transaction::class,
+            \App\Models\User::class,
+            \App\Models\Transaction::class,
             'course_id', // Foreign key on transactions table
             'id', // Foreign key on users table
             'id', // Local key on courses table
@@ -131,7 +131,7 @@ class Course extends Model
      */
     public function transactions()
     {
-        return $this->hasMany(Transaction::class, 'course_id');
+        return $this->hasMany(\App\Models\Transaction::class, 'course_id');
     }
     
     /**

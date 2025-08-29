@@ -37,7 +37,7 @@
             <x-simple-footer />
         </div>
 
-        <script src="{{ asset('js/dropdown-navbar.js') }}"></script>
+        @stack('scripts')
         @stack('after-scripts')
     </body>
 </html>

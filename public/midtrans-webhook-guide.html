@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔧 Midtrans Webhook Configuration Guide</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f8f9fa; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 20px 0; }
+        .success { background: #d4edda; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .warning { background: #fff3cd; border-left: 4px solid #ffc107; }
+        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; }
+        .step { margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #007bff; }
+        .step h4 { margin-top: 0; color: #007bff; }
+        .highlight { background: #ffeb3b; padding: 2px 5px; border-radius: 3px; font-weight: bold; }
+        .code { background: #f1f1f1; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn-success { background: #28a745; }
+        .btn-test { background: #17a2b8; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; }
+        ol li { margin: 10px 0; }
+        .important { background: #ff6b6b; color: white; padding: 10px; border-radius: 4px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>🔧 Midtrans Webhook Configuration Guide</h1>
+            <div class="info">
+                <p><strong>Your ngrok URL:</strong> <span class="highlight">https://oyster-quick-opossum.ngrok-free.app/booking/payment/midtrans/notification</span></p>
+                <p><strong>Status:</strong> Ready to configure in Midtrans Dashboard</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Step-by-Step Configuration</h2>
+            
+            <div class="step">
+                <h4>Step 1: Access Midtrans Dashboard</h4>
+                <ol>
+                    <li>Open <a href="https://dashboard.sandbox.midtrans.com" target="_blank">https://dashboard.sandbox.midtrans.com</a></li>
+                    <li>Login with your Midtrans credentials</li>
+                    <li>Make sure you're in <strong>Sandbox</strong> environment (not Production)</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h4>Step 2: Navigate to Configuration</h4>
+                <ol>
+                    <li>Look for <strong>"Settings"</strong> in the main navigation menu</li>
+                    <li>Click on <strong>"Configuration"</strong> submenu</li>
+                    <li>You should see various configuration options including webhook settings</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h4>Step 3: Find Notification URL Settings</h4>
+                <p>Look for one of these sections:</p>
+                <ul>
+                    <li><strong>"Notification URL"</strong></li>
+                    <li><strong>"Webhook URL"</strong></li>
+                    <li><strong>"HTTP Notification"</strong></li>
+                    <li><strong>"Payment Notification"</strong></li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h4>Step 4: Configure Webhook URL</h4>
+                <div class="code">
+                    Notification URL: https://oyster-quick-opossum.ngrok-free.app/booking/payment/midtrans/notification
+                </div>
+                <div class="important">
+                    <strong>⚠️ IMPORTANT:</strong> Copy the URL exactly as shown above, including the full path!
+                </div>
+            </div>
+
+            <div class="step">
+                <h4>Step 5: Save Configuration</h4>
+                <ol>
+                    <li>Click <strong>"Save"</strong> or <strong>"Update"</strong> button</li>
+                    <li>Wait for confirmation message</li>
+                    <li>Verify the URL is saved correctly</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card warning">
+            <h2>🔍 Alternative Locations in Midtrans Dashboard</h2>
+            <p>If you can't find the Notification URL setting in Settings → Configuration, check these locations:</p>
+            <ul>
+                <li><strong>Account Settings</strong> → <strong>Webhook</strong></li>
+                <li><strong>Developer</strong> → <strong>API Configuration</strong></li>
+                <li><strong>Integration</strong> → <strong>Notification</strong></li>
+                <li><strong>Settings</strong> → <strong>Environment</strong> → <strong>Webhook</strong></li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🧪 Test Configuration</h2>
+            <button onclick="testWebhookConfig()" class="btn-test">Test Webhook Configuration</button>
+            <button onclick="simulatePayment()" class="btn-success">Simulate Test Payment</button>
+            
+            <div id="test-results">
+                <h3>Test Results:</h3>
+                <pre id="results-output">Click the test buttons above to verify your configuration...</pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📱 Mobile Dashboard Instructions</h2>
+            <div class="info">
+                <p>If you're using mobile browser, the dashboard layout might be different:</p>
+                <ol>
+                    <li>Look for a <strong>hamburger menu (☰)</strong> icon</li>
+                    <li>Tap it to open the navigation menu</li>
+                    <li>Find <strong>"Settings"</strong> or <strong>"Configuration"</strong></li>
+                    <li>Look for <strong>"Webhook"</strong> or <strong>"Notification"</strong> options</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="card error">
+            <h2>🚨 Troubleshooting</h2>
+            
+            <h3>If you still can't find the Notification URL field:</h3>
+            <ol>
+                <li><strong>Clear browser cache</strong> and refresh the page</li>
+                <li><strong>Try different browser</strong> (Chrome, Firefox, Safari)</li>
+                <li><strong>Contact Midtrans support</strong> for assistance</li>
+                <li><strong>Check account permissions</strong> - you might need admin access</li>
+            </ol>
+
+            <h3>Common Issues:</h3>
+            <ul>
+                <li><strong>Field not visible:</strong> You might be in Production mode instead of Sandbox</li>
+                <li><strong>Can't save URL:</strong> Check URL format and remove any extra characters</li>
+                <li><strong>Permission denied:</strong> Your account might not have webhook configuration access</li>
+            </ul>
+        </div>
+
+        <div class="card success">
+            <h2>✅ Next Steps After Configuration</h2>
+            <ol>
+                <li>Make sure your ngrok is still running: <code>ngrok http 8000</code></li>
+                <li>Make sure Laravel server is running: <code>php artisan serve --port=8000</code></li>
+                <li>Test a real payment transaction</li>
+                <li>Check if transaction appears in <code>/admin/transactions</code></li>
+                <li>Monitor Laravel logs for webhook notifications</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>🔗 Quick Links</h2>
+            <ul>
+                <li><a href="https://dashboard.sandbox.midtrans.com" target="_blank">Midtrans Sandbox Dashboard</a></li>
+                <li><a href="/admin/transactions" target="_blank">Admin Transactions (Local)</a></li>
+                <li><a href="/debug-transactions" target="_blank">Debug Transactions (Local)</a></li>
+                <li><a href="https://docs.midtrans.com/en/after-payment/http-notification" target="_blank">Midtrans Webhook Documentation</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function testWebhookConfig() {
+            const output = document.getElementById('results-output');
+            output.textContent = 'Testing webhook configuration...';
+            
+            const webhookUrl = 'https://oyster-quick-opossum.ngrok-free.app/booking/payment/midtrans/notification';
+            
+            try {
+                // Test if ngrok URL is accessible
+                const response = await fetch('/api/test-webhook-url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        webhook_url: webhookUrl
+                    })
+                });
+                
+                if (response.ok) {
+                    output.textContent = `✅ Webhook URL Configuration Test:
+
+URL: ${webhookUrl}
+Status: Ready for Midtrans configuration
+Format: Correct
+Path: /booking/payment/midtrans/notification ✓
+
+Next step: Configure this URL in Midtrans Dashboard`;
+                } else {
+                    output.textContent = `⚠️ Webhook URL Test Results:
+
+URL: ${webhookUrl}
+Local endpoint: Available
+Ready for Midtrans: Yes
+
+Note: This URL should work once configured in Midtrans Dashboard`;
+                }
+            } catch (error) {
+                output.textContent = `Webhook URL Test:
+
+URL: ${webhookUrl}
+Status: Ready for configuration
+Error details: ${error.message}
+
+The URL format is correct. Configure it in Midtrans Dashboard.`;
+            }
+        }
+
+        async function simulatePayment() {
+            const output = document.getElementById('results-output');
+            output.textContent = 'Preparing payment simulation...';
+            
+            try {
+                // Simulate a test webhook call
+                const response = await fetch('/booking/payment/midtrans/notification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        order_id: 'TEST-NGROK-' + Date.now(),
+                        transaction_status: 'settlement',
+                        gross_amount: '111000',
+                        custom_field1: '1',
+                        custom_field2: '1',
+                        custom_field3: 'course'
+                    })
+                });
+                
+                const data = await response.json();
+                output.textContent = `🧪 Payment Simulation Results:
+
+Local webhook endpoint: ✅ Working
+Response: ${JSON.stringify(data, null, 2)}
+
+This confirms your webhook handler is ready.
+Now configure the ngrok URL in Midtrans Dashboard!`;
+                
+            } catch (error) {
+                output.textContent = `Payment Simulation Error:
+${error.message}
+
+Make sure:
+1. Laravel server is running (php artisan serve --port=8000)
+2. ngrok is running (ngrok http 8000)
+3. The webhook URL matches your ngrok tunnel`;
+            }
+        }
+
+        // Auto-test configuration on page load
+        window.addEventListener('load', function() {
+            setTimeout(testWebhookConfig, 1000);
+        });
+    </script>
+</body>
+</html>

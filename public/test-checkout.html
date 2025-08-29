@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Course Purchase Flow</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .step { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>Test Course Purchase Flow</h1>
+    
+    <div class="step info">
+        <h3>Step 1: Access Course Detail</h3>
+        <p>Go to: <a href="http://127.0.0.1:8000/course/modern-uiux-design-fundamentals" target="_blank">Course Details Page</a></p>
+        <p><strong>Check:</strong> Navigation shows proper authentication status</p>
+    </div>
+    
+    <div class="step info">
+        <h3>Step 2: Click "Buy Now" Button</h3>
+        <p>If logged in and haven't purchased, should see "Buy Now" button</p>
+        <p><strong>Expected:</strong> Redirects to checkout page</p>
+    </div>
+    
+    <div class="step info">
+        <h3>Step 3: Checkout Page</h3>
+        <p>Should load: <a href="http://127.0.0.1:8000/course/modern-uiux-design-fundamentals/checkout" target="_blank">Checkout Page</a></p>
+        <p><strong>Check:</strong> Midtrans client key loaded, Pay Now button functional</p>
+    </div>
+    
+    <div class="step info">
+        <h3>Step 4: Click "Pay Now"</h3>
+        <p><strong>Expected:</strong> Opens Midtrans payment popup</p>
+        <p><strong>Debug:</strong> Check browser console for logs</p>
+    </div>
+    
+    <div class="step success">
+        <h3>Test Accounts</h3>
+        <p><strong>Admin:</strong> admin@lmsebook.com / Admin123!</p>
+        <p><strong>Regular User:</strong> Create new account or use existing</p>
+    </div>
+    
+    <div class="step success">
+        <h3>Expected Console Logs</h3>
+        <pre>
+Page loaded. Checking Midtrans availability...
+Client key: Mid-client-UoquzKlPA0rlxj-t
+✅ Midtrans Snap loaded successfully
+Pay button clicked
+Making request to: http://127.0.0.1:8000/booking/payment/courses/midtrans
+Response status: 200
+Response data: {snap_token: "..."}
+Snap token received, length: XX
+        </pre>
+    </div>
+</body>
+</html>

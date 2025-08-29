@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use App\Models\Course;
+use App\Models\MidtransSetting;
 use App\Services\CourseService;
 use App\Services\PaymentService;
 use App\Services\TransactionService;
@@ -140,20 +141,52 @@ class FrontController extends Controller
      */
     public function courseCheckout(Course $course)
     {
-        // Check if user is authenticated
-        if (!Auth::check()) {
-            return redirect()->route('login')
-                ->with('error', 'Please login to purchase this course.');
-        }
-        
-        $checkoutData = $this->transactionService->prepareCourseCheckout($course);
+        try {
+            Log::info('Checkout accessed', ['course_slug' => $course->slug, 'user_id' => Auth::id()]);
+            
+            // Check if user is authenticated
+            if (!Auth::check()) {
+                Log::info('User not authenticated, redirecting to login');
+                return redirect()->route('login')
+                    ->with('error', 'Please login to purchase this course.');
+            }
+            
+            Log::info('Preparing checkout data for course', ['course_id' => $course->id]);
+            $checkoutData = $this->transactionService->prepareCourseCheckout($course);
+            Log::info('Checkout data prepared', $checkoutData);
 
-        if ($checkoutData['alreadyPurchased']) {
-            return redirect()->route('front.course.details', $course->slug)
-                ->with('success', 'You already own this course!');
-        }
+            if ($checkoutData['alreadyPurchased']) {
+                Log::info('User already purchased course, redirecting');
+                return redirect()->route('front.course.details', $course->slug)
+                    ->with('success', 'You already own this course!');
+            }
 
-        return view('front.course-checkout', $checkoutData);
+            // Get Midtrans client key from database or fallback to config
+            $midtransConfig = MidtransSetting::getActiveConfig();
+            $clientKey = $midtransConfig && $midtransConfig->isValidConfig() 
+                ? $midtransConfig->client_key 
+                : config('midtrans.clientKey');
+            
+            $checkoutData['midtrans_client_key'] = $clientKey;
+            Log::info('Client key added to checkout data', ['client_key_length' => strlen($clientKey ?? '')]);
+
+            Log::info('Rendering checkout view with data', ['view' => 'front.course-checkout']);
+            return view('front.course-checkout', $checkoutData);
+            
+        } catch (Exception $e) {
+            Log::error('Checkout error', [
+                'course_slug' => $course->slug ?? 'unknown',
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Return a user-friendly error page or redirect
+            return response()->view('errors.custom', [
+                'message' => 'There was an error processing your checkout. Please try again.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
     
     /**
@@ -181,6 +214,39 @@ class FrontController extends Controller
         } catch (Exception $e) {
             // Handle any exceptions that occur during transaction creation
             return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Handle Midtrans payment notification webhook
+     */
+    public function paymentMidtransNotification()
+    {
+        try {
+            Log::info('Received Midtrans webhook notification');
+            
+            // Handle the payment notification
+            $transactionStatus = $this->paymentService->handlePaymentNotification();
+            
+            Log::info('Payment notification processed', [
+                'status' => $transactionStatus
+            ]);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Notification processed'
+            ]);
+            
+        } catch (Exception $e) {
+            Log::error('Payment notification error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to process notification'
+            ], 500);
         }
     }
 }

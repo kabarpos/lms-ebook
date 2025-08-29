@@ -4,17 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Services\CourseService;
+use App\Services\TransactionService;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
     //
     protected $courseService;
+    protected $transactionService;
 
     public function __construct(
         CourseService $courseService,
+        TransactionService $transactionService
     ) {
         $this->courseService = $courseService;
+        $this->transactionService = $transactionService;
     }
 
     public function index()
@@ -85,5 +89,15 @@ class CourseController extends Controller
         $courses = $this->courseService->searchCourses($keyword);
 
         return view('courses.search', compact('courses', 'keyword'));
+    }
+
+    /**
+     * Show user's course purchases
+     */
+    public function purchases()
+    {
+        $purchases = $this->transactionService->getUserCoursePurchases();
+        
+        return view('courses.purchases', compact('purchases'));
     }
 }

@@ -2,7 +2,11 @@
 @section('title', $course->name . ' - LMS DripCourse')
 
 @section('content')
-    <x-nav-guest />
+    @auth
+        <x-navigation-auth />
+    @else
+        <x-nav-guest />
+    @endauth
     
     <!-- Clean Hero Section -->
     <section class="bg-white border-b border-gray-100">

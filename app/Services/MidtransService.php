@@ -139,7 +139,8 @@ class MidtransService {
                 'transaction_status' => $notification->transaction_status,
                 'gross_amount' => $notification->gross_amount,
                 'custom_field1' => $notification->custom_field1, // User ID
-                'custom_field2' => $notification->custom_field2, // Pricing ID
+                'custom_field2' => $notification->custom_field2, // Course ID
+                'custom_field3' => $notification->custom_field3 ?? null, // Purchase type (course)
             ];
         } catch (Exception $e) {
             Log::error('Midtrans notification error: ' . $e->getMessage(), [

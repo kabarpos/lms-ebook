@@ -3,6 +3,7 @@ trigger: always_on
 alwaysApply: true
 ---
 
+- Ketika melakukan perbaikan atau membuat fitur, TIDAK PERLU MENJALANKAN server port, KARENA DI TERMINAL selalu JALAN!!!!
 - Selalu meresponse menggunakan bahasa Indonesia
 - Kerjakan tugas dengan baik dan benar, dengan pendekatan best practice
 - Jangan pernah ada redudansi sistem, kode, konfigurasi, dan lain-lain
