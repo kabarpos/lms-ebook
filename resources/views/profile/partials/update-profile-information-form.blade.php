@@ -14,9 +14,7 @@
                     @if($user->photo)
                         <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="Profile Photo">
                     @else
-                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-lochmara-500 to-lochmara-600">
-                            <span class="text-white font-bold text-2xl lg:text-3xl">{{ substr($user->name, 0, 2) }}</span>
-                        </div>
+                        <img src="{{ getUserAvatarWithColor($user, 128) }}" class="w-full h-full object-cover" alt="Profile Photo">
                     @endif
                 </div>
                 <div class="mt-4 text-center lg:text-left">

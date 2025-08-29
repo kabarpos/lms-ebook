@@ -77,7 +77,6 @@ class UserResource extends Resource
                 ->required(),
 
                 FileUpload::make('photo')
-                ->required()
                 ->image(),
 
                 // Verification Status Fields
@@ -103,7 +102,8 @@ class UserResource extends Resource
         return $table
             ->columns([
                 //
-                ImageColumn::make('photo'),
+                ImageColumn::make('photo')
+                    ->defaultImageUrl(fn ($record) => getUserAvatarWithColor($record, 100)),
 
                 TextColumn::make('name')
                     ->searchable(),

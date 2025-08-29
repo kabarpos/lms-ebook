@@ -29,7 +29,11 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'photo' => 'https://via.placeholder.com/200x200/6366f1/ffffff?text=User',
+            'photo' => fake()->optional(0.3)->randomElement([
+                'https://via.placeholder.com/200x200/6366f1/ffffff?text=User',
+                'https://via.placeholder.com/200x200/10b981/ffffff?text=Avatar',
+                'https://via.placeholder.com/200x200/f59e0b/ffffff?text=Profile'
+            ]),
             'whatsapp_number' => '+62' . fake()->numerify('8#########'),
         ];
     }

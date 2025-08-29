@@ -35,9 +35,7 @@
                             @if($user && $user->photo)
                                 <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="profile">
                             @else
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-lochmara-500 to-lochmara-600">
-                                    <span class="text-white font-semibold text-sm">{{ $user ? substr($user->name, 0, 2) : 'U' }}</span>
-                                </div>
+                                <img src="{{ getUserAvatarWithColor($user, 32) }}" class="w-full h-full object-cover" alt="profile">
                             @endif
                         </div>
                         @if($user)
@@ -124,9 +122,7 @@
                         @if($user && $user->photo)
                             <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="profile">
                         @else
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-lochmara-500 to-lochmara-600">
-                                <span class="text-white font-semibold">{{ $user ? substr($user->name, 0, 2) : 'U' }}</span>
-                            </div>
+                            <img src="{{ getUserAvatarWithColor($user, 40) }}" class="w-full h-full object-cover" alt="profile">
                         @endif
                     </div>
                     @if($user)

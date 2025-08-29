@@ -38,12 +38,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Password::defaults()],
             'whatsapp_number' => ['required', 'string', 'max:20', 'regex:/^[+]?[0-9\s\-\(\)]+$/'],
-            'photo' => ['required', 'image', 'mimes:png,jpg,jpeg', 'max:2048'], // 2MB limit
         ]);
-
-        if($request->hasFile('photo')){
-            $photoPath = $request->file('photo')->store('photos', 'public');
-        }
 
         // Create user with inactive status
         $user = User::create([
@@ -51,7 +46,6 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'whatsapp_number' => $request->whatsapp_number,
-            'photo' => $photoPath,
             'is_account_active' => false, // Account not active until verified
         ]);
 

@@ -194,6 +194,7 @@ class TransactionResource extends Resource
                 //
                 ImageColumn::make('student.photo')
                 ->circular()
+                ->defaultImageUrl(fn ($record) => getUserAvatarWithColor($record->student->name, 100))
                 ,
 
                 TextColumn::make('student.name')

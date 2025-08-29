@@ -9,22 +9,6 @@
                 class="flex flex-col w-full rounded-[20px] border border-LMS-grey p-8 gap-4 bg-white shadow-lg">
                 @csrf
                 <h1 class="font-bold text-[22px] leading-[33px] text-center mb-4" style="font-family: 'Manrope', sans-serif;">Upgrade Your Skills</h1>
-                <label class="relative flex items-center gap-3 justify-center">
-                    <button id="upload-photo" type="button"
-                        class="relative w-[90px] h-[90px] flex rounded-full overflow-hidden border border-LMS-grey focus:ring-LMS-green transition-all duration-300 cursor-pointer">
-                        <span
-                            class="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 font-semibold text-sm">
-                            Add <br>Photo
-                        </span>
-                        <img id="photo-preview" src="" class="w-full h-full object-cover hidden" alt="photo">
-                    </button>
-                    <button id="delete-photo" type="button"
-                        class="rounded-full w-fit py-[6px] px-[10px] bg-LMS-light-red font-bold text-xs text-LMS-red hidden cursor-pointer">DELETE
-                        PHOTO</button>
-                    <input id="hidden-input" name="photo" type="file" accept="image/*"
-                        class="absolute -z-10 opacity-0">
-                </label>
-                <x-input-error :messages="$errors->get('photo')" class="mt-2" />
                 <div class="flex flex-col gap-2">
                     <p style="font-family: 'Manrope', sans-serif;">Complete Name</p>
                     <label class="relative group">
@@ -97,5 +81,4 @@
         </section>
         
     </main>
-    <script src="{{ asset('js/photo-upload.js') }}"></script>
 @endsection

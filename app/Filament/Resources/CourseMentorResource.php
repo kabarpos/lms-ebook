@@ -76,7 +76,8 @@ class CourseMentorResource extends Resource
         return $table
             ->columns([
                 //
-                ImageColumn::make('mentor.photo'),
+                ImageColumn::make('mentor.photo')
+                    ->defaultImageUrl(fn ($record) => getUserAvatarWithColor($record->mentor, 100)),
 
                 TextColumn::make('mentor.name')
                     ->sortable()
