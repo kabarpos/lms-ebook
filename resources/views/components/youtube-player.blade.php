@@ -15,14 +15,12 @@
     @endif
 
     <!-- YouTube Player Container - BULLETPROOF -->
-    <div class="youtube-player-wrapper relative w-full overflow-hidden rounded-lg shadow-lg" 
-         style="padding-bottom: 56.25%; height: 0; position: relative; z-index: 1; background: #000;"
-         data-youtube-component="true">
+    <div class="youtube-player-wrapper relative w-full overflow-hidden rounded-lg shadow-lg youtube-container" 
+        data-youtube-component="true">
         <!-- YouTube Iframe - IMMEDIATELY VISIBLE - BULLETPROOF -->
         <iframe 
             id="youtube-iframe-{{ $videoId }}"
-            class="absolute top-0 left-0 w-full h-full border-0 youtube-component-iframe"
-            style="display: block !important; visibility: visible !important; opacity: 1 !important; position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; border: none !important; z-index: 2 !important; background: #000 !important;"
+            class="absolute top-0 left-0 w-full h-full border-0 youtube-component-iframe youtube-iframe"
             src="https://www.youtube.com/embed/{{ $videoId }}?rel=0&modestbranding=1&controls=1&playsinline=1&enablejsapi=0"
             title="{{ $title }}"
             frameborder="0"

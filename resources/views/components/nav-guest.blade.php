@@ -4,7 +4,7 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="{{ route('front.index') }}" class="flex-shrink-0 cursor-pointer">
-                    <img src="{{ asset('assets/images/logos/logo.png') }}" class="h-10 w-auto" alt="logo">
+                    <x-lazy-image src="{{ asset('assets/images/logos/logo.png') }}" class="h-10 w-auto" alt="logo" loading="eager" />
                 </a>
             </div>
 

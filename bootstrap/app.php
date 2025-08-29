@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // Add security headers globally
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
         
+        // Add rate limit logging globally
+        $middleware->append(\App\Http\Middleware\RateLimitLogger::class);
+        
         $middleware->validateCsrfTokens(except: [
             '/booking/payment/midtrans/notification', // Exclude Midtrans notification route
         ]);
@@ -28,6 +31,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.subscription.or.admin' => \App\Http\Middleware\CheckSubscriptionOrAdmin::class,
             'check.course.access' => \App\Http\Middleware\CheckCourseAccess::class,
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
+            'login.rate.limit' => \App\Http\Middleware\LoginRateLimit::class,
+            'rate.limit.logger' => \App\Http\Middleware\RateLimitLogger::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

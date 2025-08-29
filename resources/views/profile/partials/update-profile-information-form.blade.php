@@ -12,9 +12,9 @@
             <div class="flex-shrink-0">
                 <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden bg-gray-200 mx-auto lg:mx-0">
                     @if($user->photo)
-                        <img id="profile-photo-preview" src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="Profile Photo">
+                        <x-lazy-image id="profile-photo-preview" src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="Profile Photo" loading="eager" />
                     @else
-                        <img id="profile-photo-preview" src="{{ getUserAvatarWithColor($user, 128) }}" class="w-full h-full object-cover" alt="Profile Photo">
+                        <x-lazy-image id="profile-photo-preview" src="{{ getUserAvatarWithColor($user, 128) }}" class="w-full h-full object-cover" alt="Profile Photo" loading="eager" />
                     @endif
                 </div>
                 <div class="mt-4 text-center lg:text-left">

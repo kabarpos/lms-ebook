@@ -4,7 +4,11 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="{{ route('front.index') }}" class="flex-shrink-0 cursor-pointer">
-                    <img src="{{ asset('assets/images/logos/logo.png') }}" class="h-10 w-auto" alt="logo">
+                    <x-lazy-image 
+                        src="{{ asset('assets/images/logos/logo.png') }}" 
+                        alt="logo" 
+                        class="h-10 w-auto"
+                        loading="eager" />
                 </a>
             </div>
 
@@ -33,9 +37,17 @@
                     <button @click="profileOpen = !profileOpen" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
                         <div class="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                             @if($user && $user->photo)
-                                <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="profile">
+                                <x-lazy-image 
+                                    src="{{ Storage::url($user->photo) }}" 
+                                    alt="profile" 
+                                    class="w-full h-full object-cover"
+                                    loading="eager" />
                             @else
-                                <img src="{{ getUserAvatarWithColor($user, 32) }}" class="w-full h-full object-cover" alt="profile">
+                                <x-lazy-image 
+                                    src="{{ getUserAvatarWithColor($user, 32) }}" 
+                                    alt="profile" 
+                                    class="w-full h-full object-cover"
+                                    loading="eager" />
                             @endif
                         </div>
                         @if($user)
@@ -118,9 +130,17 @@
                 <div class="flex items-center px-3">
                     <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                         @if($user && $user->photo)
-                            <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="profile">
+                            <x-lazy-image 
+                                src="{{ Storage::url($user->photo) }}" 
+                                alt="profile" 
+                                class="w-full h-full object-cover"
+                                loading="eager" />
                         @else
-                            <img src="{{ getUserAvatarWithColor($user, 40) }}" class="w-full h-full object-cover" alt="profile">
+                            <x-lazy-image 
+                                src="{{ getUserAvatarWithColor($user, 40) }}" 
+                                alt="profile" 
+                                class="w-full h-full object-cover"
+                                loading="eager" />
                         @endif
                     </div>
                     @if($user)

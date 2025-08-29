@@ -28,9 +28,17 @@
                     <div class="aspect-video sm:aspect-[4/3] rounded-lg overflow-hidden bg-gray-100">
                         @if($course->thumbnail)
                             @if(str_starts_with($course->thumbnail, 'http'))
-                                <img src="{{ $course->thumbnail }}" alt="{{ $course->name }}" class="w-full h-full object-cover" />
+                                <x-lazy-image 
+                                    src="{{ $course->thumbnail }}" 
+                                    alt="{{ $course->name }}" 
+                                    class="w-full h-full object-cover"
+                                    loading="lazy" />
                             @else
-                                <img src="{{ Storage::url($course->thumbnail) }}" alt="{{ $course->name }}" class="w-full h-full object-cover" />
+                                <x-lazy-image 
+                                    src="{{ Storage::url($course->thumbnail) }}" 
+                                    alt="{{ $course->name }}" 
+                                    class="w-full h-full object-cover"
+                                    loading="lazy" />
                             @endif
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-lochmara-500 to-lochmara-600">

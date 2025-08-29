@@ -25,9 +25,17 @@
                             <div class="w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
                                 @if($course->thumbnail)
                                     @if(str_starts_with($course->thumbnail, 'http'))
-                                        <img src="{{ $course->thumbnail }}" class="w-full h-full object-cover" alt="{{ $course->name }}">
+                                        <x-lazy-image 
+                                            src="{{ $course->thumbnail }}" 
+                                            alt="{{ $course->name }}" 
+                                            class="w-full h-full object-cover"
+                                            loading="lazy" />
                                     @else
-                                        <img src="{{ Storage::url($course->thumbnail) }}" class="w-full h-full object-cover" alt="{{ $course->name }}">
+                                        <x-lazy-image 
+                                            src="{{ Storage::url($course->thumbnail) }}" 
+                                            alt="{{ $course->name }}" 
+                                            class="w-full h-full object-cover"
+                                            loading="lazy" />
                                     @endif
                                 @else
                                     <div class="w-full h-full flex items-center justify-center bg-lochmara-100">

@@ -6,31 +6,51 @@
         <ul class="flex w-full max-w-[1280px] px-[75px] mx-auto gap-3">
             <li class="group">
                 <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <img src="{{ asset ('assets/images/icons/home-trend-up.svg') }}" class="flex shrink-0 w-5" alt="icon">
+                    <x-lazy-image 
+                        src="{{ asset ('assets/images/icons/home-trend-up.svg') }}" 
+                        alt="icon" 
+                        class="flex shrink-0 w-5"
+                        loading="eager" />
                     <span>Overview</span>
                 </a>
             </li>
             <li class="group">
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <img src="{{ asset ('assets/images/icons/note-favorite.svg') }}" class="flex shrink-0 w-5" alt="icon">
+                    <x-lazy-image 
+                        src="{{ asset ('assets/images/icons/note-favorite.svg') }}" 
+                        alt="icon" 
+                        class="flex shrink-0 w-5"
+                        loading="eager" />
                     <span>Courses</span>
                 </a>
             </li>
             <li class="group">
                 <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <img src="{{ asset ('assets/images/icons/message-programming.svg') }}" class="flex shrink-0 w-5" alt="icon">
+                    <x-lazy-image 
+                        src="{{ asset ('assets/images/icons/message-programming.svg') }}" 
+                        alt="icon" 
+                        class="flex shrink-0 w-5"
+                        loading="eager" />
                     <span>Quizzess</span>
                 </a>
             </li>
             <li class="group">
                 <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <img src="{{ asset ('assets/images/icons/cup.svg') }}" class="flex shrink-0 w-5" alt="icon">
+                    <x-lazy-image 
+                        src="{{ asset ('assets/images/icons/cup.svg') }}" 
+                        alt="icon" 
+                        class="flex shrink-0 w-5"
+                        loading="eager" />
                     <span>Certificates</span>
                 </a>
             </li>
             <li class="group">
                 <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <img src="{{ asset ('assets/images/icons/ruler&pen.svg') }}" class="flex shrink-0 w-5" alt="icon">
+                    <x-lazy-image 
+                        src="{{ asset ('assets/images/icons/ruler&pen.svg') }}" 
+                        alt="icon" 
+                        class="flex shrink-0 w-5"
+                        loading="eager" />
                     <span>Portfolios</span>
                 </a>
             </li>
@@ -39,7 +59,11 @@
     <main class="flex flex-col gap-10 pb-10 mt-[50px]">
         <div class="flex flex-col items-center gap-[10px] max-w-[500px] w-full mx-auto">
             <p class="flex items-center gap-[6px] w-fit rounded-full py-2 px-[14px] bg-LMS-light-green">
-                <img src="{{ asset ('assets/images/icons/crown-green.svg') }}" class="flex shrink-0 w-5" alt="icon">
+                <x-lazy-image 
+                    src="{{ asset ('assets/images/icons/crown-green.svg') }}" 
+                    alt="icon" 
+                    class="flex shrink-0 w-5"
+                    loading="eager" />
                 <span class="font-bold text-sm">GROW CAREER</span>
             </p>
             <h1 class="font-bold text-[28px] leading-[42px] text-center">Explore Our Greatest Courses</h1>
@@ -47,7 +71,11 @@
                 <label class="group">
                     <input type="text" name="search" id="" class="appearance-none outline-none ring-1 ring-LMS-grey rounded-full w-[550px] py-[14px] px-5 bg-white font-bold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:ring-LMS-green transition-all duration-300 pr-[50px]" placeholder="Search course by name">
                     <button type="submit" class="absolute right-0 top-0 h-[52px] w-[52px] flex shrink-0 items-center justify-center">
-                        <img src="{{ asset ('assets/images/icons/search-normal-green-fill.svg') }}" class="flex shrink-0 w-10 h-10" alt="">
+                        <x-lazy-image 
+                            src="{{ asset ('assets/images/icons/search-normal-green-fill.svg') }}" 
+                            alt="" 
+                            class="flex shrink-0 w-10 h-10"
+                            loading="eager" />
                     </button>
                 </label>
             </form>

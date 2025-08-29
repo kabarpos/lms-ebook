@@ -164,7 +164,11 @@
             <!-- Course Information -->
             <div class="course-info">
                 @if($courseThumbnail)
-                    <img src="{{ $courseThumbnail }}" alt="{{ $course->name }}" class="course-thumbnail">
+                    <x-lazy-image 
+                        src="{{ $courseThumbnail }}" 
+                        alt="{{ $course->name }}" 
+                        class="course-thumbnail"
+                        loading="lazy" />
                 @endif
                 <h2 class="course-title">{{ $course->name }}</h2>
                 <p>{{ $course->tagline ?? 'Start learning today and advance your skills!' }}</p>
@@ -184,16 +188,16 @@
                 </div>
                 <div class="transaction-detail">
                     <span>Payment Status:</span>
-                    <span><strong style="color: #059669;">✓ Paid</strong></span>
+                    <span><strong class="email-success-text">✓ Paid</strong></span>
                 </div>
                 <div class="transaction-detail">
                     <span>Access Status:</span>
-                    <span><strong style="color: #059669;">✓ Active</strong></span>
+                    <span><strong class="email-success-text">✓ Active</strong></span>
                 </div>
             </div>
 
             <!-- Call to Action -->
-            <div style="text-align: center;">
+            <div class="email-center">
                 <a href="{{ $courseUrl }}" class="button">Start Learning Now</a>
             </div>
 
@@ -203,8 +207,8 @@
                 <ul>
                     <li><strong>Access Your Course:</strong> Click the button above to start learning immediately</li>
                     <li><strong>Lifetime Access:</strong> You can return to this course anytime - it's yours forever!</li>
-                    <li><strong>Track Progress:</strong> Visit your <a href="{{ $dashboardUrl }}" style="color: #d97706;">dashboard</a> to see all your courses</li>
-                    <li><strong>Get Support:</strong> Need help? Contact our <a href="{{ $supportUrl }}" style="color: #d97706;">support team</a></li>
+                    <li><strong>Track Progress:</strong> Visit your <a href="{{ $dashboardUrl }}" class="email-link-primary">dashboard</a> to see all your courses</li>
+                    <li><strong>Get Support:</strong> Need help? Contact our <a href="{{ $supportUrl }}" class="email-link-primary">support team</a></li>
                 </ul>
             </div>
 
@@ -223,9 +227,9 @@
                 <a href="#">Follow us on Social Media</a>
             </div>
             
-            <p style="font-size: 12px; color: #94a3b8;">
+            <p class="email-footer-text">
                 If you're having trouble clicking the "Start Learning Now" button, copy and paste the URL below into your web browser:<br>
-                <a href="{{ $courseUrl }}" style="color: #3b82f6;">{{ $courseUrl }}</a>
+                <a href="{{ $courseUrl }}" class="email-link-blue">{{ $courseUrl }}</a>
             </p>
         </div>
     </div>

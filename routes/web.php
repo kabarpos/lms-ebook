@@ -124,6 +124,7 @@ Route::get('/dashboard/learning/{course:slug}/{courseSection}/{sectionContent}',
 
 Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
 [FrontController::class, 'paymentMidtransNotification'])
+    ->middleware('throttle:webhook')
     ->name('front.payment_midtrans_notification');
 
 // Test webhook endpoint
@@ -146,6 +147,7 @@ Route::get('/verify/{id}/{token}', [VerificationController::class, 'verify'])
     ->where(['id' => '[0-9]+', 'token' => '[a-zA-Z0-9]+']);
 
 Route::post('/verification/resend', [VerificationController::class, 'resend'])
+    ->middleware('throttle:password-reset')
     ->name('whatsapp.verification.resend');
 
 Route::get('/verification/status', [VerificationController::class, 'status'])
@@ -179,11 +181,12 @@ Route::middleware('auth')->group(function () {
         ->name('front.checkout.success');
         
         Route::post('/booking/payment/courses/midtrans', [FrontController::class, 'paymentStoreCoursesMidtrans'])
+        ->middleware('throttle:payment')
         ->name('front.payment_store_courses_midtrans');
     });
 
     // API Routes for Lesson Progress (JSON responses)
-    Route::prefix('api')->middleware(['check.course.access'])->group(function () {
+    Route::prefix('api')->middleware(['check.course.access', 'throttle:api'])->group(function () {
         Route::get('/lesson-progress', [LessonProgressController::class, 'index'])
             ->name('api.lesson-progress.index');
         

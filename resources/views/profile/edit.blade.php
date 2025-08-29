@@ -4,7 +4,7 @@
     <x-navigation-auth />
     
     <!-- Main Content -->
-    <main class="bg-gray-50 min-h-screen py-8" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
+    <main class="bg-gray-50 min-h-screen py-8 font-manrope">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header Section -->
             <div class="mb-8">

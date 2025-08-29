@@ -7,8 +7,8 @@
         <section class="w-full max-w-lg">
             <div class="flex flex-col w-full rounded-[20px] border border-LMS-grey p-8 gap-6 bg-white shadow-lg">
                 <div class="text-center">
-                    <h1 class="font-bold text-[22px] leading-[33px] mb-2" style="font-family: 'Manrope', sans-serif;">Reset Password</h1>
-                    <p class="text-sm text-gray-600" style="font-family: 'Manrope', sans-serif;">Pilih metode untuk menerima link reset password</p>
+                    <h1 class="font-bold text-[22px] leading-[33px] mb-2 form-title">Reset Password</h1>
+                    <p class="text-sm text-gray-600 form-text">Pilih metode untuk menerima link reset password</p>
                 </div>
 
                 <!-- Email Option -->
@@ -22,8 +22,8 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <h3 class="font-semibold text-gray-900" style="font-family: 'Manrope', sans-serif;">Reset via Email</h3>
-                                <p class="text-sm text-gray-600" style="font-family: 'Manrope', sans-serif;">Kirim link reset password ke email Anda</p>
+                                <h3 class="font-semibold text-gray-900 form-label">Reset via Email</h3>
+                                <p class="text-sm text-gray-600 form-text">Kirim link reset password ke email Anda</p>
                             </div>
                             <div class="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
                                 <div class="w-3 h-3 bg-LMS-green rounded-full hidden" id="email-check"></div>
@@ -41,8 +41,8 @@
                                 </svg>
                             </div>
                             <div class="flex-1">
-                                <h3 class="font-semibold text-gray-900" style="font-family: 'Manrope', sans-serif;">Reset via WhatsApp</h3>
-                                <p class="text-sm text-gray-600" style="font-family: 'Manrope', sans-serif;">Kirim link reset password ke WhatsApp Anda</p>
+                                <h3 class="font-semibold text-gray-900 form-label">Reset via WhatsApp</h3>
+                                <p class="text-sm text-gray-600 form-text">Kirim link reset password ke WhatsApp Anda</p>
                             </div>
                             <div class="w-6 h-6 border-2 border-gray-300 rounded-full flex items-center justify-center">
                                 <div class="w-3 h-3 bg-LMS-green rounded-full hidden" id="whatsapp-check"></div>
@@ -56,14 +56,16 @@
                     @csrf
                     <input type="hidden" name="method" value="email">
                     <div class="flex flex-col gap-2">
-                        <p style="font-family: 'Manrope', sans-serif;">Email Address</p>
+                        <p class="form-label">Email Address</p>
                         <label class="relative group">
                             <input name="email" type="email" required
                                 class="appearance-none outline-none w-full rounded-full border border-LMS-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:border-LMS-green transition-all duration-300"
                                 placeholder="Masukkan email Anda">
-                            <img src="{{ asset('assets/images/icons/sms.svg') }}"
+                            <x-lazy-image 
+                                src="{{ asset('assets/images/icons/sms.svg') }}"
+                                alt="email icon"
                                 class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5"
-                                alt="icon">
+                                loading="eager" />
                         </label>
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
@@ -78,17 +80,19 @@
                     @csrf
                     <input type="hidden" name="method" value="whatsapp">
                     <div class="flex flex-col gap-2">
-                        <p style="font-family: 'Manrope', sans-serif;">Email Address</p>
+                        <p class="form-label">Email Address</p>
                         <label class="relative group">
                             <input name="email" type="email" required
                                 class="appearance-none outline-none w-full rounded-full border border-LMS-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:border-LMS-green transition-all duration-300"
                                 placeholder="Masukkan email Anda">
-                            <img src="{{ asset('assets/images/icons/sms.svg') }}"
+                            <x-lazy-image 
+                                src="{{ asset('assets/images/icons/sms.svg') }}"
+                                alt="email icon"
                                 class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5"
-                                alt="icon">
+                                loading="eager" />
                         </label>
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                        <p class="text-xs text-gray-500" style="font-family: 'Manrope', sans-serif;">Link reset akan dikirim ke nomor WhatsApp yang terdaftar pada akun email ini</p>
+                        <p class="text-xs text-gray-500 form-text-xs">Link reset akan dikirim ke nomor WhatsApp yang terdaftar pada akun email ini</p>
                     </div>
                     <button type="submit"
                         class="w-full flex items-center justify-center gap-[10px] rounded-full py-[14px] px-5 bg-green-600 hover:bg-green-700 transition-all duration-300 cursor-pointer">
@@ -98,7 +102,7 @@
 
                 <!-- Back to Login -->
                 <div class="text-center">
-                    <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-LMS-green transition-colors cursor-pointer" style="font-family: 'Manrope', sans-serif;">
+                    <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-LMS-green transition-colors cursor-pointer form-text">
                         ← Kembali ke Login
                     </a>
                 </div>

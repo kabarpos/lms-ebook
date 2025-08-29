@@ -16,7 +16,7 @@
     <x-nav-guest />
     
     <!-- Hero Section -->
-    <section class="hero-gradient py-16 lg:py-24" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
+    <section class="hero-gradient py-16 lg:py-24 font-manrope">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <!-- Trust Badge -->
             <div class="inline-flex items-center space-x-2 px-4 py-2 bg-lochmara-50 text-lochmara-700 rounded-full text-sm font-semibold mb-6">
@@ -37,7 +37,7 @@
     </section>
     
     <!-- Terms Content Section -->
-    <section class="bg-white py-16" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
+    <section class="bg-white py-16 font-manrope">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="prose prose-lg max-w-none">
                 
@@ -51,7 +51,7 @@
                         </div>
                         1. Pendahuluan
                     </h2>
-                    <p class="text-gray-700 leading-relaxed" style="line-height: 1.4;">
+                    <p class="text-gray-700 leading-relaxed text-line-height-relaxed">
                         Selamat datang di LMS DripCourse. Dengan mengakses dan menggunakan platform kami, Anda setuju untuk terikat oleh ketentuan layanan ini. Platform LMS DripCourse adalah sistem manajemen pembelajaran yang menyediakan akses ke berbagai kursus online, materi pembelajaran, dan sertifikasi profesional.
                     </p>
                 </div>
@@ -66,7 +66,7 @@
                         </div>
                         2. Definisi
                     </h2>
-                    <ul class="space-y-3 text-gray-700" style="line-height: 1.4;">
+                    <ul class="space-y-3 text-gray-700 text-line-height-relaxed">
                         <li><strong>Platform:</strong> Sistem LMS DripCourse yang dapat diakses melalui website dan aplikasi mobile</li>
                         <li><strong>Pengguna:</strong> Setiap individu yang mendaftar dan menggunakan layanan kami</li>
                         <li><strong>Konten:</strong> Semua materi pembelajaran, video, teks, gambar, dan dokumen yang tersedia di platform</li>
@@ -85,7 +85,7 @@
                         </div>
                         3. Pendaftaran dan Akun
                     </h2>
-                    <div class="space-y-4 text-gray-700" style="line-height: 1.4;">
+                    <div class="space-y-4 text-gray-700 text-line-height-relaxed">
                         <p>Untuk menggunakan layanan kami, Anda harus:</p>
                         <ul class="space-y-2">
                             <li>• Berusia minimal 17 tahun atau memiliki izin dari orang tua/wali</li>
@@ -107,7 +107,7 @@
                         </div>
                         4. Penggunaan Platform
                     </h2>
-                    <div class="space-y-4 text-gray-700" style="line-height: 1.4;">
+                    <div class="space-y-4 text-gray-700 text-line-height-relaxed">
                         <p><strong>Anda diperbolehkan:</strong></p>
                         <ul class="space-y-2">
                             <li>• Mengakses dan menonton konten kursus yang telah Anda beli atau berlangganan</li>
@@ -137,7 +137,7 @@
                         </div>
                         5. Pembayaran dan Langganan
                     </h2>
-                    <div class="space-y-4 text-gray-700" style="line-height: 1.4;">
+                    <div class="space-y-4 text-gray-700 text-line-height-relaxed">
                         <ul class="space-y-3">
                             <li>• Pembayaran dilakukan melalui gateway pembayaran yang aman (Midtrans)</li>
                             <li>• Harga dapat berubah sewaktu-waktu dengan pemberitahuan sebelumnya</li>
@@ -158,7 +158,7 @@
                         </div>
                         6. Hak Kekayaan Intelektual
                     </h2>
-                    <p class="text-gray-700" style="line-height: 1.4;">
+                    <p class="text-gray-700 text-line-height-relaxed">
                         Semua konten, materi, design, logo, dan elemen lainnya di platform ini adalah milik LMS DripCourse atau mitra konten kami. Pengguna diberikan lisensi terbatas untuk mengakses dan menggunakan konten hanya untuk tujuan pembelajaran pribadi. Setiap pelanggaran hak cipta akan ditindak sesuai hukum yang berlaku.
                     </p>
                 </div>
@@ -173,7 +173,7 @@
                         </div>
                         7. Privasi dan Perlindungan Data
                     </h2>
-                    <div class="space-y-4 text-gray-700" style="line-height: 1.4;">
+                    <div class="space-y-4 text-gray-700 text-line-height-relaxed">
                         <p>Kami berkomitmen melindungi privasi dan data pribadi Anda:</p>
                         <ul class="space-y-2">
                             <li>• Data pribadi hanya digunakan untuk keperluan layanan dan komunikasi</li>
@@ -195,7 +195,7 @@
                         </div>
                         8. Pembatasan Tanggung Jawab
                     </h2>
-                    <p class="text-gray-700" style="line-height: 1.4;">
+                    <p class="text-gray-700 text-line-height-relaxed">
                         LMS DripCourse tidak bertanggung jawab atas kerugian yang timbul dari penggunaan platform, termasuk namun tidak terbatas pada kehilangan data, gangguan bisnis, atau kerusakan perangkat. Platform disediakan "sebagaimana adanya" tanpa jaminan tersurat maupun tersirat. Pengguna menggunakan layanan dengan risiko sendiri.
                     </p>
                 </div>
@@ -210,7 +210,7 @@
                         </div>
                         9. Penangguhan dan Penghentian
                     </h2>
-                    <div class="space-y-4 text-gray-700" style="line-height: 1.4;">
+                    <div class="space-y-4 text-gray-700 text-line-height-relaxed">
                         <p>Kami berhak menangguhkan atau menghentikan akun Anda jika:</p>
                         <ul class="space-y-2">
                             <li>• Melanggar ketentuan layanan ini</li>
@@ -232,7 +232,7 @@
                         </div>
                         10. Perubahan Ketentuan
                     </h2>
-                    <p class="text-gray-700" style="line-height: 1.4;">
+                    <p class="text-gray-700 text-line-height-relaxed">
                         Kami berhak mengubah ketentuan layanan ini sewaktu-waktu. Perubahan akan diumumkan melalui platform dan email terdaftar. Dengan terus menggunakan layanan setelah perubahan diberlakukan, Anda dianggap menyetujui ketentuan yang baru. Disarankan untuk memeriksa halaman ini secara berkala.
                     </p>
                 </div>
@@ -247,10 +247,10 @@
                         </div>
                         Kontak Kami
                     </h2>
-                    <p class="text-gray-700 mb-4" style="line-height: 1.4;">
+                    <p class="text-gray-700 mb-4 text-line-height-relaxed">
                         Jika Anda memiliki pertanyaan tentang ketentuan layanan ini, silakan hubungi kami:
                     </p>
-                    <div class="space-y-2 text-gray-700" style="line-height: 1.4;">
+                    <div class="space-y-2 text-gray-700 text-line-height-relaxed">
                         <p><strong>Email:</strong> support@lmsdripcourse.com</p>
                         <p><strong>Telepon:</strong> +62 21 1234 5678</p>
                         <p><strong>Alamat:</strong> Jakarta, Indonesia</p>

@@ -30,7 +30,7 @@ class WhatsappSettingResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-device-phone-mobile';
 
-    protected static ?string $navigationLabel = 'Pengaturan WhatsApp';
+    protected static ?string $navigationLabel = 'WhatsApp';
 
     protected static ?string $modelLabel = 'Pengaturan WhatsApp';
 

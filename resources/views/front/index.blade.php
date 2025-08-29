@@ -89,9 +89,11 @@
                 <!-- Hero Image -->
                 <div class="relative">
                     <div class="aspect-square lg:aspect-auto lg:h-[600px] relative">
-                        <img src="{{ asset('assets/images/backgrounds/hero-image.png') }}" 
-                             alt="Learning Platform Hero" 
-                             class="w-full h-full object-cover rounded-2xl shadow-2xl">
+                        <x-lazy-image 
+                            src="{{ asset('assets/images/backgrounds/hero-image.png') }}" 
+                            alt="Learning Platform Hero" 
+                            class="w-full h-full object-cover rounded-2xl shadow-2xl"
+                            loading="eager" />
                         
                         <!-- Floating Cards -->
                         <div class="absolute top-8 right-8 bg-white rounded-lg shadow-lg p-4 transform rotate-3 hidden lg:block">
@@ -146,9 +148,13 @@
                         <div class="aspect-video bg-gray-100 overflow-hidden">
                             @if($course->thumbnail)
                                 @if(str_starts_with($course->thumbnail, 'http'))
-                                    <img src="{{ $course->thumbnail }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $course->name }}">
+                                    <x-lazy-image src="{{ $course->thumbnail }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $course->name }}" loading="lazy" />
                                 @else
-                                    <img src="{{ Storage::url($course->thumbnail) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $course->name }}">
+                                    <x-lazy-image 
+                                    src="{{ Storage::url($course->thumbnail) }}" 
+                                    alt="{{ $course->name }}" 
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    loading="lazy" />
                                 @endif
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-lochmara-500 to-lochmara-600">

@@ -35,7 +35,7 @@
 <body class="antialiased">
 
     <!-- Main Learning Interface -->
-    <div class="min-h-screen bg-gray-50" x-data="courseData()" x-init="initializeCourse()" style="font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif !important;">
+    <div class="min-h-screen bg-gray-50 font-manrope" x-data="courseData()" x-init="initializeCourse()">
         
         <!-- Fixed Sidebar -->
         <aside :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" 

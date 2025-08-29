@@ -8,20 +8,23 @@
             <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data"
                 class="flex flex-col w-full rounded-[20px] border border-LMS-grey p-8 gap-4 bg-white shadow-lg">
                 @csrf
-                <h1 class="font-bold text-[22px] leading-[33px] text-center mb-4" style="font-family: 'Manrope', sans-serif;">Upgrade Your Skills</h1>
+                <h1 class="font-bold text-[22px] leading-[33px] text-center mb-4 form-title">Upgrade Your Skills</h1>
                 <div class="flex flex-col gap-2">
-                    <p style="font-family: 'Manrope', sans-serif;">Complete Name</p>
+                    <p class="form-label">Complete Name</p>
                     <label class="relative group">
                         <input name="name" type="text" required
                             class="appearance-none outline-none w-full rounded-full border border-LMS-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:border-LMS-green transition-all duration-300"
                             placeholder="Type your complete name">
-                        <img src="{{ asset('assets/images/icons/profile.svg') }}""
-                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5" alt="icon">
+                        <x-lazy-image 
+                            src="{{ asset('assets/images/icons/profile.svg') }}"
+                            alt="profile icon"
+                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5"
+                            loading="eager" />
                     </label>
                     <x-input-error :messages="$errors->get('name')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p style="font-family: 'Manrope', sans-serif;">WhatsApp Number</p>
+                    <p class="form-label">WhatsApp Number</p>
                     <label class="relative group">
                         <input name="whatsapp_number" type="tel" required
                             class="appearance-none outline-none w-full rounded-full border border-LMS-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:border-LMS-green transition-all duration-300"
@@ -33,35 +36,44 @@
                     <x-input-error :messages="$errors->get('whatsapp_number')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p style="font-family: 'Manrope', sans-serif;">Email Address</p>
+                    <p class="form-label">Email Address</p>
                     <label class="relative group">
                         <input name="email" type="email" required
                             class="appearance-none outline-none w-full rounded-full border border-LMS-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:border-LMS-green transition-all duration-300"
                             placeholder="Type your valid email address">
-                        <img src="{{ asset('assets/images/icons/sms.svg') }}""
-                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5" alt="icon">
+                        <x-lazy-image 
+                            src="{{ asset('assets/images/icons/sms.svg') }}"
+                            alt="email icon"
+                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5"
+                            loading="eager" />
                     </label>
                     <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p style="font-family: 'Manrope', sans-serif;">Password</p>
+                    <p class="form-label">Password</p>
                     <label class="relative group">
                         <input name="password" type="password" required
                             class="appearance-none outline-none w-full rounded-full border border-LMS-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:border-LMS-green transition-all duration-300"
                             placeholder="Type your password">
-                        <img src="{{ asset('assets/images/icons/shield-security.svg') }}""
-                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5" alt="icon">
+                        <x-lazy-image 
+                            src="{{ asset('assets/images/icons/shield-security.svg') }}"
+                            alt="password icon"
+                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5"
+                            loading="eager" />
                     </label>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <p style="font-family: 'Manrope', sans-serif;">Confirm Password</p>
+                    <p class="form-label">Confirm Password</p>
                     <label class="relative group">
                         <input name="password_confirmation" type="password" required
                             class="appearance-none outline-none w-full rounded-full border border-LMS-grey py-[14px] px-5 pl-12 font-semibold placeholder:font-normal placeholder:text-LMS-text-secondary group-focus-within:border-LMS-green transition-all duration-300"
                             placeholder="Confirm your password">
-                        <img src="{{ asset('assets/images/icons/shield-security.svg') }}""
-                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5" alt="icon">
+                        <x-lazy-image 
+                            src="{{ asset('assets/images/icons/shield-security.svg') }}"
+                            alt="confirm password icon"
+                            class="absolute size-5 flex shrink-0 transform -translate-y-1/2 top-1/2 left-5"
+                            loading="eager" />
                     </label>
                     <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                 </div>
@@ -73,7 +85,7 @@
             
             <!-- Login Link -->
             <div class="mt-6 text-center">
-                <p class="text-sm text-gray-600" style="font-family: 'Manrope', sans-serif;">
+                <p class="text-sm text-gray-600 form-text">
                     Sudah punya akun? 
                     <a href="{{ route('login') }}" class="text-LMS-green font-semibold hover:underline cursor-pointer">Masuk Sekarang</a>
                 </p>

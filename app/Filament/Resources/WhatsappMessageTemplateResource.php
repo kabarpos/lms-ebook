@@ -28,7 +28,7 @@ class WhatsappMessageTemplateResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static ?string $navigationLabel = 'Template Pesan WhatsApp';
+    protected static ?string $navigationLabel = 'Template WhatsApp';
 
     protected static ?string $modelLabel = 'Template Pesan WhatsApp';
 
