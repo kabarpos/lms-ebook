@@ -249,12 +249,8 @@
                                                                 @endif
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    
-                                                    <!-- Right Side: Badges and Arrow -->
+                                                         <!-- Right Side: Badges and Arrow -->
                                                     <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
-                                                       
-                                                        
                                                         <!-- Dropdown Arrow -->
                                                         <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 transform transition-transform duration-200 flex-shrink-0" 
                                                              :class="openSections['{{ $sectionId }}'] ? 'rotate-180' : ''"
@@ -262,6 +258,9 @@
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                                         </svg>
                                                     </div>
+                                                    </div>
+                                                    
+                                                   
                                                 </div>
                                             </button>
                                             
