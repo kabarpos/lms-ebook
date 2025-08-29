@@ -94,22 +94,23 @@
                     @endif
                 </div>
 
-                <!-- Occupation Field -->
+                <!-- WhatsApp Number Field -->
                 <div class="space-y-2">
-                    <label for="occupation" class="block text-sm font-semibold text-gray-900">
-                        Occupation
+                    <label for="whatsapp_number" class="block text-sm font-semibold text-gray-900">
+                        WhatsApp Number
                     </label>
                     <div class="relative">
-                        <input id="occupation" name="occupation" type="text" 
+                        <input id="whatsapp_number" name="whatsapp_number" type="tel" 
                                class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lochmara-500 focus:border-transparent transition-all duration-200 font-medium" 
-                               value="{{ old('occupation', $user->occupation ?? '') }}" 
-                               placeholder="Enter your occupation"
-                               autocomplete="organization-title">
+                               value="{{ old('whatsapp_number', $user->whatsapp_number ?? '') }}" 
+                               placeholder="+62812345678"
+                               required
+                               autocomplete="tel">
                         <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                         </svg>
                     </div>
-                    @error('occupation')
+                    @error('whatsapp_number')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
