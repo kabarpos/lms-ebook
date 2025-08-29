@@ -18,6 +18,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Actions\EditAction;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
+use Illuminate\Support\Facades\Hash;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
@@ -58,11 +59,13 @@ class UserResource extends Resource
                 ->required(),
 
                 TextInput::make('password')
-                ->helperText('Minimum 9 characters')
+                ->helperText('Minimum 8 characters (leave empty to keep current password)')
                 ->password() // This makes it a password field
-                ->required()
-                ->minLength(9) // Minimum length for the password
-                ->maxLength(255),
+                ->nullable()
+                ->minLength(8) // Minimum length for the password
+                ->maxLength(255)
+                ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
+                ->dehydrated(fn ($state) => filled($state)),
 
                 TextInput::make('whatsapp_number')
                 ->label('WhatsApp Number')

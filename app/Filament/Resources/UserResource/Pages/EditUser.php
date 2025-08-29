@@ -36,6 +36,11 @@ class EditUser extends EditRecord
     
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        // Handle password - only update if provided
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+        
         // Handle verification toggles - convert boolean to datetime
         if (isset($data['email_verified_at'])) {
             if ($data['email_verified_at']) {
