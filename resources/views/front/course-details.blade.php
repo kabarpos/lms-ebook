@@ -207,13 +207,13 @@
                     <!-- Course Curriculum Section -->
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                         <!-- Section Header -->
-                        <div class="px-8 py-6 border-b border-gray-100">
-                            <h2 class="text-2xl font-bold text-gray-900">Course Curriculum</h2>
-                            <p class="text-gray-600 mt-2">Structured learning path designed by industry experts</p>
+                        <div class="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 border-b border-gray-100">
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Course Curriculum</h2>
+                            <p class="text-gray-600 mt-2 text-sm sm:text-base">Structured learning path designed by industry experts</p>
                         </div>
                         
                         <!-- Curriculum Content -->
-                        <div class="p-8">
+                        <div class="p-4 sm:p-6 lg:p-8">
                             @if($course->courseSections->count() > 0)
                                 <div class="space-y-4" x-data="{ openSections: {} }">
                                     @foreach($course->courseSections as $index => $section)
@@ -225,42 +225,38 @@
                                             <!-- Section Header (Clickable) -->
                                             <button 
                                                 @click="openSections['{{ $sectionId }}'] = !openSections['{{ $sectionId }}']"
-                                                class="w-full bg-gray-50 px-6 py-4 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lochmara-500 focus:ring-inset cursor-pointer">
-                                                <div class="flex items-center justify-between">
-                                                    <div class="flex items-center">
+                                                class="w-full bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lochmara-500 focus:ring-inset cursor-pointer">
+                                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                                    <div class="flex items-center min-w-0 flex-1">
                                                         <!-- Section Number -->
-                                                        <div class="w-10 h-10 bg-lochmara-600 text-white rounded-lg flex items-center justify-center mr-4">
-                                                            <span class="font-bold text-sm">{{ $index + 1 }}</span>
+                                                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-lochmara-600 text-white rounded-lg flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                                                            <span class="font-bold text-xs sm:text-sm">{{ $index + 1 }}</span>
                                                         </div>
                                                         
                                                         <!-- Section Info -->
-                                                        <div class="text-left">
-                                                            <h3 class="text-lg font-semibold text-gray-900">{{ $section->name }}</h3>
-                                                            <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                                                                <span>{{ $section->sectionContents->count() }} lessons</span>
+                                                        <div class="text-left min-w-0 flex-1">
+                                                            <h3 class="text-base sm:text-lg font-semibold text-gray-900 truncate">{{ $section->name }}</h3>
+                                                            <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-600 mt-1">
+                                                                <span class="text-xs sm:text-sm">{{ $section->sectionContents->count() }} lessons</span>
                                                                 @if($freeContentCount > 0)
                                                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                                                         </svg>
-                                                                        {{ $freeContentCount }} Free Preview{{ $freeContentCount > 1 ? 's' : '' }}
+                                                                        <span class="hidden sm:inline">{{ $freeContentCount }} Free Preview{{ $freeContentCount > 1 ? 's' : '' }}</span>
+                                                                        <span class="sm:hidden">{{ $freeContentCount }} Free</span>
                                                                     </span>
                                                                 @endif
                                                             </div>
                                                         </div>
                                                     </div>
                                                     
-                                                    <!-- Dropdown Arrow -->
-                                                    <div class="flex items-center space-x-3">
-                                                        <!-- Lesson Count Badge -->
-                                                        <div class="flex items-center bg-white px-3 py-1 rounded-full border border-gray-200">
-                                                            <svg class="w-4 h-4 text-lochmara-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
-                                                            </svg>
-                                                            <span class="text-sm font-medium text-gray-700">{{ $section->sectionContents->count() }}</span>
-                                                        </div>
+                                                    <!-- Right Side: Badges and Arrow -->
+                                                    <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
+                                                       
                                                         
-                                                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" 
+                                                        <!-- Dropdown Arrow -->
+                                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 transform transition-transform duration-200 flex-shrink-0" 
                                                              :class="openSections['{{ $sectionId }}'] ? 'rotate-180' : ''"
                                                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -273,7 +269,7 @@
                                             <div x-show="openSections['{{ $sectionId }}']" 
                                                  x-collapse 
                                                  class="bg-white">
-                                                <div class="p-6">
+                                                <div class="p-4 sm:p-6">
                                                     <div class="space-y-3">
                                                         @foreach($section->sectionContents as $contentIndex => $content)
                                                             @php
@@ -283,72 +279,60 @@
                                                                 @if($content->is_free)
                                                                     <!-- Free Preview Content -->
                                                                     <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $content->id]) }}" 
-                                                                       class="flex items-center p-4 rounded-lg border border-gray-100 hover:border-lochmara-200 hover:bg-lochmara-50 transition-all duration-200 cursor-pointer">
-                                                                        <!-- Lesson Icon -->
-                                                                        <div class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mr-3">
-                                                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
-                                                                            </svg>
-                                                                        </div>
-                                                                        
-                                                                        <!-- Lesson Info -->
-                                                                        <div class="flex-1">
-                                                                            <h4 class="font-medium text-gray-900 group-hover:text-lochmara-700">{{ $content->name }}</h4>
-                                                                            <div class="flex items-center text-xs text-gray-500 mt-1">
-                                                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                       class="flex flex-col sm:flex-row sm:items-center p-3 sm:p-4 rounded-lg border border-gray-100 hover:border-lochmara-200 hover:bg-lochmara-50 transition-all duration-200 cursor-pointer gap-3 sm:gap-0">
+                                                                        <div class="flex items-center flex-1 min-w-0">
+                                                                            <!-- Lesson Icon -->
+                                                                            <div class="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                                                                <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
                                                                                 </svg>
-                                                                                <span>8-12 min</span>
-                                                                                <span class="mx-1">•</span>
-                                                                                <span>Video</span>
+                                                                            </div>
+                                                                            
+                                                                            <!-- Lesson Info -->
+                                                                            <div class="flex-1 min-w-0">
+                                                                                <h4 class="font-medium text-gray-900 group-hover:text-lochmara-700 text-sm sm:text-base truncate">{{ $content->name }}</h4>
+                                                                    
                                                                             </div>
                                                                         </div>
                                                                         
                                                                         <!-- Free Badge -->
-                                                                        <div class="flex items-center space-x-2">
+                                                                        <div class="flex items-center justify-between sm:justify-end space-x-2">
                                                                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                                                                 </svg>
                                                                                 Preview
                                                                             </span>
-                                                                            <svg class="w-4 h-4 text-lochmara-500 group-hover:text-lochmara-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                                                            </svg>
+
                                                                         </div>
                                                                     </a>
                                                                 @else
                                                                     <!-- Locked/Premium Content -->
-                                                                    <div class="flex items-center p-4 rounded-lg border border-gray-100 {{ $isLocked ? 'bg-gray-50' : 'hover:border-lochmara-200 hover:bg-lochmara-50' }} transition-all duration-200">
-                                                                        <!-- Lesson Icon -->
-                                                                        <div class="w-8 h-8 {{ $isLocked ? 'bg-gray-200 text-gray-400' : 'bg-lochmara-100 text-lochmara-600' }} rounded-lg flex items-center justify-center mr-3">
-                                                                            @if($isLocked)
-                                                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                                                                                </svg>
-                                                                            @else
-                                                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
-                                                                                </svg>
-                                                                            @endif
-                                                                        </div>
-                                                                        
-                                                                        <!-- Lesson Info -->
-                                                                        <div class="flex-1">
-                                                                            <h4 class="font-medium {{ $isLocked ? 'text-gray-500' : 'text-gray-900' }}">{{ $content->name }}</h4>
-                                                                            <div class="flex items-center text-xs {{ $isLocked ? 'text-gray-400' : 'text-gray-500' }} mt-1">
-                                                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                                                </svg>
-                                                                                <span>8-12 min</span>
-                                                                                <span class="mx-1">•</span>
-                                                                                <span>Video</span>
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center p-3 sm:p-4 rounded-lg border border-gray-100 {{ $isLocked ? 'bg-gray-50' : 'hover:border-lochmara-200 hover:bg-lochmara-50' }} transition-all duration-200 gap-3 sm:gap-0">
+                                                                        <div class="flex items-center flex-1 min-w-0">
+                                                                            <!-- Lesson Icon -->
+                                                                            <div class="w-6 h-6 sm:w-8 sm:h-8 {{ $isLocked ? 'bg-gray-200 text-gray-400' : 'bg-lochmara-100 text-lochmara-600' }} rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                                                                @if($isLocked)
+                                                                                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                                                                    </svg>
+                                                                                @else
+                                                                                    <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                                                                    </svg>
+                                                                                @endif
+                                                                            </div>
+                                                                            
+                                                                            <!-- Lesson Info -->
+                                                                            <div class="flex-1 min-w-0">
+                                                                                <h4 class="font-medium {{ $isLocked ? 'text-gray-500' : 'text-gray-900' }} text-sm sm:text-base truncate">{{ $content->name }}</h4>
+                                                                               
                                                                             </div>
                                                                         </div>
                                                                         
                                                                         <!-- Status -->
                                                                         @if($isLocked)
-                                                                            <div class="flex items-center space-x-2">
+                                                                            <div class="flex items-center justify-between sm:justify-end space-x-2">
                                                                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                                                                                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                                                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
@@ -357,7 +341,7 @@
                                                                                 </span>
                                                                             </div>
                                                                         @else
-                                                                            <div class="w-6 h-6 border-2 border-gray-300 rounded-full"></div>
+                                                                            <div class="w-6 h-6 border-2 border-gray-300 rounded-full flex-shrink-0"></div>
                                                                         @endif
                                                                     </div>
                                                                 @endif
