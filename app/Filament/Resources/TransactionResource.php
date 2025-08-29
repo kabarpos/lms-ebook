@@ -30,9 +30,9 @@ use App\Filament\Resources\TransactionResource\Pages\CreateTransaction;
 use App\Filament\Resources\TransactionResource\Pages\EditTransaction;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
-use App\Models\Pricing;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Course;
 use Filament\Forms;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
@@ -61,44 +61,26 @@ class TransactionResource extends Resource
                         ->schema([
                             Grid::make(2)
                                 ->schema([
+                                    Select::make('course_id')
+                                        ->relationship('course', 'name')
+                                        ->searchable()
+                                        ->preload()
+                                        ->required()
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, callable $set) {
+                                            if ($state) {
+                                                $course = Course::find($state);
+                                                $price = $course->price;
+                                                $subTotal = $price;
+                                                $totalPpn = $subTotal * 0.11;
+                                                $totalAmount = $subTotal + $totalPpn;
 
-                                    Select::make('pricing_id')
-                                    ->relationship('pricing', 'name')
-                                    ->searchable()
-                                    ->preload()
-                                    ->required()
-                                    ->live()
-                                    ->afterStateUpdated(function ($state, callable $set) {
-                                        $pricing = Pricing::find($state); // get the pricing information
-
-                                        $price = $pricing->price; // get the price
-                                        $duration = $pricing->duration; // get the duration
-
-                                        $subTotal = $price * $state; // get the sub total
-                                        $totalPpn = $subTotal * 0.11; // get the total ppn
-                                        $totalAmount = $subTotal + $totalPpn; // get the total amount
-
-                                        $set('total_tax_amount', $totalPpn);
-                                        $set('grand_total_amount', $totalAmount);
-                                        $set('sub_total_amount', $price);
-                                        $set('duration', $duration);
-                                    })
-                                    ->afterStateHydrated(function (callable $set, $state) {
-                                        $pricingId = $state;
-                                        if ($pricingId) {
-                                            $pricing = Pricing::find($pricingId);
-                                            $duration = $pricing->duration;
-                                            $set('duration', $duration);
-                                        }
-                                    }),
-
-                                    TextInput::make('duration')
-                                    ->required()
-                                    ->numeric()
-                                    ->readOnly()
-                                    ->prefix('Months'),
-
-                            ]),
+                                                $set('total_tax_amount', $totalPpn);
+                                                $set('grand_total_amount', $totalAmount);
+                                                $set('sub_total_amount', $price);
+                                            }
+                                        }),
+                                ]),
 
                             Grid::make(3)
                             ->schema([
@@ -126,20 +108,7 @@ class TransactionResource extends Resource
                             Grid::make(2)
                             ->schema([
                                 DatePicker::make('started_at')
-                                ->live()
-                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                    $duration = $get('duration'); // Get the duration from the form state
-                                    if ($state && $duration) {
-                                        $endedAt = Carbon::parse($state)->addMonth($duration); // Calculate the end date
-                                        $set('ended_at', $endedAt->format('Y-m-d')); // Set the calculated end date
-                                    }
-                                })
                                 ->required(),
-
-                                DatePicker::make('ended_at')
-                                ->readOnly()
-                                ->required(),
-
                             ]),
                         ]),
 
@@ -152,22 +121,27 @@ class TransactionResource extends Resource
                                 ->required()
                                 ->live()
                                 ->afterStateUpdated(function ($state, callable $set) {
-                                    $user = User::find($state);
+                                    if ($state) {
+                                        $user = User::find($state);
+                                        if ($user) {
+                                            $name = $user->name;
+                                            $email = $user->email;
 
-                                    $name = $user->name;
-                                    $email = $user->email;
-
-                                    $set('name', $name);
-                                    $set('email', $email);
+                                            $set('name', $name);
+                                            $set('email', $email);
+                                        }
+                                    }
                                 })
                                 ->afterStateHydrated(function (callable $set, $state) {
                                     $userId = $state;
                                     if ($userId) {
                                         $user = User::find($userId);
-                                        $name = $user->name;
-                                        $email = $user->email;
-                                        $set('name', $name);
-                                        $set('email', $email);
+                                        if ($user) {
+                                            $name = $user->name;
+                                            $email = $user->email;
+                                            $set('name', $name);
+                                            $set('email', $email);
+                                        }
                                     }
                                 }),
                             TextInput::make('name')
@@ -228,7 +202,13 @@ class TransactionResource extends Resource
                 TextColumn::make('booking_trx_id')
                 ->searchable(),
 
-                TextColumn::make('pricing.name'),
+                TextColumn::make('course.name')
+                    ->label('Course'),
+
+                TextColumn::make('grand_total_amount')
+                    ->label('Amount')
+                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, '', '.'))
+                    ->sortable(),
 
                 IconColumn::make('is_paid')
                     ->boolean()
@@ -263,7 +243,7 @@ class TransactionResource extends Resource
                     })
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn (Transaction $record) => !$record->is_paid),
+                    ->visible(fn (?Transaction $record) => $record && !$record->is_paid),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -293,6 +273,7 @@ class TransactionResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->with(['student', 'course'])
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);

@@ -69,21 +69,52 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Transaction::class, 'user_id');
     }
-
-    public function getActiveSubscription()
+    
+    /**
+     * Check if user has purchased a specific course
+     */
+    public function hasPurchasedCourse($courseId)
     {
         return $this->transactions()
+            ->where('course_id', $courseId)
             ->where('is_paid', true)
-            ->where('ended_at', '>=', now())
-            ->first(); // return details of subscription
+            ->exists();
     }
-
-    public function hasActiveSubscription()
+    
+    /**
+     * Get all courses purchased by user
+     */
+    public function purchasedCourses()
+    {
+        return $this->belongsToMany(Course::class, 'transactions', 'user_id', 'course_id')
+            ->wherePivot('is_paid', true)
+            ->withPivot('created_at', 'grand_total_amount')
+            ->withTimestamps();
+    }
+    
+    /**
+     * Get course purchase transaction
+     */
+    public function getCoursePurchaseTransaction($courseId)
     {
         return $this->transactions()
+            ->where('course_id', $courseId)
             ->where('is_paid', true)
-            ->where('ended_at', '>=', now()) // Ensure the subscription is still active
-            ->exists(); // return boolean
+            ->first();
+    }
+    
+    /**
+     * Check if user can access a course (purchased course only)
+     */
+    public function canAccessCourse($courseId)
+    {
+        // Check if user is admin
+        if ($this->hasAnyRole(['admin', 'super-admin'])) {
+            return true;
+        }
+        
+        // Check if user has purchased the specific course
+        return $this->hasPurchasedCourse($courseId);
     }
 
     public function lessonProgress()

@@ -107,6 +107,7 @@ class WhatsappMessageTemplateResource extends Resource
                         WhatsappMessageTemplate::TYPE_REGISTRATION_VERIFICATION => 'primary',
                         WhatsappMessageTemplate::TYPE_ORDER_COMPLETION => 'success',
                         WhatsappMessageTemplate::TYPE_PAYMENT_RECEIVED => 'warning',
+                        WhatsappMessageTemplate::TYPE_COURSE_PURCHASE => 'info',
                         default => 'gray',
                     }),
 

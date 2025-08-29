@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Exception;
-use App\Models\Pricing;
+use App\Models\Course;
 use App\Services\CourseService;
 use App\Services\PaymentService;
-use App\Services\PricingService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,18 +15,15 @@ class FrontController extends Controller
 {
     protected $transactionService;
     protected $paymentService;
-    protected $pricingService;
     protected $courseService;
 
     public function __construct(
         PaymentService $paymentService,
         TransactionService $transactionService,
-        PricingService $pricingService,
         CourseService $courseService
     ) {
         $this->paymentService = $paymentService;
         $this->transactionService = $transactionService;
-        $this->pricingService = $pricingService;
         $this->courseService = $courseService;
     }
 
@@ -44,12 +40,14 @@ class FrontController extends Controller
 
     public function pricing()
     {
-        $pricing_packages = $this->pricingService->getAllPackages();
-        $user = Auth::user();
-        $totalCourses = \App\Models\Course::count();
+        // Redirect to course browsing instead of subscription packages
+        // Get featured courses to display
+        $featuredCourses = $this->courseService->getFeaturedCourses(12);
+        $allCourses = $this->courseService->getCoursesForPurchase();
         $totalStudents = \App\Models\User::role('student')->count();
+        $totalCourses = \App\Models\Course::count();
         
-        return view('front.pricing', compact('pricing_packages', 'user', 'totalCourses', 'totalStudents'));
+        return view('front.course-catalog', compact('featuredCourses', 'allCourses', 'totalStudents', 'totalCourses'));
     }
 
     public function termsOfService()
@@ -61,9 +59,8 @@ class FrontController extends Controller
     {
         $course->load(['category', 'courseSections.sectionContents', 'courseStudents', 'benefits']);
         $user = Auth::user();
-        $pricing_packages = $this->pricingService->getAllPackages();
         
-        return view('front.course-details', compact('course', 'user', 'pricing_packages'));
+        return view('front.course-details', compact('course', 'user'));
     }
 
     public function previewContent(
@@ -94,13 +91,13 @@ class FrontController extends Controller
         
         // For premium content, check access rights
         if (!$sectionContent->is_free && !$isAdmin) {
-            // Check if user is authenticated and has subscription
+            // Check if user is authenticated and has course access
             if (!$user) {
                 // Guest user trying to access premium content - show locked view
-            } elseif (!$user->hasActiveSubscription()) {
-                // Authenticated user without subscription - redirect to pricing
-                return redirect()->route('front.pricing')
-                    ->with('error', 'You need an active subscription to access this premium content.');
+            } elseif (!$user->canAccessCourse($course->id)) {
+                // Authenticated user without course access - redirect to course details for purchase
+                return redirect()->route('front.course.details', $course->slug)
+                    ->with('error', 'You need to purchase this course to access this content.');
             }
         }
 
@@ -125,29 +122,55 @@ class FrontController extends Controller
         return view('front.course-preview', $viewData);
     }
 
-    public function checkout(Pricing $pricing)
+    public function checkout_success()
     {
-        $checkoutData = $this->transactionService->prepareCheckout($pricing);
+        // Check if recent course purchase
+        $course = $this->transactionService->getRecentCourse();
+        
+        if ($course) {
+            return view('front.course-checkout-success', compact('course'));
+        }
+        
+        // No recent transaction found
+        return redirect()->route('front.index')->with('error', 'No recent transaction found.');
+    }
+    
+    /**
+     * Course checkout page
+     */
+    public function courseCheckout(Course $course)
+    {
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')
+                ->with('error', 'Please login to purchase this course.');
+        }
+        
+        $checkoutData = $this->transactionService->prepareCourseCheckout($course);
 
-        if ($checkoutData['alreadySubscribed']) {
-            return redirect()->route('front.pricing')->with('error', 'You are already subscribed to this plan.');
+        if ($checkoutData['alreadyPurchased']) {
+            return redirect()->route('front.course.details', $course->slug)
+                ->with('success', 'You already own this course!');
         }
 
-        return view('front.checkout', $checkoutData);
+        return view('front.course-checkout', $checkoutData);
     }
-
-    public function paymentStoreMidtrans()
+    
+    /**
+     * Handle course payment processing
+     */
+    public function paymentStoreCoursesMidtrans()
     {
         try {
-            // Retrieve the pricing ID from the session
-            $pricingId = session()->get('pricing_id');
+            // Retrieve the course ID from the session
+            $courseId = session()->get('course_id');
 
-            if (!$pricingId) {
-                return response()->json(['error' => 'No pricing data found in the session.'], 400);
+            if (!$courseId) {
+                return response()->json(['error' => 'No course data found in the session.'], 400);
             }
 
-            // Call the PaymentService to generate the Snap token
-            $snapToken = $this->paymentService->createPayment($pricingId);
+            // Call the PaymentService to generate the Snap token for course
+            $snapToken = $this->paymentService->createCoursePayment($courseId);
 
             if (!$snapToken) {
                 return response()->json(['error' => 'Failed to create Midtrans transaction.'], 500);
@@ -159,49 +182,5 @@ class FrontController extends Controller
             // Handle any exceptions that occur during transaction creation
             return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
         }
-    }
-
-    public function paymentMidtransNotification(Request $request)
-    {
-        // Log all incoming webhook data for debugging
-        Log::info('Midtrans webhook received:', [
-            'headers' => $request->headers->all(),
-            'body' => $request->all(),
-            'method' => $request->method(),
-            'url' => $request->fullUrl(),
-            'ip' => $request->ip()
-        ]);
-        
-        try {
-            // Process the Midtrans notification through the service
-            $transactionStatus = $this->paymentService->handlePaymentNotification();
-
-            if (!$transactionStatus) {
-                Log::error('Invalid notification data received');
-                return response()->json(['error' => 'Invalid notification data.'], 400);
-            }
-
-            Log::info('Webhook processed successfully:', ['status' => $transactionStatus]);
-            
-            // transaction has been created in database
-            return response()->json(['status' => $transactionStatus]);
-        } catch (Exception $e) {
-            Log::error('Failed to handle Midtrans notification:', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            return response()->json(['error' => 'Failed to process notification.'], 500);
-        }
-    }
-
-    public function checkout_success()
-    {
-        $pricing = $this->transactionService->getRecentPricing();
-
-        if (!$pricing) {
-            return redirect()->route('front.pricing')->with('error', 'No recent subscription found.');
-        }
-
-        return view('front.checkout_success', compact('pricing'));
     }
 }

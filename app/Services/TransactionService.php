@@ -4,60 +4,59 @@ namespace App\Services;
 
 use App\Models\Pricing;
 use App\Models\Transaction;
+use App\Models\Course;
 use App\Repositories\PricingRepositoryInterface;
 use App\Repositories\TransactionRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 
 class TransactionService
 {
-    protected $pricingRepository;
     protected $transactionRepository;
 
     public function __construct(
-        PricingRepositoryInterface $pricingRepository,
         TransactionRepositoryInterface $transactionRepository
     ) {
-        $this->pricingRepository = $pricingRepository;
         $this->transactionRepository = $transactionRepository;
     }
 
 
-    // menampilkan data ke checkout page
-    // model binding
-    public function prepareCheckout(Pricing $pricing)
+    /**
+     * Prepare checkout for course purchase
+     */
+    public function prepareCourseCheckout(Course $course)
     {
         $user = Auth::user();
-        $alreadySubscribed = $pricing->isSubscribedByUser($user->id);
+        $alreadyPurchased = $course->isPurchasedByUser($user->id);
 
         $tax = 0.11;
-        $total_tax_amount = $pricing->price * $tax;
-        $sub_total_amount = $pricing->price;
+        $total_tax_amount = $course->price * $tax;
+        $sub_total_amount = $course->price;
         $grand_total_amount = $sub_total_amount + $total_tax_amount;
 
-        // Calculate subscription dates
-        $started_at = now(); // Today's date in the user's timezone
-        $ended_at = $started_at->copy()->addMonths($pricing->duration); // Add duration in months
+        // For course purchases, no subscription dates needed
+        $started_at = now();
+        $ended_at = null; // Lifetime access
 
-        // Save the selected pricing ID into the session
-        session()->put('pricing_id', $pricing->id);
+        // Save the selected course ID into the session
+        session()->put('course_id', $course->id);
+        session()->forget('pricing_id'); // Clear any existing pricing session
 
         return compact(
             'total_tax_amount',
             'grand_total_amount',
             'sub_total_amount',
-            'pricing',
+            'course',
             'user',
-            'alreadySubscribed',
+            'alreadyPurchased',
             'started_at',
             'ended_at'
         );
     }
 
-    public function getRecentPricing()
+    public function getRecentCourse()
     {
-        $pricingId = session()->get('pricing_id');
-        // return Pricing::find($pricingId);
-        return $this->pricingRepository->findById($pricingId);
+        $courseId = session()->get('course_id');
+        return Course::find($courseId);
     }
 
     public function getUserTransactions()
@@ -75,5 +74,33 @@ class TransactionService
         //     ->where('user_id', $user->id)
         //     ->orderBy('created_at', 'desc')
         //     ->get();
+    }
+    
+    /**
+     * Get user's course purchases
+     */
+    public function getUserCoursePurchases()
+    {
+        $user = Auth::user();
+        
+        return Transaction::with('course')
+            ->where('user_id', $user->id)
+            ->whereNotNull('course_id')
+            ->where('is_paid', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+    
+    /**
+     * Check if user has purchased a course
+     */
+    public function hasUserPurchasedCourse($courseId)
+    {
+        $user = Auth::user();
+        
+        return Transaction::where('user_id', $user->id)
+            ->where('course_id', $courseId)
+            ->where('is_paid', true)
+            ->exists();
     }
 }

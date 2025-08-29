@@ -13,6 +13,7 @@ Route::get('/pricing', [FrontController::class, 'pricing'])->name('front.pricing
 Route::get('/peraturan-layanan', [FrontController::class, 'termsOfService'])->name('front.terms-of-service');
 Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');
 Route::get('/course/{course:slug}/preview/{sectionContent}', [FrontController::class, 'previewContent'])->name('front.course.preview');
+Route::get('/course/{course:slug}/checkout', [FrontController::class, 'courseCheckout'])->name('front.course.checkout');
 
 // Redirect old dashboard learning route to unified preview route
 Route::get('/dashboard/learning/{course:slug}/{courseSection}/{sectionContent}', function(\App\Models\Course $course, $courseSection, \App\Models\SectionContent $sectionContent) {
@@ -55,25 +56,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware(['role:student|admin|super-admin'])->group(function () {
-        Route::get('/dashboard/subscriptions/', [DashboardController::class, 'subscriptions'])
-        ->name('dashboard.subscriptions');
-
-        // model binding 1, 23, 412 ,2121
-        Route::get('/dashboard/subscription/{transaction}', [DashboardController::class, 'subscription_details'])
-        ->name('dashboard.subscription.details');
-
         Route::get('/dashboard/courses/', [CourseController::class, 'index'])
         ->name('dashboard');
 
         Route::get('/dashboard/search/courses', [CourseController::class, 'search_courses'])
         ->name('dashboard.search.courses');
 
-        // Admin can access all learning content without subscription check
-        Route::middleware(['check.subscription.or.admin'])->group(function () {
+        // Course access routes - per-course purchase model only
+        Route::middleware(['check.course.access'])->group(function () {
             Route::get('/dashboard/join/{course:slug}', [CourseController::class, 'join'])
             ->name('dashboard.course.join');
-
-
 
             Route::get('/dashboard/learning/{course:slug}/finished', [CourseController::class, 'learning_finished'])
             ->name('dashboard.course.learning.finished');
@@ -81,16 +73,13 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/checkout/success', [FrontController::class, 'checkout_success'])
         ->name('front.checkout.success');
-
-        Route::get('/checkout/{pricing}', [FrontController::class, 'checkout'])
-        ->name('front.checkout');
-
-        Route::post('/booking/payment/midtrans', [FrontController::class, 'paymentStoreMidtrans'])
-        ->name('front.payment_store_midtrans');
+        
+        Route::post('/booking/payment/courses/midtrans', [FrontController::class, 'paymentStoreCoursesMidtrans'])
+        ->name('front.payment_store_courses_midtrans');
     });
 
     // API Routes for Lesson Progress (JSON responses)
-    Route::prefix('api')->middleware(['check.subscription.or.admin'])->group(function () {
+    Route::prefix('api')->middleware(['check.course.access'])->group(function () {
         Route::get('/lesson-progress', [LessonProgressController::class, 'index'])
             ->name('api.lesson-progress.index');
         

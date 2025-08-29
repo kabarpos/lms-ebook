@@ -2,39 +2,47 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Helpers\TransactionHelper;
-use App\Models\Pricing;
-use App\Repositories\PricingRepositoryInterface;
+use App\Models\Course;
+use App\Models\User;
+use App\Mail\CoursePurchaseConfirmation;
+use App\Notifications\CoursePurchasedNotification;
+use App\Services\WhatsappNotificationService;
 use App\Repositories\TransactionRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PaymentService
 {
     protected $midtransService;
     protected $pricingRepository;
     protected $transactionRepository;
+    protected $whatsappService;
 
     public function __construct(
         MidtransService $midtransService,
-        PricingRepositoryInterface $pricingRepository,
-        TransactionRepositoryInterface $transactionRepository
+        TransactionRepositoryInterface $transactionRepository,
+        WhatsappNotificationService $whatsappService
     )
     {
         $this->midtransService = $midtransService;
-        $this->pricingRepository = $pricingRepository;
         $this->transactionRepository = $transactionRepository;
+        $this->whatsappService = $whatsappService;
     }
 
-    public function createPayment(int $pricingId)
+    /**
+     * Create payment for course purchase
+     */
+    public function createCoursePayment(int $courseId)
     {
         $user = Auth::user();
-        // $pricing = Pricing::findOrFail($pricingId);
-        $pricing = $this->pricingRepository->findById($pricingId);
+        $course = Course::findOrFail($courseId);
 
         $tax = 0.11;
-        $totalTax = $pricing->price * $tax;
-        $grandTotal = $pricing->price + $totalTax;
+        $totalTax = $course->price * $tax;
+        $grandTotal = $course->price + $totalTax;
 
         $params = [
             'transaction_details' => [
@@ -44,14 +52,14 @@ class PaymentService
             'customer_details' => [
                 'first_name' => $user->name,
                 'email' => $user->email,
-                'phone' => '089998501293218'
+                'phone' => $user->whatsapp_number ?? '089998501293218'
             ],
             'item_details' => [
                 [
-                    'id' => $pricing->id,
-                    'price' => (int) $pricing->price,
+                    'id' => $course->id,
+                    'price' => (int) $course->price,
                     'quantity' => 1,
-                    'name' => $pricing->name,
+                    'name' => $course->name,
                 ],
                 [
                     'id' => 'tax',
@@ -61,11 +69,11 @@ class PaymentService
                 ],
             ],
             'custom_field1' => $user->id,
-            'custom_field2' => $pricingId,
+            'custom_field2' => $courseId,
+            'custom_field3' => 'course', // Mark as course purchase
         ];
 
         return $this->midtransService->createSnapToken($params);
-
     }
 
     public function handlePaymentNotification()
@@ -79,11 +87,15 @@ class PaymentService
         if (in_array($notification['transaction_status'], ['capture', 'settlement'])) {
             Log::info('Transaction status is valid for processing: ' . $notification['transaction_status']);
             
-            $pricing = Pricing::findOrFail($notification['custom_field2']);
+            // Only handle course purchases now
+            $course = Course::findOrFail($notification['custom_field2']);
+            Log::info('Found course:', ['id' => $course->id, 'name' => $course->name]);
+            $result = $this->createCourseTransaction($notification, $course);
             
-            Log::info('Found pricing:', ['id' => $pricing->id, 'name' => $pricing->name]);
-            
-            $result = $this->createTransaction($notification, $pricing);
+            // Send course purchase confirmation email
+            if ($result) {
+                $this->sendCoursePurchaseConfirmationEmail($result, $course);
+            }
             
             Log::info('Transaction creation result:', ['success' => $result !== null]);
         } else {
@@ -93,44 +105,84 @@ class PaymentService
         return $notification['transaction_status'];
     }
 
-    protected function createTransaction(array $notification, Pricing $pricing)
+    /**
+     * Create transaction for course purchase
+     */
+    protected function createCourseTransaction(array $notification, Course $course)
     {
-        Log::info('Creating transaction with data:', $notification);
+        Log::info('Creating course transaction with data:', $notification);
         
-        $startedAt = now();
-        $endedAt = $startedAt->copy()->addMonths($pricing->duration);
-
         $transactionData = [
             'user_id' => $notification['custom_field1'],
-            'pricing_id' => $notification['custom_field2'],
-            'sub_total_amount' => $pricing->price,
-            'total_tax_amount' => $pricing->price * 0.11,
+            'pricing_id' => null, // No pricing for course purchase
+            'course_id' => $notification['custom_field2'],
+            'sub_total_amount' => $course->price,
+            'total_tax_amount' => $course->price * 0.11,
             'grand_total_amount' => $notification['gross_amount'],
             'payment_type' => 'Midtrans',
             'is_paid' => true,
             'booking_trx_id' => $notification['order_id'],
-            'started_at' => $startedAt,
-            'ended_at' => $endedAt,
+            'started_at' => now(),
+            'ended_at' => null, // Course purchases have lifetime access
         ];
         
-        Log::info('Transaction data to be created:', $transactionData);
+        Log::info('Course transaction data to be created:', $transactionData);
 
         try {
             $transaction = $this->transactionRepository->create($transactionData);
             
-            Log::info('Transaction successfully created:', [
+            Log::info('Course transaction successfully created:', [
                 'id' => $transaction->id,
                 'booking_trx_id' => $transaction->booking_trx_id,
-                'user_id' => $transaction->user_id
+                'user_id' => $transaction->user_id,
+                'course_id' => $transaction->course_id
             ]);
             
             return $transaction;
         } catch (Exception $e) {
-            Log::error('Failed to create transaction:', [
+            Log::error('Failed to create course transaction:', [
                 'error' => $e->getMessage(),
                 'data' => $transactionData
             ]);
             throw $e;
+        }
+    }
+    
+    /**
+     * Send course purchase confirmation email
+     */
+    protected function sendCoursePurchaseConfirmationEmail($transaction, Course $course)
+    {
+        try {
+            $user = User::findOrFail($transaction->user_id);
+            
+            Log::info('Sending course purchase notifications', [
+                'user_id' => $user->id,
+                'course_id' => $course->id,
+                'transaction_id' => $transaction->id
+            ]);
+            
+            // Send custom email template
+            Mail::to($user->email)->send(new CoursePurchaseConfirmation($user, $course, $transaction));
+            
+            // Also send notification (for database logging and potential future channels)
+            $user->notify(new CoursePurchasedNotification($course, $transaction));
+            
+            // Send WhatsApp notification
+            $this->whatsappService->sendCoursePurchaseNotification($transaction, $course);
+            
+            Log::info('Course purchase notifications sent successfully', [
+                'email' => $user->email,
+                'course' => $course->name
+            ]);
+            
+        } catch (Exception $e) {
+            Log::error('Failed to send course purchase notifications:', [
+                'error' => $e->getMessage(),
+                'user_id' => $transaction->user_id ?? null,
+                'course_id' => $course->id
+            ]);
+            // Don't throw the exception as notification failure shouldn't break the payment flow
         }
     }
 

@@ -55,27 +55,117 @@
                     
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        @auth
-                            <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
-                                Start Learning
-                            </a>
+                        @if($course->price > 0)
+                            <!-- Paid Course -->
+                            @auth
+                                @if(auth()->user()->hasPurchasedCourse($course->id))
+                                    <!-- User already owns the course -->
+                                    <div class="flex flex-col sm:flex-row gap-4 w-full">
+                                        <a href="{{ route('dashboard.course.join', $course->slug) }}" 
+                                           class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 cursor-pointer">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9 4h10a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                            Continue Learning
+                                        </a>
+                                        <div class="sm:w-auto w-full px-4 py-3 bg-green-50 text-green-800 font-medium rounded-lg border border-green-200 text-center">
+                                            <svg class="w-5 h-5 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Course Owned
+                                        </div>
+                                    </div>
+                                @else
+                                    <!-- User hasn't purchased, show purchase option -->
+                                    <div class="flex flex-col space-y-4 w-full">
+                                        <div class="bg-lochmara-50 border border-lochmara-200 rounded-lg p-4">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="text-2xl font-bold text-lochmara-700">
+                                                        Rp {{ number_format($course->price, 0, '', '.') }}
+                                                    </div>
+                                                    <div class="text-sm text-lochmara-600">One-time purchase • Lifetime access</div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="text-sm text-gray-600">Get instant access to</div>
+                                                    <div class="text-sm font-medium text-gray-900">{{ $course->courseSections->sum(function($section) { return $section->sectionContents->count(); }) }} lessons</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col sm:flex-row gap-3">
+                                            <a href="{{ route('front.course.checkout', $course->slug) }}" 
+                                               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl">
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                                </svg>
+                                                Buy Now - Rp {{ number_format($course->price, 0, '', '.') }}
+                                            </a>
+                                            <button onclick="alert('Coming soon: Add to wishlist feature!')" 
+                                                    class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
+                                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                                </svg>
+                                                Save for Later
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
+                            @else
+                                <!-- Not authenticated user -->
+                                <div class="flex flex-col space-y-4 w-full">
+                                    <div class="bg-lochmara-50 border border-lochmara-200 rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="text-2xl font-bold text-lochmara-700">
+                                                    Rp {{ number_format($course->price, 0, '', '.') }}
+                                                </div>
+                                                <div class="text-sm text-lochmara-600">One-time purchase • Lifetime access</div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-sm text-gray-600">Get instant access to</div>
+                                                <div class="text-sm font-medium text-gray-900">{{ $course->courseSections->sum(function($section) { return $section->sectionContents->count(); }) }} lessons</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <a href="{{ route('register') }}" 
+                                           class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl">
+                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                            </svg>
+                                            Sign Up to Buy
+                                        </a>
+                                        <a href="{{ route('login') }}" 
+                                           class="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
+                                            Already have an account? Sign In
+                                        </a>
+                                    </div>
+                                </div>
+                            @endauth
                         @else
-                            <a href="{{ route('register') }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                                </svg>
-                                Start Learning
-                            </a>
-                            <a href="{{ route('login') }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
-                                Sign In
-                            </a>
-                        @endauth
+                            <!-- Free Course -->
+                            @auth
+                                <a href="{{ route('dashboard.course.join', $course->slug) }}" 
+                                   class="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 cursor-pointer">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                    </svg>
+                                    Start Learning for Free
+                                </a>
+                            @else
+                                <a href="{{ route('register') }}" 
+                                   class="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors duration-200 cursor-pointer">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                    </svg>
+                                    Sign Up to Start Learning
+                                </a>
+                                <a href="{{ route('login') }}" 
+                                   class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
+                                    Sign In
+                                </a>
+                            @endauth
+                        @endif
                     </div>
                 </div>
                 

@@ -141,7 +141,7 @@
                         My Courses
                     </a>
                     <a href="{{ route('dashboard.subscriptions') }}" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
-                        Subscriptions
+                        My Purchases
                     </a>
                     @if($user && ($user->hasRole('admin') || $user->hasRole('super-admin')))
                     <a href="/admin" target="_blank" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">

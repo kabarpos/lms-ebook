@@ -19,7 +19,7 @@ class CourseController extends Controller
 
     public function index()
     {
-        $coursesByCategory = $this->courseService->getCoursesGroupedByCategory();
+        $coursesByCategory = $this->courseService->getPurchasedCoursesGroupedByCategory();
 
         return view('courses.index', compact('coursesByCategory'));
     }

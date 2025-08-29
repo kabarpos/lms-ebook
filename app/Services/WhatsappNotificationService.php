@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Course;
 use App\Models\Transaction;
 use App\Models\WhatsappMessageTemplate;
 use App\Services\DripsenderService;
@@ -98,18 +99,25 @@ class WhatsappNotificationService
                 throw new \Exception('User or WhatsApp number is not available');
             }
 
-            // Get course details
-            $pricing = $transaction->pricing;
-            $courseName = $pricing ? $pricing->name : 'Unknown Course';
-
-            // Create payment link (assuming you have a payment route)
-            $paymentLink = route('front.checkout', ['transaction' => $transaction->id]);
+            // Get course details based on transaction type
+            if ($transaction->course_id) {
+                // Course purchase transaction
+                $courseName = $transaction->course->name ?? 'Unknown Course';
+                $totalAmount = 'Rp ' . number_format($transaction->grand_total_amount, 0, ',', '.');
+                $paymentLink = route('front.course.checkout', ['course' => $transaction->course->slug]);
+            } else {
+                // Legacy subscription transaction
+                $pricing = $transaction->pricing;
+                $courseName = $pricing ? $pricing->name : 'Unknown Course';
+                $totalAmount = 'Rp ' . number_format($transaction->grand_total_amount, 0, ',', '.');
+                $paymentLink = route('front.checkout', ['transaction' => $transaction->id]);
+            }
 
             $messageData = [
                 'user_name' => $user->name,
-                'order_id' => $transaction->id,
+                'order_id' => $transaction->booking_trx_id,
                 'course_name' => $courseName,
-                'total_amount' => 'Rp ' . number_format($transaction->total_amount, 0, ',', '.'),
+                'total_amount' => $totalAmount,
                 'payment_link' => $paymentLink,
                 'app_name' => config('app.name', 'LMS Ebook'),
             ];
@@ -145,9 +153,9 @@ class WhatsappNotificationService
     }
 
     /**
-     * Send payment received notification
+     * Send payment received notification (for course purchases only)
      */
-    public function sendPaymentReceived(Transaction $transaction): array
+    public function sendPaymentReceivedNotification(Transaction $transaction): array
     {
         try {
             $template = WhatsappMessageTemplate::getByType(WhatsappMessageTemplate::TYPE_PAYMENT_RECEIVED);
@@ -160,16 +168,22 @@ class WhatsappNotificationService
             if (!$user || !$user->whatsapp_number) {
                 throw new \Exception('User or WhatsApp number is not available');
             }
+            
+            // Validate phone number format
+            if (!$this->dripsenderService->validatePhoneNumber($user->whatsapp_number)) {
+                throw new \Exception('Invalid WhatsApp number format: ' . $user->whatsapp_number);
+            }
 
-            // Get course details
-            $pricing = $transaction->pricing;
-            $courseName = $pricing ? $pricing->name : 'Unknown Course';
+            // Get course details based on transaction type
+            // Course purchase transaction
+            $courseName = $transaction->course->name ?? 'Unknown Course';
+            $totalAmount = 'Rp ' . number_format($transaction->grand_total_amount, 0, ',', '.');
 
             $messageData = [
                 'user_name' => $user->name,
-                'order_id' => $transaction->id,
+                'order_id' => $transaction->booking_trx_id,
                 'course_name' => $courseName,
-                'total_amount' => 'Rp ' . number_format($transaction->total_amount, 0, ',', '.'),
+                'total_amount' => $totalAmount,
                 'app_name' => config('app.name', 'LMS Ebook'),
             ];
 
@@ -198,6 +212,70 @@ class WhatsappNotificationService
             return [
                 'success' => false,
                 'message' => 'Failed to send payment received message',
+                'error' => $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Send course purchase notification (for individual course purchases)
+     */
+    public function sendCoursePurchaseNotification(Transaction $transaction, Course $course): array
+    {
+        try {
+            $template = WhatsappMessageTemplate::getByType(WhatsappMessageTemplate::TYPE_COURSE_PURCHASE);
+            
+            if (!$template) {
+                throw new \Exception('Course purchase template not found');
+            }
+
+            $user = $transaction->user;
+            if (!$user || !$user->whatsapp_number) {
+                throw new \Exception('User or WhatsApp number is not available');
+            }
+            
+            // Validate phone number format
+            if (!$this->dripsenderService->validatePhoneNumber($user->whatsapp_number)) {
+                throw new \Exception('Invalid WhatsApp number format: ' . $user->whatsapp_number);
+            }
+
+            $messageData = [
+                'user_name' => $user->name,
+                'course_name' => $course->name,
+                'course_price' => 'Rp ' . number_format($course->price, 0, ',', '.'),
+                'transaction_id' => $transaction->booking_trx_id,
+                'course_url' => url('/course/' . $course->slug),
+                'dashboard_url' => url('/dashboard'),
+                'app_name' => config('app.name', 'LMS Ebook'),
+            ];
+
+            $message = $template->parseMessage($messageData);
+
+            $result = $this->dripsenderService->sendMessage(
+                $user->whatsapp_number,
+                $message
+            );
+
+            Log::info('Course purchase WhatsApp sent', [
+                'transaction_id' => $transaction->id,
+                'course_id' => $course->id,
+                'user_id' => $user->id,
+                'phone' => $user->whatsapp_number,
+                'result' => $result
+            ]);
+
+            return $result;
+
+        } catch (\Exception $e) {
+            Log::error('Failed to send course purchase WhatsApp', [
+                'transaction_id' => $transaction->id,
+                'course_id' => $course->id ?? null,
+                'error' => $e->getMessage()
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to send course purchase message',
                 'error' => $e->getMessage()
             ];
         }

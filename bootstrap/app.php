@@ -22,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'check.subscription' => \App\Http\Middleware\CheckSubscription::class,
             'check.subscription.or.admin' => \App\Http\Middleware\CheckSubscriptionOrAdmin::class,
+            'check.course.access' => \App\Http\Middleware\CheckCourseAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

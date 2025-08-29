@@ -28,6 +28,7 @@ class WhatsappMessageTemplate extends Model
     const TYPE_REGISTRATION_VERIFICATION = 'registration_verification';
     const TYPE_ORDER_COMPLETION = 'order_completion';
     const TYPE_PAYMENT_RECEIVED = 'payment_received';
+    const TYPE_COURSE_PURCHASE = 'course_purchase'; // New type for individual course purchases
     const TYPE_PASSWORD_RESET = 'password_reset';
 
     /**
@@ -64,6 +65,7 @@ class WhatsappMessageTemplate extends Model
             self::TYPE_REGISTRATION_VERIFICATION => 'Verifikasi Pendaftaran',
             self::TYPE_ORDER_COMPLETION => 'Penyelesaian Order',
             self::TYPE_PAYMENT_RECEIVED => 'Pembayaran Diterima',
+            self::TYPE_COURSE_PURCHASE => 'Pembelian Kursus Individual',
             self::TYPE_PASSWORD_RESET => 'Reset Password',
         ];
     }
@@ -92,6 +94,15 @@ class WhatsappMessageTemplate extends Model
                 'order_id' => 'ID Pesanan',
                 'course_name' => 'Nama Kursus',
                 'total_amount' => 'Total Pembayaran',
+                'app_name' => 'Nama aplikasi',
+            ],
+            self::TYPE_COURSE_PURCHASE => [
+                'user_name' => 'Nama pengguna',
+                'course_name' => 'Nama Kursus',
+                'course_price' => 'Harga Kursus',
+                'transaction_id' => 'ID Transaksi',
+                'course_url' => 'Link Akses Kursus',
+                'dashboard_url' => 'Link Dashboard',
                 'app_name' => 'Nama aplikasi',
             ],
             self::TYPE_PASSWORD_RESET => [

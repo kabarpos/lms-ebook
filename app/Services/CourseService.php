@@ -163,4 +163,95 @@ class CourseService
                 ->get();
         });
     }
+    
+    /**
+     * Get courses available for purchase with pricing
+     */
+    public function getCoursesForPurchase()
+    {
+        return Course::where('price', '>', 0)
+            ->with(['category', 'courseMentors.mentor'])
+            ->withCount(['courseStudents', 'courseSections'])
+            ->orderBy('is_popular', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+    
+    /**
+     * Get user's purchased courses
+     */
+    public function getUserPurchasedCourses()
+    {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return collect();
+        }
+        
+        return $user->purchasedCourses()
+            ->with(['category', 'courseMentors.mentor'])
+            ->withCount(['courseSections'])
+            ->get();
+    }
+    
+    /**
+     * Check if user can access course content
+     */
+    public function canUserAccessCourse(Course $course)
+    {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->canAccessCourse($course->id);
+    }
+    
+    /**
+     * Get course with purchase status for user
+     */
+    public function getCourseWithPurchaseStatus(Course $course)
+    {
+        $user = Auth::user();
+        
+        $course->load([
+            'category',
+            'benefits',
+            'courseSections.sectionContents',
+            'courseMentors.mentor'
+        ]);
+        
+        $course->is_purchased = $user ? $user->hasPurchasedCourse($course->id) : false;
+        $course->can_access = $user ? $user->canAccessCourse($course->id) : false;
+        
+        return $course;
+    }
+    
+    /**
+     * Get courses purchased by the authenticated user grouped by category
+     */
+    public function getPurchasedCoursesGroupedByCategory()
+    {
+        $user = Auth::user();
+        
+        if (!$user) {
+            return collect();
+        }
+        
+        // Get purchased courses - both via individual purchase and subscription
+        $purchasedCourses = Course::whereHas('transactions', function($query) use ($user) {
+            $query->where('user_id', $user->id)
+                  ->where('is_paid', true);
+        })->orWhereHas('courseStudents', function($query) use ($user) {
+            // Legacy: users who are already enrolled
+            $query->where('user_id', $user->id)
+                  ->where('is_active', true);
+        })->with('category')
+          ->get();
+        
+        return $purchasedCourses->groupBy(function ($course) {
+            return $course->category->name ?? 'Uncategorized';
+        });
+    }
 }

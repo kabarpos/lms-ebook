@@ -56,8 +56,45 @@
             <!-- Call to Action -->
             <div class="pt-2">
                 <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-500">{{ $course->courseStudents->count() }} students</span>
-                    <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">View Details →</span>
+                    @if($course->price > 0)
+                        <!-- Course Price -->
+                        <div class="text-left">
+                            <div class="text-lg font-bold text-lochmara-600">
+                                Rp {{ number_format($course->price, 0, '', '.') }}
+                            </div>
+                            <div class="text-xs text-gray-500">One-time purchase</div>
+                        </div>
+                        
+                        @auth
+                            @if(auth()->user()->hasPurchasedCourse($course->id))
+                                <div class="flex items-center space-x-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Owned
+                                    </span>
+                                    <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">
+                                        Continue Learning →
+                                    </span>
+                                </div>
+                            @else
+                                <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Buy Now →</span>
+                            @endif
+                        @else
+                            <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Buy Now →</span>
+                        @endauth
+                    @else
+                        <!-- Free Course -->
+                        <div class="text-lg font-bold text-green-600">Free</div>
+                        <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Start Learning →</span>
+                    @endif
+                </div>
+                
+                <!-- Course Stats -->
+                <div class="flex items-center justify-between text-xs text-gray-500 mt-2 pt-2 border-t border-gray-100">
+                    <span>{{ $course->courseStudents->count() }} students</span>
+                    <span>{{ $course->courseSections->count() ?? 0 }} sections</span>
                 </div>
             </div>
         </div>

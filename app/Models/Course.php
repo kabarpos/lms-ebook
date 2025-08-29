@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -20,6 +21,7 @@ class Course extends Model
         'about',
         'is_popular',
         'category_id',
+        'price',
     ];
 
     public function setNameAttribute($value)
@@ -96,5 +98,59 @@ class Course extends Model
     public function getSectionCountAttribute()
     {
         return $this->course_sections_count ?? $this->courseSections()->count();
+    }
+    
+    /**
+     * Check if a user has purchased this course
+     */
+    public function isPurchasedByUser($userId)
+    {
+        return Transaction::where('user_id', $userId)
+            ->where('course_id', $this->id)
+            ->where('is_paid', true)
+            ->exists();
+    }
+    
+    /**
+     * Get all users who have purchased this course
+     */
+    public function purchasedBy()
+    {
+        return $this->hasManyThrough(
+            User::class,
+            Transaction::class,
+            'course_id', // Foreign key on transactions table
+            'id', // Foreign key on users table
+            'id', // Local key on courses table
+            'user_id' // Local key on transactions table
+        )->where('transactions.is_paid', true);
+    }
+    
+    /**
+     * Get transactions for this course
+     */
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'course_id');
+    }
+    
+    /**
+     * Get course revenue
+     */
+    public function getRevenueAttribute()
+    {
+        return $this->transactions()
+            ->where('is_paid', true)
+            ->sum('grand_total_amount');
+    }
+    
+    /**
+     * Get course sales count
+     */
+    public function getSalesCountAttribute()
+    {
+        return $this->transactions()
+            ->where('is_paid', true)
+            ->count();
     }
 }

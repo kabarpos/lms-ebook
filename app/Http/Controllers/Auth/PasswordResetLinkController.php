@@ -7,11 +7,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use App\Models\User;
-use App\Services\WhatsappNotificationService;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
 use App\Models\User;
 use App\Services\WhatsappNotificationService;
 use Illuminate\Support\Facades\URL;
@@ -76,7 +74,7 @@ class PasswordResetLinkController extends Controller
             $token = Str::random(64);
             
             // Store token in password_reset_tokens table
-            \DB::table('password_reset_tokens')->updateOrInsert(
+            DB::table('password_reset_tokens')->updateOrInsert(
                 ['email' => $request->email],
                 [
                     'email' => $request->email,
@@ -98,7 +96,8 @@ class PasswordResetLinkController extends Controller
 
             return back()->with('status', 'Link reset password telah dikirim ke WhatsApp Anda.');
         } catch (\Exception $e) {
-            \Log::error('WhatsApp password reset failed: ' . $e->getMessage());
+            Log::error('WhatsApp password reset failed: ' . $e->getMessage());
             return back()->withErrors(['email' => 'Gagal mengirim pesan WhatsApp. Silakan coba lagi atau gunakan reset via email.']);
         }
+    }
 }

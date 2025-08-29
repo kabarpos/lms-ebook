@@ -22,6 +22,12 @@ Sistem notifikasi WhatsApp marketing menggunakan API Dripsender yang terintegras
 - 🎉 Konfirmasi pembayaran diterima admin
 - 🚀 Pemberitahuan akses kursus aktif
 
+### 4. **Notifikasi Pembelian Kursus Individual**
+- 🎆 Konfirmasi pembelian kursus individual
+- 📚 Detail kursus yang dibeli dengan harga
+- 🔗 Link langsung untuk mengakses kursus
+- 🔝 Akses seumur hidup tanpa batasan waktu
+
 ## 🗄️ Database Schema
 
 ### Tables Created
@@ -41,7 +47,7 @@ Sistem notifikasi WhatsApp marketing menggunakan API Dripsender yang terintegras
 ```sql
 - id (bigint, primary key)
 - name (varchar) - Nama template
-- type (varchar) - Tipe: registration_verification, order_completion, payment_received
+- type (varchar) - Tipe: registration_verification, order_completion, payment_received, course_purchase
 - subject (varchar, nullable) - Subject template
 - message (text) - Isi pesan template
 - variables (json, nullable) - Variabel tersedia

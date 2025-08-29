@@ -59,6 +59,15 @@ class CourseResource extends Resource
                     FileUpload::make('thumbnail')
                     ->required()
                     ->image(),
+                    
+                    TextInput::make('price')
+                    ->label('Course Price (Rp)')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->minValue(0)
+                    ->default(0)
+                    ->helperText('Set to 0 for free courses')
+                    ->required(),
 
                 ]),
 
@@ -103,6 +112,22 @@ class CourseResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('category.name'),
+                
+                TextColumn::make('price')
+                    ->label('Price')
+                    ->formatStateUsing(fn ($state) => $state > 0 ? 'Rp ' . number_format($state, 0, '', '.') : 'Free')
+                    ->color(fn ($state) => $state > 0 ? 'primary' : 'success')
+                    ->sortable(),
+                    
+                TextColumn::make('sales_count')
+                    ->label('Sales')
+                    ->getStateUsing(fn (Course $record) => $record->transactions()->where('is_paid', true)->count())
+                    ->sortable(),
+                    
+                TextColumn::make('revenue')
+                    ->label('Revenue')
+                    ->getStateUsing(fn (Course $record) => 'Rp ' . number_format($record->transactions()->where('is_paid', true)->sum('grand_total_amount'), 0, '', '.'))
+                    ->sortable(),
 
                 IconColumn::make('is_popular')
                     ->boolean()
