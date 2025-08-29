@@ -7,8 +7,61 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
+
+// Health Check Endpoint
+Route::get('/health', function () {
+    try {
+        // Check database connection
+        $dbStatus = 'connected';
+        $dbConnection = null;
+        try {
+            $pdo = DB::connection()->getPdo();
+            $dbConnection = DB::connection()->getName();
+        } catch (Exception $e) {
+            $dbStatus = 'disconnected';
+        }
+
+        // Check cache connection
+        $cacheStatus = 'connected';
+        try {
+            Cache::put('health_check', 'test', 10);
+            Cache::get('health_check');
+        } catch (Exception $e) {
+            $cacheStatus = 'disconnected';
+        }
+
+        $overallStatus = ($dbStatus === 'connected' && $cacheStatus === 'connected') ? 'ok' : 'warning';
+
+        return response()->json([
+            'status' => $overallStatus,
+            'timestamp' => now(),
+            'version' => config('app.version', '1.0.0'),
+            'services' => [
+                'database' => [
+                    'status' => $dbStatus,
+                    'connection' => $dbConnection
+                ],
+                'cache' => [
+                    'status' => $cacheStatus,
+                    'driver' => config('cache.default')
+                ]
+            ],
+            'environment' => config('app.env'),
+            'debug_mode' => config('app.debug')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'timestamp' => now(),
+            'error' => $e->getMessage()
+        ], 500);
+    }
+})->name('health.check');
+
 Route::get('/pricing', [FrontController::class, 'pricing'])->name('front.pricing');
 Route::get('/peraturan-layanan', [FrontController::class, 'termsOfService'])->name('front.terms-of-service');
 Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');

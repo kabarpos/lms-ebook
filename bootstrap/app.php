@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         //
         $middleware->trustProxies(at: '*');
+        
+        // Add security headers globally
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        
         $middleware->validateCsrfTokens(except: [
             '/booking/payment/midtrans/notification', // Exclude Midtrans notification route
         ]);
@@ -23,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.subscription' => \App\Http\Middleware\CheckSubscription::class,
             'check.subscription.or.admin' => \App\Http\Middleware\CheckSubscriptionOrAdmin::class,
             'check.course.access' => \App\Http\Middleware\CheckCourseAccess::class,
+            'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

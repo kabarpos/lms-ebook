@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Helpers\ErrorResponse;
+use App\Helpers\SuccessResponse;
 use App\Models\Course;
 use App\Models\MidtransSetting;
 use App\Services\CourseService;
@@ -232,21 +234,16 @@ class FrontController extends Controller
                 'status' => $transactionStatus
             ]);
             
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Notification processed'
-            ]);
+            return SuccessResponse::json(
+                'Notification processed successfully',
+                ['status' => $transactionStatus]
+            );
             
         } catch (Exception $e) {
-            Log::error('Payment notification error', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to process notification'
-            ], 500);
+            return ErrorResponse::serverError(
+                'Failed to process payment notification',
+                $e
+            );
         }
     }
 }

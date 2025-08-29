@@ -58,6 +58,20 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'production' => [
+            'driver' => 'stack',
+            'channels' => ['daily', 'slack'],
+            'ignore_exceptions' => false,
+        ],
+
+        'payment' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/payment.log'),
+            'level' => 'info',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -76,10 +90,23 @@ return [
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => env('LOG_SLACK_USERNAME', 'Laravel Log'),
-            'emoji' => env('LOG_SLACK_EMOJI', ':boom:'),
-            'level' => env('LOG_LEVEL', 'critical'),
+            'username' => env('LOG_SLACK_USERNAME', 'LMS-Ebook Bot'),
+            'emoji' => env('LOG_SLACK_EMOJI', ':warning:'),
+            'level' => env('LOG_SLACK_LEVEL', 'error'),
             'replace_placeholders' => true,
+            'context' => true,
+            'short' => false,
+        ],
+
+        'slack_critical' => [
+            'driver' => 'slack',
+            'url' => env('LOG_SLACK_WEBHOOK_URL'),
+            'username' => 'LMS-Ebook Critical Alert',
+            'emoji' => ':rotating_light:',
+            'level' => 'critical',
+            'replace_placeholders' => true,
+            'context' => true,
+            'short' => false,
         ],
 
         'papertrail' => [
