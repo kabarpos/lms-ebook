@@ -13,7 +13,7 @@
                 <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
                     Home
                 </a>
-                <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
+                <a href="{{ route('front.courses') }}" class="{{ request()->routeIs('front.courses') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
                     Courses
                 </a>
                 <a href="{{ route('front.terms-of-service') }}" class="{{ request()->routeIs('front.terms-of-service') ? 'text-lochmara-600 font-semibold' : 'text-gray-700 hover:text-lochmara-600' }} transition-colors duration-200 cursor-pointer">
@@ -51,7 +51,7 @@
             <a href="{{ route('front.index') }}" class="{{ request()->routeIs('front.index') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
                 Home
             </a>
-            <a href="{{ route('front.pricing') }}" class="{{ request()->routeIs('front.pricing') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
+            <a href="{{ route('front.courses') }}" class="{{ request()->routeIs('front.courses') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">
                 Courses
             </a>
             <a href="{{ route('front.terms-of-service') }}" class="{{ request()->routeIs('front.terms-of-service') ? 'bg-lochmara-50 text-lochmara-600 font-semibold' : 'text-gray-700 hover:bg-gray-50 hover:text-lochmara-600' }} block px-3 py-2 rounded-md text-base transition-colors duration-200 cursor-pointer">

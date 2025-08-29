@@ -41,9 +41,8 @@ class FrontController extends Controller
         return view('front.index', compact('featuredCourses', 'totalStudents', 'totalCourses'));
     }
 
-    public function pricing()
+    public function courses()
     {
-        // Redirect to course browsing instead of subscription packages
         // Get featured courses to display
         $featuredCourses = $this->courseService->getFeaturedCourses(12);
         $allCourses = $this->courseService->getCoursesForPurchase();

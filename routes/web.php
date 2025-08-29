@@ -62,7 +62,7 @@ Route::get('/health', function () {
     }
 })->name('health.check');
 
-Route::get('/pricing', [FrontController::class, 'pricing'])->name('front.pricing');
+Route::get('/courses', [FrontController::class, 'courses'])->name('front.courses'); 
 Route::get('/peraturan-layanan', [FrontController::class, 'termsOfService'])->name('front.terms-of-service');
 Route::get('/course/{course:slug}', [FrontController::class, 'courseDetails'])->name('front.course.details');
 Route::get('/course/{course:slug}/preview/{sectionContent}', [FrontController::class, 'previewContent'])->name('front.course.preview');
