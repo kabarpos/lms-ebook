@@ -6,22 +6,22 @@
     'containerClass' => ''
 ])
 
-<div class="lazy-image-container {{ $containerClass }}" x-data="{ loaded: false, error: false }">
+<div class="lazy-image-container {{ $containerClass }}" x-data="{ loaded: {{ $loading === 'eager' ? 'true' : 'false' }}, error: false }">
     <!-- Placeholder -->
-    <div x-show="!loaded" class="lazy-placeholder bg-gray-200 animate-pulse flex items-center justify-center">
+    <div x-show="!loaded && !error" class="lazy-placeholder bg-gray-200 animate-pulse flex items-center justify-center">
         <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
         </svg>
     </div>
     
     <!-- Image -->
-    <img x-show="loaded"
-         src="{{ $src }}"
+    <img src="{{ $src }}"
          alt="{{ $alt }}"
          loading="{{ $loading }}"
          class="lazy-image {{ $class }}"
+         x-show="loaded || error"
          @load="loaded = true"
-         x-on:error="error = true; loaded = true" />
+         x-on:error="error = true" />
 </div>
 
 @push('styles')
