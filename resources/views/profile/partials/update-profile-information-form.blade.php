@@ -12,9 +12,9 @@
             <div class="flex-shrink-0">
                 <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full overflow-hidden bg-gray-200 mx-auto lg:mx-0">
                     @if($user->photo)
-                        <img src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="Profile Photo">
+                        <img id="profile-photo-preview" src="{{ Storage::url($user->photo) }}" class="w-full h-full object-cover" alt="Profile Photo">
                     @else
-                        <img src="{{ getUserAvatarWithColor($user, 128) }}" class="w-full h-full object-cover" alt="Profile Photo">
+                        <img id="profile-photo-preview" src="{{ getUserAvatarWithColor($user, 128) }}" class="w-full h-full object-cover" alt="Profile Photo">
                     @endif
                 </div>
                 <div class="mt-4 text-center lg:text-left">
@@ -25,7 +25,8 @@
                         </svg>
                         Change Photo
                     </label>
-                    <input id="photo" name="photo" type="file" accept="image/*" class="hidden">
+                    <div id="photo-status" class="mt-2 text-sm hidden"></div>
+                    <input id="photo" name="photo" type="file" accept="image/*" class="hidden" onchange="previewPhoto(event)">
                 </div>
             </div>
             
@@ -139,3 +140,39 @@
         </div>
     </form>
 </section>
+
+<script>
+function previewPhoto(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById('profile-photo-preview');
+    
+    if (file) {
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Please select a valid image file (JPEG, PNG, JPG, or GIF)');
+            event.target.value = '';
+            return;
+        }
+        
+        // Validate file size (2MB max)
+        if (file.size > 2 * 1024 * 1024) {
+            alert('File size must be less than 2MB');
+            event.target.value = '';
+            return;
+        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+        };
+        
+        reader.onerror = function() {
+            alert('Error reading file');
+        };
+        
+        reader.readAsDataURL(file);
+    }
+}
+</script>

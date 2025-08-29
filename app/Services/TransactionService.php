@@ -76,20 +76,7 @@ class TransactionService
         //     ->get();
     }
     
-    /**
-     * Get user's course purchases
-     */
-    public function getUserCoursePurchases()
-    {
-        $user = Auth::user();
-        
-        return Transaction::with('course')
-            ->where('user_id', $user->id)
-            ->whereNotNull('course_id')
-            ->where('is_paid', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
+
     
     /**
      * Check if user has purchased a course

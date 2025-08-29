@@ -164,8 +164,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard/search/courses', [CourseController::class, 'search_courses'])
         ->name('dashboard.search.courses');
         
-        Route::get('/dashboard/purchases', [CourseController::class, 'purchases'])
-        ->name('dashboard.purchases');
+
 
         // Course access routes - per-course purchase model only
         Route::middleware(['check.course.access'])->group(function () {

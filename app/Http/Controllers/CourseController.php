@@ -91,13 +91,5 @@ class CourseController extends Controller
         return view('courses.search', compact('courses', 'keyword'));
     }
 
-    /**
-     * Show user's course purchases
-     */
-    public function purchases()
-    {
-        $purchases = $this->transactionService->getUserCoursePurchases();
-        
-        return view('courses.purchases', compact('purchases'));
-    }
+
 }
