@@ -52,8 +52,8 @@ class TestCourseEmailCommand extends Command
         $mockTransaction->course_id = $course->id;
         $mockTransaction->booking_trx_id = 'TEST-' . time();
         $mockTransaction->sub_total_amount = $course->price;
-        $mockTransaction->total_tax_amount = $course->price * 0.11;
-        $mockTransaction->grand_total_amount = $course->price * 1.11;
+        $mockTransaction->admin_fee_amount = 0;
+        $mockTransaction->grand_total_amount = $course->price;
         $mockTransaction->payment_type = 'Test';
         $mockTransaction->is_paid = true;
         $mockTransaction->started_at = now();

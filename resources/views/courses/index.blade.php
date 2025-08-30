@@ -14,10 +14,10 @@
                 </div>
                 
                 <!-- Course Content -->
-                <div class="flex flex-wrap gap-6 justify-start">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($coursesByCategory as $category => $courses)
                         @foreach($courses as $course)
-                            <div class="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)]">
+                            <div class="w-full">
                                 <x-course-card :course="$course" />
                             </div>
                         @endforeach
@@ -56,10 +56,22 @@
         font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
     }
     
-    /* Responsive flex layout for course cards */
-    @media (max-width: 640px) {
-        .course-card-container {
-            width: 100% !important;
+    /* Responsive grid layout for course cards */
+    .course-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    @media (min-width: 768px) {
+        .course-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .course-grid {
+            grid-template-columns: repeat(3, 1fr);
         }
     }
     </style>

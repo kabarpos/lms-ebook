@@ -16,7 +16,7 @@ class Transaction extends Model
         'course_id', // For per-course purchases
         'sub_total_amount',
         'grand_total_amount',
-        'total_tax_amount',
+        'admin_fee_amount',
         'is_paid',
         'payment_type',
         'proof',

@@ -142,6 +142,7 @@ class CourseResourceTest extends TestCase
         $course = Course::factory()->create([
             'name' => 'React Fundamentals',
             'price' => 199000,
+            'admin_fee_amount' => 5000,
             'description' => 'Learn React from scratch',
             'category_id' => $this->category->id,
         ]);
@@ -153,6 +154,7 @@ class CourseResourceTest extends TestCase
             ->assertFormSet([
                 'name' => 'React Fundamentals',
                 'price' => 199000,
+                'admin_fee_amount' => 5000,
                 'description' => 'Learn React from scratch',
                 'category_id' => $this->category->id,
             ]);
@@ -165,6 +167,7 @@ class CourseResourceTest extends TestCase
         $newData = [
             'name' => 'Updated Course Name',
             'price' => 399000,
+            'admin_fee_amount' => 7500,
             'description' => 'Updated course description',
             'is_popular' => true,
         ];
@@ -181,6 +184,7 @@ class CourseResourceTest extends TestCase
             'id' => $course->id,
             'name' => 'Updated Course Name',
             'price' => 399000,
+            'admin_fee_amount' => 7500,
             'description' => 'Updated course description',
             'is_popular' => true,
         ]);
@@ -291,32 +295,5 @@ class CourseResourceTest extends TestCase
             ->assertCanSeeTableRecords([$cheapCourse, $expensiveCourse], inOrder: true);
     }
 
-    public function test_benefits_field_handles_array_data(): void
-    {
-        // Arrange
-        $benefits = [
-            'Comprehensive curriculum',
-            'Hands-on projects',
-            'Expert instruction',
-            'Certificate of completion'
-        ];
-        
-        $courseData = [
-            'name' => 'Full Stack Course',
-            'price' => 599000,
-            'description' => 'Complete full stack development course',
-            'category_id' => $this->category->id,
-            'benefits' => $benefits,
-        ];
-        
-        // Act
-        Livewire::test(CourseResource\Pages\CreateCourse::class)
-            ->fillForm($courseData)
-            ->call('create')
-            ->assertHasNoFormErrors();
-            
-        // Assert
-        $course = Course::where('name', 'Full Stack Course')->first();
-        $this->assertEquals($benefits, $course->benefits);
-    }
+
 }

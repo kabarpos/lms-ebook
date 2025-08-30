@@ -39,6 +39,8 @@ class CourseFactory extends Factory
             'about' => $this->faker->paragraphs(3, true),
             'is_popular' => $this->faker->boolean(30), // 30% chance to be popular
             'category_id' => Category::factory(),
+            'price' => $this->faker->numberBetween(199000, 499000), // Random price between 199k - 499k
+            'admin_fee_amount' => $this->faker->numberBetween(3000, 10000), // Random admin fee between 3k - 10k
         ];
     }
 

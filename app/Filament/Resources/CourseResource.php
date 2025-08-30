@@ -81,6 +81,15 @@ class CourseResource extends Resource
                     ->helperText('Set to 0 for free courses')
                     ->required(),
 
+                TextInput::make('admin_fee_amount')
+                    ->label('Admin Fee (Rp)')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->minValue(0)
+                    ->default(0)
+                    ->helperText('Admin fee for this course')
+                    ->required(),
+
                 Textarea::make('about')
                     ->required(),
 

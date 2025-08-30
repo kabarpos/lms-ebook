@@ -218,8 +218,7 @@ class TestDatabaseSeeder extends Seeder
             for ($i = 0; $i < $transactionCount; $i++) {
                 $course = $createdCourses[array_rand($createdCourses)];
                 $subtotal = $course->price;
-                $taxAmount = $subtotal * 0.1; // 10% tax
-                $totalAmount = $subtotal + $taxAmount;
+                $totalAmount = $subtotal; // No tax calculation
                 
                 Transaction::firstOrCreate(
                     [
@@ -228,7 +227,6 @@ class TestDatabaseSeeder extends Seeder
                     ],
                     [
                         'subtotal' => $subtotal,
-                        'tax_amount' => $taxAmount,
                         'total_amount' => $totalAmount,
                         'payment_status' => $transactionStatuses[array_rand($transactionStatuses)],
                         'payment_method' => $paymentMethods[array_rand($paymentMethods)],

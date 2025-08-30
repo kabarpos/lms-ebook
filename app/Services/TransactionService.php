@@ -28,21 +28,21 @@ class TransactionService
         $user = Auth::user();
         $alreadyPurchased = $course->isPurchasedByUser($user->id);
 
-        $tax = 0.11;
-        $total_tax_amount = $course->price * $tax;
+        $admin_fee_amount = $course->admin_fee_amount ?? 0;
         $sub_total_amount = $course->price;
-        $grand_total_amount = $sub_total_amount + $total_tax_amount;
+        $grand_total_amount = $sub_total_amount + $admin_fee_amount;
 
         // For course purchases, no subscription dates needed
         $started_at = now();
         $ended_at = null; // Lifetime access
 
-        // Save the selected course ID into the session
+        // Save the selected course ID and admin fee into the session
         session()->put('course_id', $course->id);
+        session()->put('admin_fee_amount', $admin_fee_amount);
         session()->forget('pricing_id'); // Clear any existing pricing session
 
         return compact(
-            'total_tax_amount',
+            'admin_fee_amount',
             'grand_total_amount',
             'sub_total_amount',
             'course',

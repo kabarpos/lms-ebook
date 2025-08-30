@@ -44,15 +44,17 @@
                                         <span class="font-bold text-lg">Rp {{ number_format($course->price, 0, '', '.') }}</span>
                                     </div>
                                     
+                                    @if(isset($admin_fee_amount) && $admin_fee_amount > 0)
                                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                         <div class="flex items-center space-x-2">
                                             <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
                                             </svg>
-                                            <span>PPN 11%</span>
+                                            <span>Biaya Admin</span>
                                         </div>
-                                        <span class="font-semibold">Rp {{ number_format($total_tax_amount, 0, '', '.') }}</span>
+                                        <span class="font-semibold">Rp {{ number_format($admin_fee_amount, 0, '', '.') }}</span>
                                     </div>
+                                    @endif
                                     
                                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                         <div class="flex items-center space-x-2">

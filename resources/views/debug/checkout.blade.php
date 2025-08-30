@@ -67,7 +67,7 @@
                         <h3 class="font-semibold text-green-800 mb-2">✅ Expected (Success)</h3>
                         <ul class="text-green-700 text-sm space-y-1">
                             <li>• Shows checkout form with course details</li>
-                            <li>• Displays course price and tax calculation</li>
+                            <li>• Displays course price and admin fee</li>
                             <li>• Has a "Pay Now" button</li>
                             <li>• Shows user information</li>
                         </ul>

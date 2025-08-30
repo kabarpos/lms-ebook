@@ -140,7 +140,7 @@ class FrontController extends Controller
     /**
      * Course checkout page
      */
-    public function courseCheckout(Course $course)
+    public function courseCheckout(Course $course, Request $request)
     {
         try {
             Log::info('Checkout accessed', ['course_slug' => $course->slug, 'user_id' => Auth::id()]);

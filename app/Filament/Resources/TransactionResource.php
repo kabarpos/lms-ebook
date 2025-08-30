@@ -68,18 +68,18 @@ class TransactionResource extends Resource
                                         ->required()
                                         ->live()
                                         ->afterStateUpdated(function ($state, callable $set) {
-                                            if ($state) {
-                                                $course = Course::find($state);
-                                                $price = $course->price;
-                                                $subTotal = $price;
-                                                $totalPpn = $subTotal * 0.11;
-                                                $totalAmount = $subTotal + $totalPpn;
-
-                                                $set('total_tax_amount', $totalPpn);
-                                                $set('grand_total_amount', $totalAmount);
-                                                $set('sub_total_amount', $price);
-                                            }
-                                        }),
+                            if ($state) {
+                                $course = Course::find($state);
+                                $price = $course->price;
+                                $adminFee = $course->admin_fee_amount ?? 0;
+                                $subTotal = $price;
+                                $grandTotal = $subTotal + $adminFee;
+                                
+                                $set('admin_fee_amount', $adminFee);
+                                $set('grand_total_amount', $grandTotal);
+                                $set('sub_total_amount', $price);
+                            }
+                        }),
                                 ]),
 
                             Grid::make(3)
@@ -90,18 +90,19 @@ class TransactionResource extends Resource
                                     ->prefix('IDR')
                                     ->readOnly(),
 
-                                TextInput::make('total_tax_amount')
+                                TextInput::make('admin_fee_amount')
                                     ->required()
                                     ->numeric()
                                     ->prefix('IDR')
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->helperText('Admin fee dari course'),
 
                                 TextInput::make('grand_total_amount')
                                     ->required()
                                     ->numeric()
                                     ->prefix('IDR')
                                     ->readOnly()
-                                    ->helperText('Harga sudah include PPN 11%'),
+                                    ->helperText('Total dengan biaya admin'),
                             ]),
 
 
@@ -206,8 +207,13 @@ class TransactionResource extends Resource
                 TextColumn::make('course.name')
                     ->label('Course'),
 
+                TextColumn::make('admin_fee_amount')
+                    ->label('Admin Fee')
+                    ->formatStateUsing(fn ($state) => $state > 0 ? 'Rp ' . number_format($state, 0, '', '.') : '-')
+                    ->sortable(),
+
                 TextColumn::make('grand_total_amount')
-                    ->label('Amount')
+                    ->label('Total Amount')
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, '', '.'))
                     ->sortable(),
 

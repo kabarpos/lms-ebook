@@ -32,6 +32,8 @@ class CourseSeeder extends Seeder
                 'about' => 'Master Laravel from beginner to advanced level. Learn to build modern web applications with Laravel framework, including authentication, database design, API development, and deployment.',
                 'is_popular' => true,
                 'category_name' => 'Web Development',
+                'price' => 299000,
+                'admin_fee_amount' => 5000,
             ],
             [
                 'name' => 'React Native Mobile App Development',
@@ -39,6 +41,8 @@ class CourseSeeder extends Seeder
                 'about' => 'Build cross-platform mobile applications with React Native. Learn navigation, state management, API integration, and publishing to app stores.',
                 'is_popular' => true,
                 'category_name' => 'Mobile Development',
+                'price' => 399000,
+                'admin_fee_amount' => 7500,
             ],
             [
                 'name' => 'Python Data Science Bootcamp',
@@ -46,6 +50,8 @@ class CourseSeeder extends Seeder
                 'about' => 'Complete data science course covering Python, pandas, numpy, matplotlib, machine learning algorithms, and real-world projects.',
                 'is_popular' => false,
                 'category_name' => 'Data Science',
+                'price' => 349000,
+                'admin_fee_amount' => 6000,
             ],
             [
                 'name' => 'Modern UI/UX Design Fundamentals',
@@ -53,6 +59,8 @@ class CourseSeeder extends Seeder
                 'about' => 'Learn design principles, user research, wireframing, prototyping, and design systems. Master Figma and Adobe XD.',
                 'is_popular' => true,
                 'category_name' => 'UI/UX Design',
+                'price' => 249000,
+                'admin_fee_amount' => 4500,
             ],
             [
                 'name' => 'Digital Marketing Strategy Mastery',
@@ -60,6 +68,8 @@ class CourseSeeder extends Seeder
                 'about' => 'Complete digital marketing course covering SEO, SEM, social media marketing, content marketing, and analytics.',
                 'is_popular' => false,
                 'category_name' => 'Digital Marketing',
+                'price' => 199000,
+                'admin_fee_amount' => 3500,
             ],
         ];
 
@@ -74,6 +84,8 @@ class CourseSeeder extends Seeder
                 'about' => $courseData['about'],
                 'is_popular' => $courseData['is_popular'],
                 'category_id' => $category->id,
+                'price' => $courseData['price'],
+                'admin_fee_amount' => $courseData['admin_fee_amount'],
             ]);
 
             // Create course benefits (3-5 benefits per course)

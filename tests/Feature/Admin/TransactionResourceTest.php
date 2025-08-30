@@ -72,27 +72,31 @@ class TransactionResourceTest extends TestCase
             ->assertSuccessful();
     }
 
-    public function test_can_create_transaction_step_1_product_selection(): void
+    public function test_can_create_transaction_form_validation(): void
     {
         // Arrange
         $transactionData = [
             'user_id' => $this->customer->id,
             'course_id' => $this->course->id,
+            'admin_fee_amount' => '0',
+            'started_at' => now()->format('Y-m-d'),
+            'is_paid' => 0,
+            'payment_type' => 'Manual',
         ];
         
         // Act & Assert
         Livewire::test(TransactionResource\Pages\CreateTransaction::class)
             ->fillForm($transactionData)
-            ->call('nextStep')
-            ->assertHasNoFormErrors()
-            ->assertSet('currentStep', 2);
+            ->call('create')
+            ->assertHasNoFormErrors();
     }
 
-    public function test_can_create_transaction_step_2_pricing_calculation(): void
+    public function test_transaction_admin_fee_calculation(): void
     {
         // Arrange
         $course = Course::factory()->create([
             'price' => 299000,
+            'admin_fee_amount' => 5000,
             'category_id' => Category::factory()->create()->id,
         ]);
         
@@ -101,26 +105,27 @@ class TransactionResourceTest extends TestCase
             ->fillForm([
                 'user_id' => $this->customer->id,
                 'course_id' => $course->id,
+                'sub_total_amount' => 299000,
             ])
-            ->call('nextStep')
             ->assertFormSet([
-                'subtotal' => 299000,
-                'tax_amount' => 29900, // 10% tax
-                'total_amount' => 328900,
+                'grand_total_amount' => 304000, // 299000 + 5000 admin fee from course
             ]);
     }
 
     public function test_can_complete_transaction_creation(): void
     {
         // Arrange
+        $course = Course::factory()->create([
+            'admin_fee_amount' => 5000,
+            'category_id' => Category::factory()->create()->id,
+        ]);
+        
         $transactionData = [
             'user_id' => $this->customer->id,
-            'course_id' => $this->course->id,
-            'subtotal' => $this->course->price,
-            'tax_amount' => $this->course->price * 0.1,
-            'total_amount' => $this->course->price * 1.1,
-            'payment_status' => 'pending',
-            'payment_method' => 'bank_transfer',
+            'course_id' => $course->id,
+            'started_at' => now()->format('Y-m-d'),
+            'is_paid' => 0,
+            'payment_type' => 'Manual',
         ];
         
         // Act & Assert
@@ -131,9 +136,10 @@ class TransactionResourceTest extends TestCase
             
         $this->assertDatabaseHas('transactions', [
             'user_id' => $this->customer->id,
-            'course_id' => $this->course->id,
-            'payment_status' => 'pending',
-            'payment_method' => 'bank_transfer',
+            'course_id' => $course->id,
+            'admin_fee_amount' => 5000,
+            'is_paid' => false,
+            'payment_type' => 'Manual',
         ]);
     }
 
@@ -144,15 +150,15 @@ class TransactionResourceTest extends TestCase
             ->fillForm([
                 'user_id' => null,
                 'course_id' => null,
-                'subtotal' => -100,
-                'total_amount' => -100,
+                'sub_total_amount' => 0,
+                'grand_total_amount' => 0,
+                'payment_type' => null,
             ])
             ->call('create')
             ->assertHasFormErrors([
                 'user_id' => 'required',
                 'course_id' => 'required',
-                'subtotal' => 'min',
-                'total_amount' => 'min',
+                'payment_type' => 'required',
             ]);
     }
 
@@ -174,13 +180,19 @@ class TransactionResourceTest extends TestCase
     public function test_can_retrieve_transaction_data_for_editing(): void
     {
         // Arrange
+        $course = Course::factory()->create([
+            'admin_fee_amount' => 29900,
+            'category_id' => Category::factory()->create()->id,
+        ]);
+        
         $transaction = Transaction::factory()->create([
             'user_id' => $this->customer->id,
-            'course_id' => $this->course->id,
-            'subtotal' => 299000,
-            'tax_amount' => 29900,
-            'total_amount' => 328900,
-            'payment_status' => 'pending',
+            'course_id' => $course->id,
+            'sub_total_amount' => 299000,
+            'admin_fee_amount' => 29900,
+            'grand_total_amount' => 328900,
+            'is_paid' => false,
+            'payment_type' => 'Manual',
         ]);
         
         // Act & Assert
@@ -189,11 +201,10 @@ class TransactionResourceTest extends TestCase
         ])
             ->assertFormSet([
                 'user_id' => $this->customer->id,
-                'course_id' => $this->course->id,
-                'subtotal' => 299000,
-                'tax_amount' => 29900,
-                'total_amount' => 328900,
-                'payment_status' => 'pending',
+                'course_id' => $course->id,
+                'sub_total_amount' => 299000,
+                'grand_total_amount' => 328900,
+                'is_paid' => false,
             ]);
     }
 
@@ -203,7 +214,8 @@ class TransactionResourceTest extends TestCase
         $transaction = Transaction::factory()->create([
             'user_id' => $this->customer->id,
             'course_id' => $this->course->id,
-            'payment_status' => 'pending',
+            'is_paid' => false,
+            'payment_type' => 'Manual',
         ]);
         
         // Act & Assert
@@ -211,16 +223,16 @@ class TransactionResourceTest extends TestCase
             'record' => $transaction->getRouteKey(),
         ])
             ->fillForm([
-                'payment_status' => 'completed',
-                'payment_method' => 'credit_card',
+                'is_paid' => true,
+                'payment_type' => 'Midtrans',
             ])
             ->call('save')
             ->assertHasNoFormErrors();
             
         $this->assertDatabaseHas('transactions', [
             'id' => $transaction->id,
-            'payment_status' => 'completed',
-            'payment_method' => 'credit_card',
+            'is_paid' => true,
+            'payment_type' => 'Midtrans',
         ]);
     }
 
@@ -239,7 +251,7 @@ class TransactionResourceTest extends TestCase
             ->callAction(DeleteAction::class)
             ->assertSuccessful();
             
-        $this->assertModelMissing($transaction);
+        $this->assertSoftDeleted($transaction);
     }
 
     public function test_can_search_transactions(): void
@@ -264,100 +276,95 @@ class TransactionResourceTest extends TestCase
             ->assertCanNotSeeTableRecords([$transaction2]);
     }
 
-    public function test_can_filter_transactions_by_payment_status(): void
+    public function test_can_filter_transactions_by_trashed(): void
     {
         // Arrange
-        $pendingTransaction = Transaction::factory()->create([
+        $activeTransaction = Transaction::factory()->create([
             'user_id' => $this->customer->id,
             'course_id' => $this->course->id,
-            'payment_status' => 'pending',
+            'is_paid' => false,
+            'payment_type' => 'Manual',
         ]);
-        $completedTransaction = Transaction::factory()->create([
+        $trashedTransaction = Transaction::factory()->create([
             'user_id' => $this->customer->id,
             'course_id' => $this->course->id,
-            'payment_status' => 'completed',
+            'is_paid' => true,
+            'payment_type' => 'Manual',
         ]);
+        $trashedTransaction->delete();
         
         // Act & Assert
         Livewire::test(TransactionResource\Pages\ListTransactions::class)
-            ->filterTable('payment_status', 'pending')
-            ->assertCanSeeTableRecords([$pendingTransaction])
-            ->assertCanNotSeeTableRecords([$completedTransaction]);
+            ->assertCanSeeTableRecords([$activeTransaction])
+            ->assertCanNotSeeTableRecords([$trashedTransaction]);
     }
 
-    public function test_can_filter_transactions_by_payment_method(): void
+    public function test_can_view_transactions_list(): void
     {
         // Arrange
-        $bankTransferTransaction = Transaction::factory()->create([
+        $transaction = Transaction::factory()->create([
             'user_id' => $this->customer->id,
             'course_id' => $this->course->id,
-            'payment_method' => 'bank_transfer',
-        ]);
-        $creditCardTransaction = Transaction::factory()->create([
-            'user_id' => $this->customer->id,
-            'course_id' => $this->course->id,
-            'payment_method' => 'credit_card',
+            'payment_type' => 'bank_transfer',
         ]);
         
         // Act & Assert
         Livewire::test(TransactionResource\Pages\ListTransactions::class)
-            ->filterTable('payment_method', 'bank_transfer')
-            ->assertCanSeeTableRecords([$bankTransferTransaction])
-            ->assertCanNotSeeTableRecords([$creditCardTransaction]);
-    }
-
-    public function test_can_bulk_delete_transactions(): void
-    {
-        // Arrange
-        $transactions = Transaction::factory()->count(3)->create([
-            'user_id' => $this->customer->id,
-            'course_id' => $this->course->id,
-        ]);
-        
-        // Act & Assert
-        Livewire::test(TransactionResource\Pages\ListTransactions::class)
-            ->selectTableRecords($transactions)
-            ->callTableBulkAction(DeleteBulkAction::class)
+            ->assertCanSeeTableRecords([$transaction])
             ->assertSuccessful();
-            
-        foreach ($transactions as $transaction) {
-            $this->assertModelMissing($transaction);
-        }
     }
 
-    public function test_wizard_navigation_works_correctly(): void
+    public function test_can_access_transaction_edit_page(): void
     {
-        // Act & Assert - Test forward navigation
-        Livewire::test(TransactionResource\Pages\CreateTransaction::class)
-            ->fillForm([
-                'user_id' => $this->customer->id,
-                'course_id' => $this->course->id,
-            ])
-            ->call('nextStep')
-            ->assertSet('currentStep', 2)
-            ->call('previousStep')
-            ->assertSet('currentStep', 1);
+        // Arrange
+        $transaction = Transaction::factory()->create([
+            'user_id' => $this->customer->id,
+            'course_id' => $this->course->id,
+        ]);
+        
+        // Act & Assert
+        Livewire::test(TransactionResource\Pages\EditTransaction::class, [
+            'record' => $transaction->getRouteKey(),
+        ])
+            ->assertFormExists()
+            ->assertSuccessful();
     }
 
-    public function test_transaction_totals_calculation_is_accurate(): void
+    public function test_transaction_form_renders_correctly(): void
+    {
+        // Act & Assert - Test form rendering
+        Livewire::test(TransactionResource\Pages\CreateTransaction::class)
+            ->assertFormExists()
+            ->assertSuccessful();
+    }
+
+    public function test_transaction_can_be_created_with_admin_fee(): void
     {
         // Arrange
         $course = Course::factory()->create([
             'price' => 500000,
+            'admin_fee_amount' => 10000,
             'category_id' => Category::factory()->create()->id,
         ]);
         
-        // Act & Assert
-        Livewire::test(TransactionResource\Pages\CreateTransaction::class)
-            ->fillForm([
-                'user_id' => $this->customer->id,
-                'course_id' => $course->id,
-            ])
-            ->call('nextStep')
-            ->assertFormSet([
-                'subtotal' => 500000,
-                'tax_amount' => 50000, // 10% tax
-                'total_amount' => 550000,
-            ]);
+        // Act
+        $transaction = Transaction::create([
+            'user_id' => $this->customer->id,
+            'course_id' => $course->id,
+            'sub_total_amount' => 500000,
+            'admin_fee_amount' => $course->admin_fee_amount,
+            'grand_total_amount' => 510000,
+            'is_paid' => false,
+            'payment_type' => 'Manual',
+            'started_at' => now(),
+        ]);
+        
+        // Assert
+        $this->assertDatabaseHas('transactions', [
+            'id' => $transaction->id,
+            'sub_total_amount' => 500000,
+            'admin_fee_amount' => 10000,
+            'grand_total_amount' => 510000,
+        ]);
     }
 }

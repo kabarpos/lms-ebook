@@ -39,10 +39,9 @@ class PaymentService
     {
         $user = Auth::user();
         $course = Course::findOrFail($courseId);
-
-        $tax = 0.11;
-        $totalTax = $course->price * $tax;
-        $grandTotal = $course->price + $totalTax;
+        
+        $adminFeeAmount = $course->admin_fee_amount ?? 0;
+        $grandTotal = $course->price + $adminFeeAmount;
 
         $params = [
             'transaction_details' => [
@@ -54,23 +53,24 @@ class PaymentService
                 'email' => $user->email,
                 'phone' => $user->whatsapp_number ?? '089998501293218'
             ],
-            'item_details' => [
+            'item_details' => array_filter([
                 [
                     'id' => $course->id,
                     'price' => (int) $course->price,
                     'quantity' => 1,
                     'name' => $course->name,
                 ],
-                [
-                    'id' => 'tax',
-                    'price' => (int) $totalTax,
+                $adminFeeAmount > 0 ? [
+                    'id' => 'admin_fee',
+                    'price' => (int) $adminFeeAmount,
                     'quantity' => 1,
-                    'name' => 'PPN 11%',
-                ],
-            ],
+                    'name' => 'Biaya Admin',
+                ] : null,
+            ]),
             'custom_field1' => $user->id,
             'custom_field2' => $courseId,
             'custom_field3' => 'course', // Mark as course purchase
+            'custom_expiry' => json_encode(['admin_fee_amount' => $adminFeeAmount])
         ];
 
         return $this->midtransService->createSnapToken($params);
@@ -112,12 +112,15 @@ class PaymentService
     {
         Log::info('Creating course transaction with data:', $notification);
         
+        // Get admin fee amount from course model
+        $adminFeeAmount = $course->admin_fee_amount ?? 0;
+        
         $transactionData = [
             'user_id' => $notification['custom_field1'],
             'pricing_id' => null, // No pricing for course purchase
             'course_id' => $notification['custom_field2'],
             'sub_total_amount' => $course->price,
-            'total_tax_amount' => $course->price * 0.11,
+            'admin_fee_amount' => $adminFeeAmount,
             'grand_total_amount' => $notification['gross_amount'],
             'payment_type' => 'Midtrans',
             'is_paid' => true,

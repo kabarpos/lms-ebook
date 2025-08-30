@@ -23,9 +23,8 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         $subTotal = $this->faker->numberBetween(99000, 799000);
-        $taxRate = 0.11; // 11% PPN
-        $taxAmount = (int) ($subTotal * $taxRate);
-        $grandTotal = $subTotal + $taxAmount;
+        $adminFee = $this->faker->numberBetween(5000, 25000); // Manual admin fee
+        $grandTotal = $subTotal + $adminFee;
 
         $startDate = $this->faker->dateTimeBetween('-6 months', 'now');
         $pricingDuration = $this->faker->randomElement([1, 3, 6, 12]); // months
@@ -36,10 +35,10 @@ class TransactionFactory extends Factory
             'user_id' => User::factory(),
             'course_id' => Course::factory(),
             'sub_total_amount' => $subTotal,
+            'admin_fee_amount' => $adminFee,
             'grand_total_amount' => $grandTotal,
-            'total_tax_amount' => $taxAmount,
             'is_paid' => $this->faker->boolean(80), // 80% chance to be paid
-            'payment_type' => $this->faker->randomElement(['credit_card', 'bank_transfer', 'e_wallet', 'cash']),
+            'payment_type' => $this->faker->randomElement(['Manual', 'Midtrans']),
             'proof' => $this->faker->boolean(70) ? 'https://via.placeholder.com/400x600/22c55e/ffffff?text=Payment+Proof' : null,
             'started_at' => $startDate,
             'ended_at' => $endDate,

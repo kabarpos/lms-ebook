@@ -22,6 +22,7 @@ class Course extends Model
         'is_popular',
         'category_id',
         'price',
+        'admin_fee_amount',
     ];
 
     public function setNameAttribute($value)

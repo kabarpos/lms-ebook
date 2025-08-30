@@ -93,9 +93,7 @@ class TransactionSeeder extends Seeder
             $course = $courses->random();
 
             $subTotal = $course->price;
-            $taxRate = 0.11; // 11% PPN
-            $taxAmount = (int) ($subTotal * $taxRate);
-            $grandTotal = $subTotal + $taxAmount;
+            $grandTotal = $subTotal; // No tax calculation
 
             $startDate = $transactionData['started_at'];
             $endDate = $transactionData['is_paid'] ? (clone $startDate)->addYear() : null;
@@ -106,7 +104,7 @@ class TransactionSeeder extends Seeder
                 'course_id' => $course->id,
                 'sub_total_amount' => $subTotal,
                 'grand_total_amount' => $grandTotal,
-                'total_tax_amount' => $taxAmount,
+                'admin_fee_amount' => 0,
                 'is_paid' => $transactionData['is_paid'],
                 'payment_type' => $transactionData['payment_type'],
                 'proof' => $transactionData['proof'],
