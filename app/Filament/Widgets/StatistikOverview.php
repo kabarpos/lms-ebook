@@ -24,7 +24,6 @@ class StatistikOverview extends BaseWidget
         return [
             Stat::make('Total Pengguna', number_format($totalUsers))
                 ->description('Jumlah pengguna terdaftar')
-                ->descriptionIcon('heroicon-m-users')
                 ->color('primary')
                 ->extraAttributes([
                     'class' => 'cursor-pointer',
@@ -32,7 +31,6 @@ class StatistikOverview extends BaseWidget
             
             Stat::make('Total Kursus', number_format($totalCourses))
                 ->description('Jumlah kursus tersedia')
-                ->descriptionIcon('heroicon-m-academic-cap')
                 ->color('success')
                 ->extraAttributes([
                     'class' => 'cursor-pointer',
@@ -40,7 +38,6 @@ class StatistikOverview extends BaseWidget
             
             Stat::make('Total Kategori', number_format($totalCategories))
                 ->description('Jumlah kategori kursus')
-                ->descriptionIcon('heroicon-m-tag')
                 ->color('warning')
                 ->extraAttributes([
                     'class' => 'cursor-pointer',
@@ -48,7 +45,6 @@ class StatistikOverview extends BaseWidget
             
             Stat::make('Total Transaksi', number_format($totalTransactions))
                 ->description('Jumlah transaksi')
-                ->descriptionIcon('heroicon-m-credit-card')
                 ->color('info')
                 ->extraAttributes([
                     'class' => 'cursor-pointer',

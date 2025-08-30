@@ -44,20 +44,20 @@ class AdminPanelProvider extends PanelProvider
                 Data::class,
             ])
             ->navigationGroups([
-                NavigationGroup::make('General')
+                'General' => NavigationGroup::make()
                     ->label('Umum')
                     ->icon('heroicon-o-home')
                     ->collapsed(false),
-                NavigationGroup::make('Products')
+                'Products' => NavigationGroup::make()
                     ->label('Produk')
                     ->icon('heroicon-o-cube')
                     ->collapsed(false),
-                NavigationGroup::make('Customers')
+                'Customers' => NavigationGroup::make()
                     ->label('Pelanggan')
                     ->icon('heroicon-o-users')
                     ->collapsed(false),
-                NavigationGroup::make('System')
-                    ->label('System')
+                'System' => NavigationGroup::make()
+                    ->label('Sistem')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->collapsed(false),
             ])

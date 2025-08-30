@@ -7,7 +7,7 @@ use App\Filament\Widgets\StatistikOverview;
 
 class Statistik extends Dashboard
 {
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chart-bar';
+    protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static \UnitEnum | string | null $navigationGroup = 'General';
 
@@ -16,7 +16,12 @@ class Statistik extends Dashboard
     protected static ?string $title = 'Statistik';
 
     protected static ?string $navigationLabel = 'Statistik';
-    
+
+    public static function getNavigationIcon(): string | \BackedEnum | \Illuminate\Contracts\Support\Htmlable | null
+    {
+        return null;
+    }
+
     public static function getSlug(?\Filament\Panel $panel = null): string
     {
         return 'statistics';

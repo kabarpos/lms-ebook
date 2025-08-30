@@ -39,7 +39,7 @@ class WhatsappMessageTemplateResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Template Pesan WhatsApp';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
+    protected static string | \UnitEnum | null $navigationGroup = 'System';
     
     protected static ?int $navigationSort = 3;
 
