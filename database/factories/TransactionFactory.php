@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Pricing;
+use App\Models\Course;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -34,7 +34,7 @@ class TransactionFactory extends Factory
         return [
             'booking_trx_id' => 'TRX' . strtoupper(Str::random(8)),
             'user_id' => User::factory(),
-            'pricing_id' => Pricing::factory(),
+            'course_id' => Course::factory(),
             'sub_total_amount' => $subTotal,
             'grand_total_amount' => $grandTotal,
             'total_tax_amount' => $taxAmount,

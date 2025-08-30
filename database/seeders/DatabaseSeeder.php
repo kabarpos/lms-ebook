@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             
             // Master data
             CategorySeeder::class,
-            PricingSeeder::class,
+            WhatsappSettingSeeder::class,
             
             // Users (instructors and students)
             UserSeeder::class,

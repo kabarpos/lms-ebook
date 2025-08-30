@@ -60,7 +60,7 @@ class TransactionObserver
         if ($transaction->isDirty('is_paid') && $transaction->is_paid) {
             try {
                 $whatsappService = app(WhatsappNotificationService::class);
-                $result = $whatsappService->sendPaymentReceived($transaction);
+                $result = $whatsappService->sendPaymentReceivedNotification($transaction);
                 
                 if ($result['success']) {
                     Log::info('Payment received WhatsApp notification sent', [

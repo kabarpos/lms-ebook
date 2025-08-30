@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // pricing_id column was already removed in a previous migration
-        // This migration is just for consistency and rollback capability
+        Schema::table('transactions', function (Blueprint $table) {
+            // Drop foreign key constraint if it exists
+            $table->dropForeign(['pricing_id']);
+            // Drop the pricing_id column if it exists
+            $table->dropColumn('pricing_id');
+        });
     }
 
     /**

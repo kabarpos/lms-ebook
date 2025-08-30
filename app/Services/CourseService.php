@@ -123,9 +123,12 @@ class CourseService
             'prevContent' => $prevContent,
             'isFinished' => !$nextContent,
             'currentProgress' => $progressPercentage,
+            'progressPercentage' => $progressPercentage,
             'totalLessons' => $totalLessons,
             'completedLessons' => $completedLessons,
+            'completedLessonsCount' => $completedLessonsCount,
             'isCompleted' => $isCurrentCompleted,
+            'isCurrentCompleted' => $isCurrentCompleted,
             'userProgress' => $userProgress
         ];
     }

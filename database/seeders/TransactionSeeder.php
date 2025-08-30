@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Pricing;
+use App\Models\Course;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -17,7 +17,7 @@ class TransactionSeeder extends Seeder
     public function run(): void
     {
         $students = User::role('student')->get();
-        $pricings = Pricing::all();
+        $courses = Course::all();
 
         // Create 8 transactions with different statuses
         $transactionsData = [
@@ -88,26 +88,22 @@ class TransactionSeeder extends Seeder
         ];
 
         foreach ($transactionsData as $transactionData) {
-            // Get random student and pricing based on duration
+            // Get random student and course
             $randomStudent = $students->random();
-            $pricing = $pricings->where('duration', $transactionData['pricing_duration'])->first();
-            
-            if (!$pricing) {
-                $pricing = $pricings->random();
-            }
+            $course = $courses->random();
 
-            $subTotal = $pricing->price;
+            $subTotal = $course->price;
             $taxRate = 0.11; // 11% PPN
             $taxAmount = (int) ($subTotal * $taxRate);
             $grandTotal = $subTotal + $taxAmount;
 
             $startDate = $transactionData['started_at'];
-            $endDate = (clone $startDate)->modify("+{$pricing->duration} months");
+            $endDate = $transactionData['is_paid'] ? (clone $startDate)->addYear() : null;
 
             Transaction::create([
                 'booking_trx_id' => $transactionData['booking_trx_id'],
                 'user_id' => $randomStudent->id,
-                'pricing_id' => $pricing->id,
+                'course_id' => $course->id,
                 'sub_total_amount' => $subTotal,
                 'grand_total_amount' => $grandTotal,
                 'total_tax_amount' => $taxAmount,

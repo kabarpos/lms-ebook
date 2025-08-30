@@ -27,6 +27,8 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'whatsapp_verified_at' => now(),
+            'is_account_active' => true,
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'photo' => fake()->optional(0.3)->randomElement([
@@ -46,5 +48,18 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (\App\Models\User $user) {
+            // Assign student role by default for testing
+            if (\Spatie\Permission\Models\Role::where('name', 'student')->exists()) {
+                $user->assignRole('student');
+            }
+        });
     }
 }

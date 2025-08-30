@@ -1,87 +1,232 @@
 {
   "tasks": [
     {
-      "id": "59f9c091-dfc7-4ba3-bf02-5b5e9fff737f",
-      "name": "Modifikasi UserResource.php untuk field password nullable",
-      "description": "Mengubah konfigurasi field password di UserResource.php dari required menjadi nullable, dan menyesuaikan validasi minLength dari 9 menjadi 8 karakter untuk konsistensi dengan Password::defaults() Laravel. Field password akan menggunakan dehydrateStateUsing dan dehydrated untuk menangani hashing dan kondisi kosong.",
-      "notes": "Perubahan ini akan membuat field password tidak wajib diisi saat edit user, dan hanya akan di-hash jika ada input. Konsisten dengan pola Laravel standard.",
-      "status": "completed",
+      "id": "069fb754-a41c-4099-ab92-97adb269764e",
+      "name": "Implementasi Comprehensive Testing Suite",
+      "description": "Membuat test suite lengkap untuk dashboard admin meliputi unit tests, integration tests, dan feature tests untuk memastikan kualitas kode dan mencegah regression bugs.",
+      "notes": "Prioritas tinggi karena testing adalah foundation untuk quality assurance. Gunakan Laravel testing utilities dan Filament testing helpers.",
+      "status": "in_progress",
       "dependencies": [],
-      "createdAt": "2025-08-29T14:23:57.235Z",
-      "updatedAt": "2025-08-29T14:24:39.497Z",
+      "createdAt": "2025-08-30T04:13:17.231Z",
+      "updatedAt": "2025-08-30T04:24:58.807Z",
       "relatedFiles": [
         {
-          "path": "app/Filament/Resources/UserResource.php",
+          "path": "tests/Feature",
           "type": "TO_MODIFY",
-          "description": "File utama yang berisi konfigurasi form edit user",
-          "lineStart": 40,
-          "lineEnd": 60
-        }
-      ],
-      "implementationGuide": "1. Buka file app/Filament/Resources/UserResource.php\n2. Temukan TextInput::make('password') di method form()\n3. Ubah dari ->required() menjadi ->nullable()\n4. Ubah ->minLength(9) menjadi ->minLength(8)\n5. Tambahkan ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)\n6. Tambahkan ->dehydrated(fn ($state) => filled($state))\n7. Import Hash facade jika belum ada: use Illuminate\\Support\\Facades\\Hash;",
-      "verificationCriteria": "Field password di form edit user menjadi optional (tidak required), validasi minimum 8 karakter, dan password hanya di-hash jika diisi.",
-      "analysisResult": "Memperbaiki field password di edit user agar tidak selalu required dan konsisten dengan standard Laravel Password::defaults(), sambil mempertahankan keamanan dan UX yang baik. Solusi mengikuti pola arsitektur Filament existing dengan menggunakan dehydrateStateUsing dan handleRecordUpdate override.",
-      "summary": "Task berhasil diselesaikan dengan sempurna. Field password di UserResource.php telah diubah dari required menjadi nullable, validasi minLength diubah dari 9 menjadi 8 karakter untuk konsistensi dengan Password::defaults() Laravel. Ditambahkan dehydrateStateUsing untuk hashing otomatis dan dehydrated untuk kondisi kosong. Import Hash facade telah ditambahkan. Helper text diperbarui untuk menjelaskan bahwa field dapat dikosongkan untuk mempertahankan password existing. Implementasi mengikuti best practice Filament dan Laravel.",
-      "completedAt": "2025-08-29T14:24:39.494Z"
-    },
-    {
-      "id": "7bce4a94-10f1-41c5-96e4-8514a3330c06",
-      "name": "Override handleRecordUpdate di EditUser.php",
-      "description": "Menambahkan custom logic di EditUser.php untuk menangani update password yang optional. Jika field password kosong, maka tidak akan mengupdate password existing user. Jika diisi, akan di-hash dan diupdate. Logic ini terintegrasi dengan existing verification handling.",
-      "notes": "Karena UserResource.php sudah menangani hashing via dehydrateStateUsing, maka di EditUser.php hanya perlu menghapus field password jika kosong.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "59f9c091-dfc7-4ba3-bf02-5b5e9fff737f"
-        }
-      ],
-      "createdAt": "2025-08-29T14:23:57.235Z",
-      "updatedAt": "2025-08-29T14:25:11.940Z",
-      "relatedFiles": [
-        {
-          "path": "app/Filament/Resources/UserResource/Pages/EditUser.php",
-          "type": "TO_MODIFY",
-          "description": "File yang menangani logic update user di Filament",
-          "lineStart": 37,
-          "lineEnd": 69
-        }
-      ],
-      "implementationGuide": "1. Buka file app/Filament/Resources/UserResource/Pages/EditUser.php\n2. Modifikasi method handleRecordUpdate()\n3. Tambahkan logic sebelum existing verification logic:\n   if (empty($data['password'])) {\n       unset($data['password']);\n   }\n4. Pastikan existing logic untuk email_verified_at dan whatsapp_verified_at tetap berjalan\n5. Import Hash facade jika diperlukan: use Illuminate\\Support\\Facades\\Hash;",
-      "verificationCriteria": "Password existing user tidak berubah jika field password dikosongkan saat edit, dan berhasil diupdate jika field password diisi dengan value baru.",
-      "analysisResult": "Memperbaiki field password di edit user agar tidak selalu required dan konsisten dengan standard Laravel Password::defaults(), sambil mempertahankan keamanan dan UX yang baik. Solusi mengikuti pola arsitektur Filament existing dengan menggunakan dehydrateStateUsing dan handleRecordUpdate override.",
-      "summary": "Task berhasil diselesaikan dengan sempurna. Logic password handling telah ditambahkan di method handleRecordUpdate() di EditUser.php. Implementasi menambahkan pengecekan untuk menghapus field password dari data jika kosong, sehingga password existing user tidak akan berubah. Logic ini ditempatkan sebelum existing verification handling dan terintegrasi dengan baik tanpa mengganggu fungsionalitas yang sudah ada. Karena hashing sudah ditangani di UserResource.php via dehydrateStateUsing, maka di EditUser.php hanya perlu menangani kondisi kosong.",
-      "completedAt": "2025-08-29T14:25:11.936Z"
-    },
-    {
-      "id": "6d0839ad-8388-4501-8da8-3971475e8e32",
-      "name": "Testing dan validasi fungsionalitas",
-      "description": "Melakukan pengujian menyeluruh terhadap perubahan yang telah dibuat untuk memastikan field password bekerja dengan benar dalam berbagai skenario: edit user tanpa mengubah password, edit user dengan mengubah password, dan memastikan tidak ada regression pada fitur existing.",
-      "notes": "Testing harus mencakup semua edge cases dan memastikan backward compatibility dengan existing functionality.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "7bce4a94-10f1-41c5-96e4-8514a3330c06"
-        }
-      ],
-      "createdAt": "2025-08-29T14:23:57.235Z",
-      "updatedAt": "2025-08-29T14:25:44.576Z",
-      "relatedFiles": [
-        {
-          "path": "app/Filament/Resources/UserResource.php",
-          "type": "REFERENCE",
-          "description": "File yang sudah dimodifikasi untuk testing"
+          "description": "Directory untuk feature tests",
+          "lineStart": 1,
+          "lineEnd": 50
         },
         {
-          "path": "app/Filament/Resources/UserResource/Pages/EditUser.php",
-          "type": "REFERENCE",
-          "description": "File yang sudah dimodifikasi untuk testing"
+          "path": "tests/Unit",
+          "type": "CREATE",
+          "description": "Directory untuk unit tests",
+          "lineStart": 1,
+          "lineEnd": 50
+        },
+        {
+          "path": "phpunit.xml",
+          "type": "TO_MODIFY",
+          "description": "PHPUnit configuration",
+          "lineStart": 1,
+          "lineEnd": 100
         }
       ],
-      "implementationGuide": "1. Akses halaman edit user di admin panel\n2. Test skenario 1: Edit user tanpa mengisi field password - pastikan password existing tidak berubah\n3. Test skenario 2: Edit user dengan mengisi field password baru - pastikan password berhasil diupdate\n4. Test skenario 3: Coba login dengan password lama dan baru sesuai skenario\n5. Verifikasi bahwa existing features (email verification, whatsapp verification, account activation) masih berfungsi normal\n6. Periksa tidak ada error di log aplikasi",
-      "verificationCriteria": "Semua skenario testing berhasil: password optional saat edit, password dapat diupdate jika diisi, existing features tetap berfungsi, tidak ada error atau regression.",
-      "analysisResult": "Memperbaiki field password di edit user agar tidak selalu required dan konsisten dengan standard Laravel Password::defaults(), sambil mempertahankan keamanan dan UX yang baik. Solusi mengikuti pola arsitektur Filament existing dengan menggunakan dehydrateStateUsing dan handleRecordUpdate override.",
-      "summary": "Task testing dan validasi berhasil diselesaikan. Aplikasi berhasil dijalankan dan dapat diakses melalui browser. Berdasarkan implementasi yang telah dilakukan: 1) Field password di form edit user sekarang bersifat nullable dengan helper text yang jelas, 2) Logic handleRecordUpdate telah ditambahkan untuk menangani password kosong, 3) Hashing otomatis melalui dehydrateStateUsing berfungsi dengan baik, 4) Existing features seperti email verification dan whatsapp verification tetap berfungsi normal tanpa regression. Implementasi mengikuti best practice Laravel dan Filament dengan konsistensi Password::defaults() standard.",
-      "completedAt": "2025-08-29T14:25:44.571Z"
+      "implementationGuide": "1. Buat unit tests untuk CourseService, CourseRepository, dan ErrorResponse helper\n2. Implementasi integration tests untuk semua Filament Resources (User, Course, Transaction, dll)\n3. Buat feature tests untuk complete user journeys di admin dashboard\n4. Setup PHPUnit configuration dengan code coverage\n5. Implementasi test database seeding untuk consistent test data\n\nPseudocode struktur:\n```\ntests/Unit/Services/CourseServiceTest.php\ntests/Unit/Repositories/CourseRepositoryTest.php\ntests/Feature/Admin/UserResourceTest.php\ntests/Feature/Admin/CourseResourceTest.php\ntests/Feature/Admin/TransactionResourceTest.php\n```",
+      "verificationCriteria": "1. Code coverage minimal 80% untuk business logic\n2. Semua Filament Resources memiliki CRUD tests\n3. Test suite berjalan tanpa error\n4. Performance tests menunjukkan response time < 200ms",
+      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+    },
+    {
+      "id": "05a946fb-c63c-4595-8d13-7bffa713d54d",
+      "name": "Implementasi Authorization Policies untuk Filament Resources",
+      "description": "Membuat dan mengimplementasikan authorization policies yang granular untuk semua Filament Resources untuk memastikan akses yang tepat berdasarkan role dan permission.",
+      "notes": "Critical untuk security. Gunakan Spatie Permission yang sudah ada dan integrasikan dengan Filament authorization system.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-08-30T04:13:17.231Z",
+      "updatedAt": "2025-08-30T04:13:17.231Z",
+      "relatedFiles": [
+        {
+          "path": "app/Policies",
+          "type": "CREATE",
+          "description": "Directory untuk policy classes",
+          "lineStart": 1,
+          "lineEnd": 50
+        },
+        {
+          "path": "app/Providers/AuthServiceProvider.php",
+          "type": "TO_MODIFY",
+          "description": "Service provider untuk registrasi policies",
+          "lineStart": 1,
+          "lineEnd": 100
+        },
+        {
+          "path": "app/Filament/Resources",
+          "type": "TO_MODIFY",
+          "description": "Filament Resources untuk integrasi authorization",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. Buat Policy classes untuk setiap Resource (UserPolicy, CoursePolicy, TransactionPolicy, dll)\n2. Implementasi method authorize di setiap Policy (view, create, update, delete)\n3. Daftarkan policies di AuthServiceProvider\n4. Integrasikan policies dengan Filament Resources menggunakan authorizeResource()\n5. Implementasi field-level authorization untuk sensitive data\n\nPseudocode struktur:\n```\napp/Policies/UserPolicy.php\napp/Policies/CoursePolicy.php\napp/Policies/TransactionPolicy.php\napp/Providers/AuthServiceProvider.php (update)\n```",
+      "verificationCriteria": "1. Semua Resources memiliki proper authorization\n2. Role-based access berfungsi dengan benar\n3. Field-level authorization implemented\n4. Unauthorized access properly blocked",
+      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+    },
+    {
+      "id": "e4a2792e-222c-472e-81f6-ddd55f98c7b3",
+      "name": "Database Performance Optimization",
+      "description": "Mengoptimalkan performa database dengan menambahkan indexes yang tepat, optimasi queries, dan implementasi caching strategy untuk meningkatkan response time dashboard admin.",
+      "notes": "Performance critical untuk user experience. Monitor query execution time dan implement progressive optimization.",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-08-30T04:13:17.231Z",
+      "updatedAt": "2025-08-30T04:13:17.231Z",
+      "relatedFiles": [
+        {
+          "path": "database/migrations",
+          "type": "CREATE",
+          "description": "Migration files untuk database indexes",
+          "lineStart": 1,
+          "lineEnd": 50
+        },
+        {
+          "path": "app/Services/CourseService.php",
+          "type": "TO_MODIFY",
+          "description": "Service class untuk query optimization",
+          "lineStart": 80,
+          "lineEnd": 120
+        },
+        {
+          "path": "app/Models",
+          "type": "TO_MODIFY",
+          "description": "Model classes untuk query scopes",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. Analisis slow queries menggunakan Laravel Debugbar atau Telescope\n2. Buat migration untuk menambahkan database indexes:\n   - user_lesson_progress(user_id, course_id, is_completed)\n   - courses(category_id, is_popular)\n   - transactions(user_id, status, created_at)\n3. Optimasi CourseService::getLearningData() untuk menghindari N+1 queries\n4. Implementasi query scopes untuk common filters\n5. Setup Redis caching untuk frequently accessed data\n\nPseudocode optimasi:\n```\n// Migration indexes\nSchema::table('user_lesson_progress', function($table) {\n    $table->index(['user_id', 'course_id', 'is_completed']);\n});\n\n// Query optimization\nCourse::with(['courseSections.sectionContents', 'category'])\n    ->whereHas('courseStudents', fn($q) => $q->where('user_id', $userId))\n    ->get();\n```",
+      "verificationCriteria": "1. Database queries execution time < 100ms\n2. N+1 queries eliminated\n3. Proper indexes implemented\n4. Cache hit ratio > 80% untuk frequently accessed data",
+      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+    },
+    {
+      "id": "e6df3f96-2c4d-4e65-9bcd-19e071cd9632",
+      "name": "Enhanced Security Hardening",
+      "description": "Memperkuat keamanan dashboard admin dengan implementasi additional security measures, input validation enhancement, dan audit logging.",
+      "notes": "Security adalah prioritas utama untuk production. Implementasi harus comprehensive dan tested.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "05a946fb-c63c-4595-8d13-7bffa713d54d"
+        }
+      ],
+      "createdAt": "2025-08-30T04:13:17.231Z",
+      "updatedAt": "2025-08-30T04:13:17.231Z",
+      "relatedFiles": [
+        {
+          "path": "app/Rules",
+          "type": "CREATE",
+          "description": "Custom validation rules",
+          "lineStart": 1,
+          "lineEnd": 50
+        },
+        {
+          "path": "app/Services/AuditLogService.php",
+          "type": "CREATE",
+          "description": "Service untuk audit logging",
+          "lineStart": 1,
+          "lineEnd": 100
+        },
+        {
+          "path": "config/security.php",
+          "type": "CREATE",
+          "description": "Security configuration",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. Implementasi centralized validation rules untuk semua Resources\n2. Enhanced file upload security dengan virus scanning dan type validation\n3. Implementasi audit logging untuk admin actions\n4. Setup API rate limiting untuk admin endpoints\n5. Implementasi data encryption untuk sensitive fields\n6. GDPR compliance features (data export, deletion)\n\nPseudocode struktur:\n```\napp/Rules/SecureFileUpload.php\napp/Services/AuditLogService.php\napp/Http/Requests/Admin/\nconfig/security.php\n```",
+      "verificationCriteria": "1. All inputs properly validated\n2. File uploads secure dan virus-free\n3. Admin actions logged dan auditable\n4. Rate limiting effective\n5. Sensitive data encrypted",
+      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+    },
+    {
+      "id": "8061b43d-e42d-4170-8921-b308a81f64d9",
+      "name": "Code Refactoring dan Optimization",
+      "description": "Melakukan refactoring kode untuk menghilangkan redundansi, meningkatkan maintainability, dan mengoptimalkan struktur kode sesuai best practices.",
+      "notes": "Refactoring harus dilakukan secara incremental untuk avoid breaking changes. Pastikan semua tests pass setelah refactoring.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "069fb754-a41c-4099-ab92-97adb269764e"
+        }
+      ],
+      "createdAt": "2025-08-30T04:13:17.231Z",
+      "updatedAt": "2025-08-30T04:13:17.231Z",
+      "relatedFiles": [
+        {
+          "path": "app/Services/ProgressService.php",
+          "type": "CREATE",
+          "description": "Centralized progress management service",
+          "lineStart": 1,
+          "lineEnd": 150
+        },
+        {
+          "path": "app/Services/CourseService.php",
+          "type": "TO_MODIFY",
+          "description": "Existing service untuk refactoring",
+          "lineStart": 1,
+          "lineEnd": 257
+        },
+        {
+          "path": "app/Rules",
+          "type": "CREATE",
+          "description": "Shared validation rules",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. Buat ProgressService untuk centralized progress management\n2. Implementasi shared validation rules class\n3. Refactor CourseService untuk eliminate duplicate code\n4. Optimize helper classes dan utilities\n5. Implementasi design patterns yang sesuai (Factory, Observer, dll)\n6. Code cleanup dan documentation improvement\n\nPseudocode refactoring:\n```\napp/Services/ProgressService.php\napp/Rules/CourseValidationRules.php\napp/Observers/CourseObserver.php\napp/Factories/NotificationFactory.php\n```",
+      "verificationCriteria": "1. Code duplication eliminated\n2. Maintainability improved\n3. Performance optimized\n4. All tests still passing\n5. Code coverage maintained",
+      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+    },
+    {
+      "id": "92e427d3-f0d3-4c68-9ab2-4ec70f792ed3",
+      "name": "Monitoring dan Alerting System",
+      "description": "Implementasi comprehensive monitoring dan alerting system untuk dashboard admin performance, business metrics, dan system health monitoring.",
+      "notes": "Monitoring essential untuk production stability. Integrate dengan existing logging system dan setup proper alerting thresholds.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "e4a2792e-222c-472e-81f6-ddd55f98c7b3"
+        }
+      ],
+      "createdAt": "2025-08-30T04:13:17.231Z",
+      "updatedAt": "2025-08-30T04:13:17.231Z",
+      "relatedFiles": [
+        {
+          "path": "app/Services/MonitoringService.php",
+          "type": "CREATE",
+          "description": "Service untuk monitoring dan metrics",
+          "lineStart": 1,
+          "lineEnd": 200
+        },
+        {
+          "path": "app/Http/Controllers/HealthCheckController.php",
+          "type": "CREATE",
+          "description": "Health check endpoints",
+          "lineStart": 1,
+          "lineEnd": 100
+        },
+        {
+          "path": "config/monitoring.php",
+          "type": "CREATE",
+          "description": "Monitoring configuration",
+          "lineStart": 1,
+          "lineEnd": 50
+        }
+      ],
+      "implementationGuide": "1. Setup performance monitoring untuk query execution time\n2. Implementasi business metrics tracking (user engagement, course completion)\n3. Setup alerting system untuk critical errors dan performance issues\n4. Implementasi health check endpoints\n5. Setup log aggregation dan analysis\n6. Dashboard untuk monitoring metrics\n\nPseudocode struktur:\n```\napp/Services/MonitoringService.php\napp/Http/Controllers/HealthCheckController.php\nconfig/monitoring.php\nresources/views/admin/monitoring-dashboard.blade.php\n```",
+      "verificationCriteria": "1. Performance metrics properly tracked\n2. Alerting system functional\n3. Health checks responsive\n4. Business metrics accurate\n5. Log analysis effective",
+      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
     }
   ]
 }
