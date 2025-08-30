@@ -22,7 +22,7 @@ class MidtransSettingResource extends Resource
 {
     protected static ?string $model = MidtransSetting::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-credit-card';
+    protected static string | \BackedEnum | null $navigationIcon = null;
     
     protected static ?string $navigationLabel = 'Midtrans Settings';
     

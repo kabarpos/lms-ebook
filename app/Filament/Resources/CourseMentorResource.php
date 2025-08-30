@@ -34,9 +34,11 @@ class CourseMentorResource extends Resource
 {
     protected static ?string $model = CourseMentor::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+    protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
+    
+    protected static ?int $navigationSort = 2;
 
 
     public static function form(Schema $schema): Schema

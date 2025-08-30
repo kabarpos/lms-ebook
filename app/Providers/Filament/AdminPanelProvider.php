@@ -2,7 +2,9 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\Statistik;
+use App\Filament\Pages\Data;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Http\Middleware\Authenticate;
@@ -14,6 +16,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -38,6 +41,26 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Dashboard::class,
+                Statistik::class,
+                Data::class,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make('General')
+                    ->label('General')
+                    ->icon('heroicon-o-home')
+                    ->collapsed(false),
+                NavigationGroup::make('Products')
+                    ->label('Products')
+                    ->icon('heroicon-o-cube')
+                    ->collapsed(false),
+                NavigationGroup::make('Customers')
+                    ->label('Customers')
+                    ->icon('heroicon-o-users')
+                    ->collapsed(false),
+                NavigationGroup::make('Sistem')
+                    ->label('Sistem')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->collapsed(false),
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([

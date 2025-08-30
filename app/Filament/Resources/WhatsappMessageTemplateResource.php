@@ -26,7 +26,7 @@ class WhatsappMessageTemplateResource extends Resource
 {
     protected static ?string $model = WhatsappMessageTemplate::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static ?string $navigationLabel = 'Template WhatsApp';
 
@@ -35,6 +35,8 @@ class WhatsappMessageTemplateResource extends Resource
     protected static ?string $pluralModelLabel = 'Template Pesan WhatsApp';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
+    
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

@@ -39,9 +39,11 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-academic-cap';
+    protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
+    
+    protected static ?int $navigationSort = 3;
 
 
     public static function form(Schema $schema): Schema

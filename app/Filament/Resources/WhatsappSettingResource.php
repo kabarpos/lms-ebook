@@ -28,7 +28,7 @@ class WhatsappSettingResource extends Resource
 {
     protected static ?string $model = WhatsappSetting::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-device-phone-mobile';
+    protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static ?string $navigationLabel = 'WhatsApp';
 
@@ -37,6 +37,8 @@ class WhatsappSettingResource extends Resource
     protected static ?string $pluralModelLabel = 'Pengaturan WhatsApp';
 
     protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
+    
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
