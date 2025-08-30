@@ -1,232 +1,153 @@
 {
   "tasks": [
     {
-      "id": "069fb754-a41c-4099-ab92-97adb269764e",
-      "name": "Implementasi Comprehensive Testing Suite",
-      "description": "Membuat test suite lengkap untuk dashboard admin meliputi unit tests, integration tests, dan feature tests untuk memastikan kualitas kode dan mencegah regression bugs.",
-      "notes": "Prioritas tinggi karena testing adalah foundation untuk quality assurance. Gunakan Laravel testing utilities dan Filament testing helpers.",
-      "status": "in_progress",
+      "id": "353eb02c-a04a-4215-b1d3-37571a411223",
+      "name": "Memperluas CourseRepository dengan metode filtering dan sorting",
+      "description": "Menambahkan metode baru di CourseRepository untuk mendukung filtering berdasarkan kategori, harga (gratis/berbayar), dan sorting (terbaru, terpopuler, harga). Metode ini akan memperluas fungsionalitas yang sudah ada tanpa merusak implementasi existing.",
+      "notes": "Pastikan menggunakan eager loading untuk menghindari N+1 query problem. Gunakan scope yang sudah ada jika memungkinkan.",
+      "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-08-30T04:13:17.231Z",
-      "updatedAt": "2025-08-30T04:24:58.807Z",
+      "createdAt": "2025-08-30T06:02:18.741Z",
+      "updatedAt": "2025-08-30T06:13:24.898Z",
       "relatedFiles": [
         {
-          "path": "tests/Feature",
+          "path": "app/Repositories/CourseRepository.php",
           "type": "TO_MODIFY",
-          "description": "Directory untuk feature tests",
-          "lineStart": 1,
-          "lineEnd": 50
-        },
-        {
-          "path": "tests/Unit",
-          "type": "CREATE",
-          "description": "Directory untuk unit tests",
-          "lineStart": 1,
-          "lineEnd": 50
-        },
-        {
-          "path": "phpunit.xml",
-          "type": "TO_MODIFY",
-          "description": "PHPUnit configuration",
-          "lineStart": 1,
-          "lineEnd": 100
-        }
-      ],
-      "implementationGuide": "1. Buat unit tests untuk CourseService, CourseRepository, dan ErrorResponse helper\n2. Implementasi integration tests untuk semua Filament Resources (User, Course, Transaction, dll)\n3. Buat feature tests untuk complete user journeys di admin dashboard\n4. Setup PHPUnit configuration dengan code coverage\n5. Implementasi test database seeding untuk consistent test data\n\nPseudocode struktur:\n```\ntests/Unit/Services/CourseServiceTest.php\ntests/Unit/Repositories/CourseRepositoryTest.php\ntests/Feature/Admin/UserResourceTest.php\ntests/Feature/Admin/CourseResourceTest.php\ntests/Feature/Admin/TransactionResourceTest.php\n```",
-      "verificationCriteria": "1. Code coverage minimal 80% untuk business logic\n2. Semua Filament Resources memiliki CRUD tests\n3. Test suite berjalan tanpa error\n4. Performance tests menunjukkan response time < 200ms",
-      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
-    },
-    {
-      "id": "05a946fb-c63c-4595-8d13-7bffa713d54d",
-      "name": "Implementasi Authorization Policies untuk Filament Resources",
-      "description": "Membuat dan mengimplementasikan authorization policies yang granular untuk semua Filament Resources untuk memastikan akses yang tepat berdasarkan role dan permission.",
-      "notes": "Critical untuk security. Gunakan Spatie Permission yang sudah ada dan integrasikan dengan Filament authorization system.",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-08-30T04:13:17.231Z",
-      "updatedAt": "2025-08-30T04:13:17.231Z",
-      "relatedFiles": [
-        {
-          "path": "app/Policies",
-          "type": "CREATE",
-          "description": "Directory untuk policy classes",
-          "lineStart": 1,
-          "lineEnd": 50
-        },
-        {
-          "path": "app/Providers/AuthServiceProvider.php",
-          "type": "TO_MODIFY",
-          "description": "Service provider untuk registrasi policies",
+          "description": "File repository utama yang akan ditambahkan metode filtering",
           "lineStart": 1,
           "lineEnd": 100
         },
         {
-          "path": "app/Filament/Resources",
+          "path": "app/Repositories/CourseRepositoryInterface.php",
           "type": "TO_MODIFY",
-          "description": "Filament Resources untuk integrasi authorization",
+          "description": "Interface yang perlu ditambahkan method signature baru",
           "lineStart": 1,
           "lineEnd": 50
         }
       ],
-      "implementationGuide": "1. Buat Policy classes untuk setiap Resource (UserPolicy, CoursePolicy, TransactionPolicy, dll)\n2. Implementasi method authorize di setiap Policy (view, create, update, delete)\n3. Daftarkan policies di AuthServiceProvider\n4. Integrasikan policies dengan Filament Resources menggunakan authorizeResource()\n5. Implementasi field-level authorization untuk sensitive data\n\nPseudocode struktur:\n```\napp/Policies/UserPolicy.php\napp/Policies/CoursePolicy.php\napp/Policies/TransactionPolicy.php\napp/Providers/AuthServiceProvider.php (update)\n```",
-      "verificationCriteria": "1. Semua Resources memiliki proper authorization\n2. Role-based access berfungsi dengan benar\n3. Field-level authorization implemented\n4. Unauthorized access properly blocked",
-      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+      "implementationGuide": "1. Buka file app/Repositories/CourseRepository.php\n2. Tambahkan metode getCoursesWithFilters($filters = [], $sort = null, $perPage = 12)\n3. Implementasi filtering:\n   - category_id: whereHas('category', function($q) use ($categoryId) { $q->where('id', $categoryId); })\n   - price_type: where('price', $priceType === 'free' ? 0 : '>', 0)\n4. Implementasi sorting:\n   - 'latest': orderBy('created_at', 'desc')\n   - 'popular': orderBy('total_students', 'desc')\n   - 'price_low': orderBy('price', 'asc')\n   - 'price_high': orderBy('price', 'desc')\n5. Return paginated results dengan eager loading category dan instructor",
+      "verificationCriteria": "Metode baru dapat melakukan filtering berdasarkan kategori dan harga, serta sorting sesuai parameter yang diberikan. Hasil query harus ter-paginate dan menggunakan eager loading.",
+      "analysisResult": "Implementasi fitur pencarian dan pemfilteran pada halaman katalog kursus front-end dengan menggunakan arsitektur repository pattern yang sudah ada, Alpine.js untuk interaktivitas, dan AJAX untuk real-time filtering. Solusi ini akan meningkatkan user experience dengan filtering yang responsif tanpa reload halaman, sambil mempertahankan konsistensi dengan desain dan arsitektur yang sudah ada.",
+      "summary": "Saya telah berhasil mengimplementasikan metode getCoursesWithFilters di CourseRepository dan menambahkan method signature di CourseRepositoryInterface. Implementasi ini mendukung filtering berdasarkan kategori (category_id), harga (free/paid), dan pencarian (search). Metode ini juga mendukung sorting berdasarkan terbaru (latest), terpopuler (popular), harga terendah (price_low), dan harga tertinggi (price_high). Hasil query telah di-paginate dan menggunakan eager loading untuk menghindari N+1 query problem dengan relasi category, courseMentors.mentor, dan withCount untuk courseStudents dan courseSections.",
+      "completedAt": "2025-08-30T06:13:24.895Z"
     },
     {
-      "id": "e4a2792e-222c-472e-81f6-ddd55f98c7b3",
-      "name": "Database Performance Optimization",
-      "description": "Mengoptimalkan performa database dengan menambahkan indexes yang tepat, optimasi queries, dan implementasi caching strategy untuk meningkatkan response time dashboard admin.",
-      "notes": "Performance critical untuk user experience. Monitor query execution time dan implement progressive optimization.",
+      "id": "137d2b20-bb30-41cb-a4ac-82e4768583e0",
+      "name": "Update CourseService untuk mendukung filtering dan sorting",
+      "description": "Menambahkan metode di CourseService yang akan memanggil repository method baru untuk filtering dan sorting. Service layer ini akan menjadi penghubung antara controller dan repository.",
+      "notes": "Tambahkan validasi input untuk memastikan parameter yang diterima valid. Gunakan konstanta untuk nilai sorting yang diizinkan.",
       "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-08-30T04:13:17.231Z",
-      "updatedAt": "2025-08-30T04:13:17.231Z",
-      "relatedFiles": [
+      "dependencies": [
         {
-          "path": "database/migrations",
-          "type": "CREATE",
-          "description": "Migration files untuk database indexes",
-          "lineStart": 1,
-          "lineEnd": 50
-        },
+          "taskId": "353eb02c-a04a-4215-b1d3-37571a411223"
+        }
+      ],
+      "createdAt": "2025-08-30T06:02:18.741Z",
+      "updatedAt": "2025-08-30T06:02:18.741Z",
+      "relatedFiles": [
         {
           "path": "app/Services/CourseService.php",
           "type": "TO_MODIFY",
-          "description": "Service class untuk query optimization",
-          "lineStart": 80,
-          "lineEnd": 120
-        },
-        {
-          "path": "app/Models",
-          "type": "TO_MODIFY",
-          "description": "Model classes untuk query scopes",
-          "lineStart": 1,
-          "lineEnd": 50
-        }
-      ],
-      "implementationGuide": "1. Analisis slow queries menggunakan Laravel Debugbar atau Telescope\n2. Buat migration untuk menambahkan database indexes:\n   - user_lesson_progress(user_id, course_id, is_completed)\n   - courses(category_id, is_popular)\n   - transactions(user_id, status, created_at)\n3. Optimasi CourseService::getLearningData() untuk menghindari N+1 queries\n4. Implementasi query scopes untuk common filters\n5. Setup Redis caching untuk frequently accessed data\n\nPseudocode optimasi:\n```\n// Migration indexes\nSchema::table('user_lesson_progress', function($table) {\n    $table->index(['user_id', 'course_id', 'is_completed']);\n});\n\n// Query optimization\nCourse::with(['courseSections.sectionContents', 'category'])\n    ->whereHas('courseStudents', fn($q) => $q->where('user_id', $userId))\n    ->get();\n```",
-      "verificationCriteria": "1. Database queries execution time < 100ms\n2. N+1 queries eliminated\n3. Proper indexes implemented\n4. Cache hit ratio > 80% untuk frequently accessed data",
-      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
-    },
-    {
-      "id": "e6df3f96-2c4d-4e65-9bcd-19e071cd9632",
-      "name": "Enhanced Security Hardening",
-      "description": "Memperkuat keamanan dashboard admin dengan implementasi additional security measures, input validation enhancement, dan audit logging.",
-      "notes": "Security adalah prioritas utama untuk production. Implementasi harus comprehensive dan tested.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "05a946fb-c63c-4595-8d13-7bffa713d54d"
-        }
-      ],
-      "createdAt": "2025-08-30T04:13:17.231Z",
-      "updatedAt": "2025-08-30T04:13:17.231Z",
-      "relatedFiles": [
-        {
-          "path": "app/Rules",
-          "type": "CREATE",
-          "description": "Custom validation rules",
-          "lineStart": 1,
-          "lineEnd": 50
-        },
-        {
-          "path": "app/Services/AuditLogService.php",
-          "type": "CREATE",
-          "description": "Service untuk audit logging",
+          "description": "Service layer yang akan ditambahkan metode filtering",
           "lineStart": 1,
           "lineEnd": 100
-        },
-        {
-          "path": "config/security.php",
-          "type": "CREATE",
-          "description": "Security configuration",
-          "lineStart": 1,
-          "lineEnd": 50
         }
       ],
-      "implementationGuide": "1. Implementasi centralized validation rules untuk semua Resources\n2. Enhanced file upload security dengan virus scanning dan type validation\n3. Implementasi audit logging untuk admin actions\n4. Setup API rate limiting untuk admin endpoints\n5. Implementasi data encryption untuk sensitive fields\n6. GDPR compliance features (data export, deletion)\n\nPseudocode struktur:\n```\napp/Rules/SecureFileUpload.php\napp/Services/AuditLogService.php\napp/Http/Requests/Admin/\nconfig/security.php\n```",
-      "verificationCriteria": "1. All inputs properly validated\n2. File uploads secure dan virus-free\n3. Admin actions logged dan auditable\n4. Rate limiting effective\n5. Sensitive data encrypted",
-      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+      "implementationGuide": "1. Buka file app/Services/CourseService.php\n2. Tambahkan metode getFilteredCourses($filters = [], $sort = null, $perPage = 12)\n3. Validasi input parameters:\n   - $filters: array dengan key category_id, price_type\n   - $sort: string dengan nilai latest, popular, price_low, price_high\n4. Panggil $this->courseRepository->getCoursesWithFilters($filters, $sort, $perPage)\n5. Return hasil dengan format yang konsisten",
+      "verificationCriteria": "Service dapat menerima parameter filtering dan sorting, melakukan validasi, dan mengembalikan hasil yang ter-format dengan benar.",
+      "analysisResult": "Implementasi fitur pencarian dan pemfilteran pada halaman katalog kursus front-end dengan menggunakan arsitektur repository pattern yang sudah ada, Alpine.js untuk interaktivitas, dan AJAX untuk real-time filtering. Solusi ini akan meningkatkan user experience dengan filtering yang responsif tanpa reload halaman, sambil mempertahankan konsistensi dengan desain dan arsitektur yang sudah ada."
     },
     {
-      "id": "8061b43d-e42d-4170-8921-b308a81f64d9",
-      "name": "Code Refactoring dan Optimization",
-      "description": "Melakukan refactoring kode untuk menghilangkan redundansi, meningkatkan maintainability, dan mengoptimalkan struktur kode sesuai best practices.",
-      "notes": "Refactoring harus dilakukan secara incremental untuk avoid breaking changes. Pastikan semua tests pass setelah refactoring.",
+      "id": "5f84bf15-ce84-4ff9-b59d-e815eca940ce",
+      "name": "Menambahkan AJAX endpoint di FrontController",
+      "description": "Membuat endpoint AJAX di FrontController untuk menangani request filtering dan sorting secara real-time tanpa reload halaman. Endpoint ini akan mengembalikan data JSON untuk diproses oleh frontend.",
+      "notes": "Pastikan response JSON konsisten dan include pagination info. Tambahkan error handling untuk request yang tidak valid.",
       "status": "pending",
       "dependencies": [
         {
-          "taskId": "069fb754-a41c-4099-ab92-97adb269764e"
+          "taskId": "137d2b20-bb30-41cb-a4ac-82e4768583e0"
         }
       ],
-      "createdAt": "2025-08-30T04:13:17.231Z",
-      "updatedAt": "2025-08-30T04:13:17.231Z",
+      "createdAt": "2025-08-30T06:02:18.741Z",
+      "updatedAt": "2025-08-30T06:02:18.741Z",
       "relatedFiles": [
         {
-          "path": "app/Services/ProgressService.php",
-          "type": "CREATE",
-          "description": "Centralized progress management service",
+          "path": "app/Http/Controllers/FrontController.php",
+          "type": "TO_MODIFY",
+          "description": "Controller yang akan ditambahkan endpoint AJAX",
           "lineStart": 1,
+          "lineEnd": 100
+        }
+      ],
+      "implementationGuide": "1. Buka file app/Http/Controllers/FrontController.php\n2. Tambahkan metode filterCourses(Request $request)\n3. Validasi request parameters:\n   - category_id: nullable|exists:categories,id\n   - price_type: nullable|in:free,paid\n   - sort: nullable|in:latest,popular,price_low,price_high\n   - search: nullable|string\n4. Panggil CourseService->getFilteredCourses()\n5. Return JSON response dengan struktur:\n   {\n     \"success\": true,\n     \"data\": {\n       \"courses\": [...],\n       \"pagination\": {...}\n     }\n   }",
+      "verificationCriteria": "Endpoint AJAX dapat menerima parameter filtering, melakukan validasi, dan mengembalikan response JSON yang valid dengan data kursus dan pagination.",
+      "analysisResult": "Implementasi fitur pencarian dan pemfilteran pada halaman katalog kursus front-end dengan menggunakan arsitektur repository pattern yang sudah ada, Alpine.js untuk interaktivitas, dan AJAX untuk real-time filtering. Solusi ini akan meningkatkan user experience dengan filtering yang responsif tanpa reload halaman, sambil mempertahankan konsistensi dengan desain dan arsitektur yang sudah ada."
+    },
+    {
+      "id": "c428588b-8211-474a-94cf-930de0aa1727",
+      "name": "Implementasi UI pencarian dan filter di halaman katalog",
+      "description": "Menambahkan komponen UI untuk pencarian, filtering berdasarkan kategori dan harga, serta sorting di halaman course-catalog.blade.php. UI akan menggunakan Alpine.js untuk interaktivitas dan AJAX untuk real-time filtering.",
+      "notes": "Gunakan komponen x-course-card yang sudah ada untuk menampilkan hasil. Pastikan responsive design dan accessibility. Gunakan warna brand dari app.css.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "5f84bf15-ce84-4ff9-b59d-e815eca940ce"
+        }
+      ],
+      "createdAt": "2025-08-30T06:02:18.741Z",
+      "updatedAt": "2025-08-30T06:02:18.741Z",
+      "relatedFiles": [
+        {
+          "path": "resources/views/front/course-catalog.blade.php",
+          "type": "TO_MODIFY",
+          "description": "Halaman katalog yang akan ditambahkan UI filtering",
+          "lineStart": 1,
+          "lineEnd": 122
+        },
+        {
+          "path": "resources/css/app.css",
+          "type": "REFERENCE",
+          "description": "File CSS untuk referensi warna brand",
+          "lineStart": 30,
+          "lineEnd": 60
+        }
+      ],
+      "implementationGuide": "1. Buka file resources/views/front/course-catalog.blade.php\n2. Tambahkan section filter di atas daftar kursus:\n   - Search input dengan placeholder \"Cari kursus...\"\n   - Dropdown kategori (ambil dari database)\n   - Radio button untuk filter harga (Semua, Gratis, Berbayar)\n   - Dropdown sorting (Terbaru, Terpopuler, Harga Terendah, Harga Tertinggi)\n3. Implementasi Alpine.js component:\n   - Data: filters, courses, loading, pagination\n   - Methods: applyFilters(), resetFilters(), loadMore()\n4. Styling menggunakan warna brand Lochmara dan class cursor-pointer\n5. Tambahkan loading state dan empty state",
+      "verificationCriteria": "UI filtering dan pencarian berfungsi dengan baik, responsive, menggunakan warna brand yang konsisten, dan memberikan feedback visual yang jelas kepada user.",
+      "analysisResult": "Implementasi fitur pencarian dan pemfilteran pada halaman katalog kursus front-end dengan menggunakan arsitektur repository pattern yang sudah ada, Alpine.js untuk interaktivitas, dan AJAX untuk real-time filtering. Solusi ini akan meningkatkan user experience dengan filtering yang responsif tanpa reload halaman, sambil mempertahankan konsistensi dengan desain dan arsitektur yang sudah ada."
+    },
+    {
+      "id": "81f28b16-add8-474c-a538-d6a397f687cb",
+      "name": "Menambahkan rute AJAX dan integrasi JavaScript",
+      "description": "Menambahkan rute untuk endpoint AJAX filtering dan mengimplementasikan JavaScript untuk menangani request AJAX, update DOM, dan pagination. Integrasi ini akan membuat filtering berjalan secara real-time.",
+      "notes": "Gunakan fetch API untuk AJAX requests. Implementasi error handling yang user-friendly. Pastikan URL tetap SEO-friendly dengan history API.",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c428588b-8211-474a-94cf-930de0aa1727"
+        }
+      ],
+      "createdAt": "2025-08-30T06:02:18.741Z",
+      "updatedAt": "2025-08-30T06:02:18.741Z",
+      "relatedFiles": [
+        {
+          "path": "routes/web.php",
+          "type": "TO_MODIFY",
+          "description": "File routing yang akan ditambahkan rute AJAX",
+          "lineStart": 100,
           "lineEnd": 150
         },
         {
-          "path": "app/Services/CourseService.php",
+          "path": "resources/views/front/course-catalog.blade.php",
           "type": "TO_MODIFY",
-          "description": "Existing service untuk refactoring",
-          "lineStart": 1,
-          "lineEnd": 257
-        },
-        {
-          "path": "app/Rules",
-          "type": "CREATE",
-          "description": "Shared validation rules",
-          "lineStart": 1,
-          "lineEnd": 50
+          "description": "File yang akan ditambahkan JavaScript AJAX",
+          "lineStart": 100,
+          "lineEnd": 122
         }
       ],
-      "implementationGuide": "1. Buat ProgressService untuk centralized progress management\n2. Implementasi shared validation rules class\n3. Refactor CourseService untuk eliminate duplicate code\n4. Optimize helper classes dan utilities\n5. Implementasi design patterns yang sesuai (Factory, Observer, dll)\n6. Code cleanup dan documentation improvement\n\nPseudocode refactoring:\n```\napp/Services/ProgressService.php\napp/Rules/CourseValidationRules.php\napp/Observers/CourseObserver.php\napp/Factories/NotificationFactory.php\n```",
-      "verificationCriteria": "1. Code duplication eliminated\n2. Maintainability improved\n3. Performance optimized\n4. All tests still passing\n5. Code coverage maintained",
-      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
-    },
-    {
-      "id": "92e427d3-f0d3-4c68-9ab2-4ec70f792ed3",
-      "name": "Monitoring dan Alerting System",
-      "description": "Implementasi comprehensive monitoring dan alerting system untuk dashboard admin performance, business metrics, dan system health monitoring.",
-      "notes": "Monitoring essential untuk production stability. Integrate dengan existing logging system dan setup proper alerting thresholds.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "e4a2792e-222c-472e-81f6-ddd55f98c7b3"
-        }
-      ],
-      "createdAt": "2025-08-30T04:13:17.231Z",
-      "updatedAt": "2025-08-30T04:13:17.231Z",
-      "relatedFiles": [
-        {
-          "path": "app/Services/MonitoringService.php",
-          "type": "CREATE",
-          "description": "Service untuk monitoring dan metrics",
-          "lineStart": 1,
-          "lineEnd": 200
-        },
-        {
-          "path": "app/Http/Controllers/HealthCheckController.php",
-          "type": "CREATE",
-          "description": "Health check endpoints",
-          "lineStart": 1,
-          "lineEnd": 100
-        },
-        {
-          "path": "config/monitoring.php",
-          "type": "CREATE",
-          "description": "Monitoring configuration",
-          "lineStart": 1,
-          "lineEnd": 50
-        }
-      ],
-      "implementationGuide": "1. Setup performance monitoring untuk query execution time\n2. Implementasi business metrics tracking (user engagement, course completion)\n3. Setup alerting system untuk critical errors dan performance issues\n4. Implementasi health check endpoints\n5. Setup log aggregation dan analysis\n6. Dashboard untuk monitoring metrics\n\nPseudocode struktur:\n```\napp/Services/MonitoringService.php\napp/Http/Controllers/HealthCheckController.php\nconfig/monitoring.php\nresources/views/admin/monitoring-dashboard.blade.php\n```",
-      "verificationCriteria": "1. Performance metrics properly tracked\n2. Alerting system functional\n3. Health checks responsive\n4. Business metrics accurate\n5. Log analysis effective",
-      "analysisResult": "Dashboard admin Laravel Filament sudah memiliki foundation yang solid dengan arsitektur yang baik, namun memerlukan perbaikan di area testing, performance optimization, security hardening, dan monitoring sebelum production deployment. Implementasi harus dilakukan secara bertahap dengan prioritas pada testing dan security sebagai foundation, diikuti dengan performance optimization dan monitoring untuk production readiness."
+      "implementationGuide": "1. Buka file routes/web.php\n2. Tambahkan rute: Route::get('/courses/filter', [FrontController::class, 'filterCourses'])->name('courses.filter')\n3. Buka file resources/views/front/course-catalog.blade.php\n4. Tambahkan JavaScript untuk AJAX:\n   - Function fetchCourses(filters, page = 1)\n   - Function updateCoursesGrid(courses)\n   - Function updatePagination(pagination)\n   - Event listeners untuk form elements\n5. Implementasi debouncing untuk search input\n6. Handle loading states dan error responses",
+      "verificationCriteria": "AJAX filtering berfungsi tanpa reload halaman, pagination bekerja dengan baik, search memiliki debouncing, dan error handling memberikan feedback yang jelas kepada user.",
+      "analysisResult": "Implementasi fitur pencarian dan pemfilteran pada halaman katalog kursus front-end dengan menggunakan arsitektur repository pattern yang sudah ada, Alpine.js untuk interaktivitas, dan AJAX untuk real-time filtering. Solusi ini akan meningkatkan user experience dengan filtering yang responsif tanpa reload halaman, sambil mempertahankan konsistensi dengan desain dan arsitektur yang sudah ada."
     }
   ]
 }
