@@ -45,6 +45,13 @@ class UserResource extends Resource
     protected static string | \UnitEnum | null $navigationGroup = 'Customers';
     
     protected static ?int $navigationSort = 3;
+    
+    protected static ?string $navigationLabel = 'Pengguna';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'users';
+    }
 
     public static function form(Schema $schema): Schema
     {

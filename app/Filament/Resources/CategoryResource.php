@@ -36,6 +36,13 @@ class CategoryResource extends Resource
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
     
     protected static ?int $navigationSort = 1;
+    
+    protected static ?string $navigationLabel = 'Kategori';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'categories';
+    }
 
 
     public static function form(Schema $schema): Schema

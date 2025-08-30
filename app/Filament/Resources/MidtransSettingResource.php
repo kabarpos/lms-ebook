@@ -24,7 +24,12 @@ class MidtransSettingResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = null;
     
-    protected static ?string $navigationLabel = 'Midtrans Settings';
+    protected static ?string $navigationLabel = 'Pengaturan Midtrans';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'midtrans-settings';
+    }
     
     protected static ?string $modelLabel = 'Midtrans Setting';
     

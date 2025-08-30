@@ -51,6 +51,13 @@ class TransactionResource extends Resource
     protected static string | \UnitEnum | null $navigationGroup = 'Customers';
     
     protected static ?int $navigationSort = 2;
+    
+    protected static ?string $navigationLabel = 'Transaksi';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'transactions';
+    }
 
     public static function form(Schema $schema): Schema
     {

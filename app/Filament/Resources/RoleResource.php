@@ -35,6 +35,13 @@ class RoleResource extends Resource
     protected static string | \UnitEnum | null $navigationGroup = 'Customers';
     
     protected static ?int $navigationSort = 1;
+    
+    protected static ?string $navigationLabel = 'Peran';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'roles';
+    }
 
 
     public static function form(Schema $schema): Schema

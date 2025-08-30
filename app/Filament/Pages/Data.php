@@ -15,6 +15,11 @@ class Data extends Page
     protected static ?string $title = 'Data';
 
     protected static ?string $navigationLabel = 'Data';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'data';
+    }
 
     public function getTitle(): string
     {

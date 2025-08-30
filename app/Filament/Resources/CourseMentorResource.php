@@ -39,6 +39,13 @@ class CourseMentorResource extends Resource
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
     
     protected static ?int $navigationSort = 2;
+    
+    protected static ?string $navigationLabel = 'Mentor Kursus';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'course-mentors';
+    }
 
 
     public static function form(Schema $schema): Schema

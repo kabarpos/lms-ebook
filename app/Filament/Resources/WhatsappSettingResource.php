@@ -31,6 +31,11 @@ class WhatsappSettingResource extends Resource
     protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static ?string $navigationLabel = 'WhatsApp';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'whatsapp-settings';
+    }
 
     protected static ?string $modelLabel = 'Pengaturan WhatsApp';
 

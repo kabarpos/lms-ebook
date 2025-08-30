@@ -29,6 +29,11 @@ class WhatsappMessageTemplateResource extends Resource
     protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static ?string $navigationLabel = 'Template WhatsApp';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'whatsapp-message-templates';
+    }
 
     protected static ?string $modelLabel = 'Template Pesan WhatsApp';
 

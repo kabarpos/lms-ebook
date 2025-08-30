@@ -36,6 +36,13 @@ class SectionContentResource extends Resource
     protected static string | \UnitEnum | null $navigationGroup = 'Products';
     
     protected static ?int $navigationSort = 4;
+    
+    protected static ?string $navigationLabel = 'Konten Bagian';
+    
+    public static function getSlug(?\Filament\Panel $panel = null): string
+    {
+        return 'section-contents';
+    }
 
     public static function form(Schema $schema): Schema
     {

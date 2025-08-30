@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Statistik;
 use App\Filament\Pages\Data;
 use Filament\Widgets\AccountWidget;
@@ -33,6 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->homeUrl('/admin/statistics')
             ->colors([
                 'primary' => Color::Cyan,
                 'secondary' => Color::Amber,
@@ -40,25 +40,24 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Dashboard::class,
                 Statistik::class,
                 Data::class,
             ])
             ->navigationGroups([
                 NavigationGroup::make('General')
-                    ->label('General')
+                    ->label('Umum')
                     ->icon('heroicon-o-home')
                     ->collapsed(false),
                 NavigationGroup::make('Products')
-                    ->label('Products')
+                    ->label('Produk')
                     ->icon('heroicon-o-cube')
                     ->collapsed(false),
                 NavigationGroup::make('Customers')
-                    ->label('Customers')
+                    ->label('Pelanggan')
                     ->icon('heroicon-o-users')
                     ->collapsed(false),
-                NavigationGroup::make('Sistem')
-                    ->label('Sistem')
+                NavigationGroup::make('System')
+                    ->label('System')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->collapsed(false),
             ])
