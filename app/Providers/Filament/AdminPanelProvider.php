@@ -2,10 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Statistik;
 use App\Filament\Pages\Data;
-use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
+use App\Filament\Pages\Statistik;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -39,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->pages([
                 Statistik::class,
                 Data::class,
@@ -60,11 +59,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Sistem')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->collapsed(false),
-            ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

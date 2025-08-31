@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Dashboard;
-use App\Filament\Widgets\StatistikOverview;
+use App\Filament\Widgets\StatsOverview;
 
 class Statistik extends Dashboard
 {
@@ -35,7 +35,7 @@ class Statistik extends Dashboard
     public function getWidgets(): array
     {
         return [
-            StatistikOverview::class,
+            StatsOverview::class,
         ];
     }
 

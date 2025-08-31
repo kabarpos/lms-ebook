@@ -9,7 +9,7 @@ use App\Models\Course;
 use App\Models\Category;
 use App\Models\Transaction;
 
-class StatistikOverview extends BaseWidget
+class StatsOverview extends BaseWidget
 {
     protected static ?int $sort = 1;
     protected int | string | array $columnSpan = 'full';

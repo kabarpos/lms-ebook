@@ -9,7 +9,7 @@ use App\Models\Transaction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 
-class RecentTransactions extends BaseWidget
+class TransactionsList extends BaseWidget
 {
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
