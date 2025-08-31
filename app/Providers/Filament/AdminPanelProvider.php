@@ -43,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
                 '/admin/external-link/*',
             ])
             ->login()
-            ->homeUrl('/admin/statistics')
+            ->homeUrl('/admin/statistik')
             ->colors([
                 'primary' => Color::Cyan,
                 'secondary' => Color::Amber,

@@ -24,7 +24,7 @@ class Statistik extends Dashboard
 
     public static function getSlug(?\Filament\Panel $panel = null): string
     {
-        return 'statistics';
+        return 'statistik';
     }
 
     public function getTitle(): string

@@ -7,20 +7,28 @@ use Filament\Actions\Action;
 
 class SPATestPage extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-beaker';
+    protected static string | \BackedEnum | null $navigationIcon = null;
     
     protected static ?string $navigationLabel = 'SPA Testing';
     
     protected static ?string $title = 'SPA Testing Page';
     
-    protected static string $view = 'filament.pages.spa-test-page';
+    public function getView(): string
+    {
+        return 'filament.pages.spa-test-page';
+    }
     
-    protected static ?string $navigationGroup = 'System';
+    protected static \UnitEnum | string | null $navigationGroup = 'System';
     
     protected static ?int $navigationSort = 99;
     
-    // Hide from navigation in production
+    // Only available in development environments
     public static function shouldRegisterNavigation(): bool
+    {
+        return app()->environment(['local', 'testing']);
+    }
+    
+    public static function canAccess(): bool
     {
         return app()->environment(['local', 'testing']);
     }

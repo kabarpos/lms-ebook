@@ -49,7 +49,8 @@ class SPATestingMonitor {
         // Track SPA navigation start
         document.addEventListener('livewire:navigate', (event) => {
             this.startTime = performance.now();
-            console.log('🔄 SPA Navigation started to:', event.detail.url);
+            const targetUrl = (event.detail && event.detail.url) ? event.detail.url : 'unknown';
+            console.log('🔄 SPA Navigation started to:', targetUrl);
         });
         
         // Track SPA navigation end
@@ -58,8 +59,11 @@ class SPATestingMonitor {
                 const endTime = performance.now();
                 const duration = endTime - this.startTime;
                 
+                // Safely access event.detail.url with null check
+                const navigationUrl = (event.detail && event.detail.url) ? event.detail.url : window.location.href;
+                
                 this.navigationTimes.push({
-                    url: event.detail.url || window.location.href,
+                    url: navigationUrl,
                     duration: duration,
                     timestamp: new Date().toISOString()
                 });
