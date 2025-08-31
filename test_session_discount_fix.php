@@ -38,13 +38,13 @@ $discountData = [
     'name' => 'Diskon Flash Sale',
     'type' => 'percentage',
     'value' => 50,
-    'max_amount' => 100000
+    'maximum_discount' => 100000
 ];
 
 echo "Data Course:\n";
 echo "- Harga: Rp " . number_format($coursePrice, 0, ',', '.') . "\n";
 echo "- Admin Fee: Rp " . number_format($adminFee, 0, ',', '.') . "\n";
-echo "- Diskon: {$discountData['value']}% (max Rp " . number_format($discountData['max_amount'], 0, ',', '.') . ")\n\n";
+echo "- Diskon: {$discountData['value']}% (max Rp " . number_format($discountData['maximum_discount'], 0, ',', '.') . ")\n\n";
 
 // Fungsi simulasi PaymentService::createCoursePayment (SETELAH PERBAIKAN)
 function calculateDiscountAmount($coursePrice, $appliedDiscount) {
@@ -54,8 +54,8 @@ function calculateDiscountAmount($coursePrice, $appliedDiscount) {
         if ($appliedDiscount['type'] === 'percentage') {
             $discountAmount = ($coursePrice * $appliedDiscount['value']) / 100;
             // Apply maximum discount limit if exists
-            if (isset($appliedDiscount['max_amount']) && $appliedDiscount['max_amount'] > 0) {
-                $discountAmount = min($discountAmount, $appliedDiscount['max_amount']);
+            if (isset($appliedDiscount['maximum_discount']) && $appliedDiscount['maximum_discount'] > 0) {
+                $discountAmount = min($discountAmount, $appliedDiscount['maximum_discount']);
             }
         } else {
             $discountAmount = min($appliedDiscount['value'], $coursePrice);
@@ -73,7 +73,7 @@ function applyDiscount($discountData) {
         'name' => $discountData['name'],
         'type' => $discountData['type'],
         'value' => $discountData['value'],
-        'max_amount' => $discountData['max_amount'],
+        'maximum_discount' => $discountData['maximum_discount'],
         'applied_at' => date('c')
     ]);
     echo "✓ Diskon diterapkan ke session\n";

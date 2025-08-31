@@ -54,8 +54,8 @@ class PaymentService
                 if ($appliedDiscount['type'] === 'percentage') {
                     $discountAmount = ($course->price * $appliedDiscount['value']) / 100;
                     // Apply maximum discount limit if exists
-                    if (isset($appliedDiscount['max_amount']) && $appliedDiscount['max_amount'] > 0) {
-                        $discountAmount = min($discountAmount, $appliedDiscount['max_amount']);
+                    if (isset($appliedDiscount['maximum_discount']) && $appliedDiscount['maximum_discount'] > 0) {
+                        $discountAmount = min($discountAmount, $appliedDiscount['maximum_discount']);
                     }
                 } else {
                     $discountAmount = min($appliedDiscount['value'], $course->price);

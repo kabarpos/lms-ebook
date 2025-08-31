@@ -128,7 +128,7 @@ class TransactionService
             'name' => $discount->name,
             'type' => $discount->type,
             'value' => $discount->value,
-            'max_amount' => $discount->max_amount,
+            'maximum_discount' => $discount->maximum_discount,
             'applied_at' => now()->toISOString()
         ]);
         
@@ -138,7 +138,7 @@ class TransactionService
             'discount_code' => $discount->code,
             'discount_type' => $discount->type,
             'discount_value' => $discount->value,
-            'discount_max_amount' => $discount->max_amount
+            'discount_maximum_discount' => $discount->maximum_discount
         ]);
     }
     
