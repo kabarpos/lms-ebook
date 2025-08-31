@@ -29,6 +29,19 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->spa()
+            ->spaUrlExceptions([
+                // External URLs yang tidak kompatibel dengan SPA
+                'https://docs.filamentphp.com/*',
+                'https://github.com/*',
+                'https://laravel.com/*',
+                // URL internal yang memerlukan full page reload
+                '/admin/export/*',
+                '/admin/download/*',
+                '/admin/pdf/*',
+                // URL yang menggunakan target="_blank"
+                '/admin/external-link/*',
+            ])
             ->login()
             ->homeUrl('/admin/statistics')
             ->colors([
