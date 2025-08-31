@@ -1,5 +1,83 @@
 @extends('front.layouts.app')
 @section('title', 'Course Checkout - ' . $course->name)
+
+@push('styles')
+<style>
+    /* Enhanced discount system animations and transitions */
+    .discount-transition {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .discount-loading {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .discount-loading::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        animation: shimmer 1.5s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+    
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .discount-input-focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        border-color: #3b82f6;
+    }
+    
+    .discount-success-highlight {
+        background-color: #f0fdf4;
+        border-color: #22c55e;
+        animation: successPulse 0.6s ease-out;
+    }
+    
+    @keyframes successPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+    
+    .discount-error-shake {
+        animation: errorShake 0.5s ease-in-out;
+    }
+    
+    @keyframes errorShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    /* Smooth price update animation */
+    .price-update {
+        animation: priceUpdate 0.4s ease-in-out;
+    }
+    
+    @keyframes priceUpdate {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.7; transform: scale(0.98); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+</style>
+@endpush
+
 @section('content')
     <x-navigation-auth />
     
@@ -307,7 +385,153 @@
             subtotal: {{ $sub_total_amount }},
             adminFee: {{ $admin_fee_amount ?? 0 }},
             grandTotal: {{ $grand_total_amount }}
-        };
+        }
+        
+        // Progressive Enhancement: Keyboard shortcuts and accessibility
+        document.addEventListener('keydown', function(e) {
+            // Escape key to clear discount input or hide messages
+            if (e.key === 'Escape') {
+                const discountInput = document.getElementById('discount-code');
+                const messageElement = document.getElementById('discount-message');
+                
+                if (messageElement && !messageElement.classList.contains('hidden')) {
+                    hideDiscountMessage();
+                } else if (discountInput && discountInput.value) {
+                    discountInput.value = '';
+                    discountInput.focus();
+                    hideDiscountMessage();
+                }
+            }
+            
+            // Ctrl/Cmd + D to focus discount input (if visible)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                e.preventDefault();
+                const discountInput = document.getElementById('discount-code');
+                const discountSection = document.getElementById('discount-input-section');
+                
+                if (discountInput && discountSection && !discountSection.classList.contains('hidden')) {
+                    discountInput.focus();
+                    discountInput.select();
+                }
+            }
+        });
+        
+        // Progressive Enhancement: Auto-save form data to prevent loss
+        const formElements = document.querySelectorAll('#checkout-details input, #checkout-details select');
+        formElements.forEach(element => {
+            element.addEventListener('input', function() {
+                const formData = new FormData(document.getElementById('checkout-details'));
+                const data = Object.fromEntries(formData.entries());
+                sessionStorage.setItem('checkout_form_data', JSON.stringify(data));
+            });
+        });
+        
+        // Restore form data on page load
+        const savedFormData = sessionStorage.getItem('checkout_form_data');
+        if (savedFormData) {
+            try {
+                const data = JSON.parse(savedFormData);
+                Object.keys(data).forEach(key => {
+                    const element = document.querySelector(`[name="${key}"]`);
+                    if (element && element.type !== 'hidden') {
+                        element.value = data[key];
+                    }
+                });
+            } catch (e) {
+                console.warn('Could not restore form data:', e);
+            }
+        }
+        
+        // Progressive Enhancement: Network status monitoring
+        let isOnline = navigator.onLine;
+        
+        window.addEventListener('online', function() {
+            isOnline = true;
+            const offlineMessage = document.getElementById('offline-message');
+            if (offlineMessage) {
+                offlineMessage.remove();
+            }
+        });
+        
+        window.addEventListener('offline', function() {
+            isOnline = false;
+            showNetworkMessage('Koneksi internet terputus. Beberapa fitur mungkin tidak berfungsi.', 'warning');
+        });
+        
+        function showNetworkMessage(message, type) {
+            // Remove existing network message
+            const existingMessage = document.getElementById('offline-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // Create new network message
+            const messageDiv = document.createElement('div');
+            messageDiv.id = 'offline-message';
+            messageDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
+                type === 'warning' ? 'bg-yellow-100 border border-yellow-400 text-yellow-800' : 'bg-red-100 border border-red-400 text-red-800'
+            }`;
+            messageDiv.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(messageDiv);
+            
+            // Auto-remove after 5 seconds for warning messages
+            if (type === 'warning') {
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.style.opacity = '0';
+                        messageDiv.style.transform = 'translateX(100%)';
+                        setTimeout(() => messageDiv.remove(), 300);
+                    }
+                }, 5000);
+            }
+        }
+        
+        // Modern fetch wrapper with proper error handling
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        ...options.headers
+                    }
+                });
+                
+                // Always try to parse JSON response first
+                const data = await response.json().catch(() => ({}));
+                
+                // For validation errors (422) and other client errors, return the data
+                // The calling function will check data.success to determine if it's an error
+                if (response.status === 422 || (response.status >= 400 && response.status < 500)) {
+                    return data;
+                }
+                
+                // For server errors (500+), throw an error
+                if (!response.ok) {
+                    throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return data;
+            } catch (error) {
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    throw new Error('Koneksi terputus. Silakan periksa internet Anda.');
+                }
+                throw error;
+            }
+        }
+        
+        // Global variables for discount validation
+        let discountValidationTimeout;
+        let isValidating = false;
         
         document.addEventListener('DOMContentLoaded', function() {
             const payButton = document.getElementById('pay-button');
@@ -322,19 +546,75 @@
                 });
             }
             
-            // Discount code validation
-            if (applyDiscountBtn && discountCodeInput) {
-                applyDiscountBtn.addEventListener('click', function() {
+            // Discount code validation with debouncing
+        
+        if (applyDiscountBtn && discountCodeInput) {
+            applyDiscountBtn.addEventListener('click', function(e) {
+                if (!isValidating) {
                     validateDiscountCode();
-                });
-                
-                discountCodeInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
+                }
+            });
+            
+            discountCodeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!isValidating) {
                         validateDiscountCode();
                     }
-                });
+                }
+            });
+            
+            // Enhanced focus and blur events for better UX
+            discountCodeInput.addEventListener('focus', function(e) {
+                e.target.classList.add('discount-input-focus');
+                hideDiscountMessage(); // Clear any existing messages on focus
+            });
+            
+            discountCodeInput.addEventListener('blur', function(e) {
+                e.target.classList.remove('discount-input-focus');
+            });
+            
+            // Progressive Enhancement: Auto-validate on input with debouncing and auto-save
+            discountCodeInput.addEventListener('input', function(e) {
+                const value = e.target.value.trim();
+                
+                // Progressive Enhancement: Auto-save discount code input
+                sessionStorage.setItem('discount_code_input', e.target.value);
+                
+                // Clear previous timeout
+                if (discountValidationTimeout) {
+                    clearTimeout(discountValidationTimeout);
+                }
+                
+                // Clear any existing messages if input is empty
+                if (!value) {
+                    hideDiscountMessage();
+                    sessionStorage.removeItem('discount_code_input');
+                    return;
+                }
+                
+                // Visual feedback for typing
+                e.target.classList.add('discount-loading');
+                
+                // Set new timeout for auto-validation (2 seconds after user stops typing)
+                discountValidationTimeout = setTimeout(() => {
+                    e.target.classList.remove('discount-loading');
+                    if (value.length >= 3 && !isValidating) {
+                        validateDiscountCode(true); // true = silent validation
+                    }
+                }, 2000);
+            });
+            
+            // Progressive Enhancement: Restore discount code input on page load (without auto-validation)
+            const savedDiscountCode = sessionStorage.getItem('discount_code_input');
+            if (savedDiscountCode && !appliedDiscount) {
+                discountCodeInput.value = savedDiscountCode;
+                // Only restore input value, do not auto-focus or auto-validate
+                // User must manually interact to validate
             }
+        } else {
+            console.error('Apply button or discount input not found!');
+        }
             
             // Remove discount
             if (removeDiscountBtn) {
@@ -344,7 +624,7 @@
             }
         });
         
-        function validateDiscountCode() {
+        async function validateDiscountCode(silent = false) {
             const discountCodeInput = document.getElementById('discount-code');
             const applyBtn = document.getElementById('apply-discount');
             const messageDiv = document.getElementById('discount-message');
@@ -352,121 +632,299 @@
             const discountCode = discountCodeInput.value.trim();
             
             if (!discountCode) {
-                showDiscountMessage('Silakan masukkan kode diskon.', 'error');
+                if (!silent) {
+                    showDiscountMessage('Silakan masukkan kode diskon.', 'error');
+                }
                 return;
             }
             
-            // Show loading state
-            applyBtn.disabled = true;
-            applyBtn.textContent = 'Memvalidasi...';
-            hideDiscountMessage();
-            
-            // Get CSRF token
-            const tokenInput = document.querySelector('input[name="_token"]');
-            if (!tokenInput) {
-                showDiscountMessage('Session expired. Please refresh the page.', 'error');
-                resetApplyButton();
+            // Prevent multiple simultaneous validations
+            if (isValidating) {
                 return;
             }
             
-            // Make validation request
-            fetch('{{ route('front.course.validate-discount', $course->slug) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': tokenInput.value
-                },
-                body: JSON.stringify({
-                    discount_code: discountCode
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                resetApplyButton();
+            isValidating = true;
+            
+            // Show enhanced loading state
+            if (!silent) {
+                applyBtn.disabled = true;
+                applyBtn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Memvalidasi...';
+                hideDiscountMessage();
+            }
+            
+            // Add loading class to input for visual feedback
+            discountCodeInput.classList.add('border-blue-400', 'bg-blue-50');
+            
+            // Get CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) {
+                if (!silent) {
+                    showDiscountMessage('Session expired. Please refresh the page.', 'error');
+                    resetApplyButton();
+                }
+                isValidating = false;
+                discountCodeInput.classList.remove('border-blue-400', 'bg-blue-50');
+                return;
+            }
+            
+            // Modern discount validation with clean error handling
+            try {
+                const data = await makeRequest("{{ route('front.course.validate-discount', $course->slug) }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        discount_code: discountCode
+                    })
+                });
                 
                 if (data.success) {
-                    // Apply discount
-                    appliedDiscount = data.discount;
-                    updatePricingDisplay(data.pricing, data.formatted);
-                    showAppliedDiscount(data.discount, data.formatted.savings);
-                    showDiscountMessage(data.message, 'success');
+                    // Store applied discount for session persistence
+                    sessionStorage.setItem('last_valid_discount', JSON.stringify({
+                        code: discountCode,
+                        discount: data.discount,
+                        applied_at: new Date().toISOString()
+                    }));
                     
-                    // Clear input and hide apply section
-                    discountCodeInput.value = '';
-                    const discountInputSection = document.getElementById('discount-input-section');
-                    if (discountInputSection) {
-                        discountInputSection.classList.add('hidden');
+                    if (!silent) {
+                        showDiscountMessage(data.message, 'success');
+                    }
+                    
+                    // Update pricing display in real-time instead of reloading
+                    if (data.pricing && data.formatted) {
+                        updatePricingDisplay(data.pricing, data.formatted);
+                        showAppliedDiscount(data.discount, data.formatted.savings);
                     }
                 } else {
-                    showDiscountMessage(data.message, 'error');
+                    if (!silent) {
+                        showDiscountMessage(data.message, 'error');
+                        
+                        // Add error shake animation to input
+                        discountCodeInput.classList.add('discount-error-shake');
+                        // Use event listener for animation end instead of setTimeout
+                        const handleAnimationEnd = () => {
+                            discountCodeInput.classList.remove('discount-error-shake');
+                            discountCodeInput.removeEventListener('animationend', handleAnimationEnd);
+                        };
+                        discountCodeInput.addEventListener('animationend', handleAnimationEnd);
+                    }
                 }
-            })
-            .catch(error => {
-                resetApplyButton();
-                showDiscountMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
-            });
+                
+            } catch (error) {
+                console.error('Discount validation error:', error);
+                
+                // Hanya tampilkan pesan error jika benar-benar ada masalah dengan kupon
+                if (!silent) {
+                    let errorMessage = '';
+                    
+                    if (!isOnline) {
+                        errorMessage = 'Tidak ada koneksi internet. Silakan coba lagi.';
+                    } else if (error.message.includes('422')) {
+                        errorMessage = 'Kode diskon tidak valid atau sudah kedaluwarsa';
+                    } else if (error.message.includes('500')) {
+                        errorMessage = 'Server sedang bermasalah. Silakan coba lagi.';
+                    } else if (error.message.includes('Koneksi terputus')) {
+                        errorMessage = error.message;
+                    }
+                    
+                    // Hanya tampilkan pesan jika ada error message yang spesifik
+                    if (errorMessage) {
+                        showDiscountMessage(errorMessage, 'error');
+                        
+                        // Add error shake animation to input
+                        discountCodeInput.classList.add('discount-error-shake');
+                        const handleAnimationEnd = () => {
+                            discountCodeInput.classList.remove('discount-error-shake');
+                            discountCodeInput.removeEventListener('animationend', handleAnimationEnd);
+                        };
+                        discountCodeInput.addEventListener('animationend', handleAnimationEnd);
+                    }
+                }
+                
+            } finally {
+                isValidating = false;
+                
+                // Reset button state with smooth transition
+                if (!silent) {
+                    resetApplyButton();
+                }
+                
+                // Remove loading classes from input
+                discountCodeInput.classList.remove('border-blue-400', 'bg-blue-50');
+            }
         }
         
-        function removeDiscount() {
-            // Get CSRF token
-            const tokenInput = document.querySelector('input[name="_token"]');
-            if (!tokenInput) {
-                showDiscountMessage('Session expired. Please refresh the page.', 'error');
+        async function removeDiscount() {
+            const removeBtn = document.getElementById('remove-discount');
+            
+            // Prevent multiple simultaneous removals
+            if (isValidating) {
                 return;
             }
             
-            // Make remove discount request
-            fetch('{{ route('front.course.remove-discount', $course->slug) }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': tokenInput.value
+            isValidating = true;
+            
+            if (removeBtn) {
+                removeBtn.disabled = true;
+                removeBtn.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full"></span>';
+            }
+            
+            // Get CSRF token from meta tag
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            if (!csrfToken) {
+                showDiscountMessage('Session expired. Please refresh the page.', 'error');
+                isValidating = false;
+                if (removeBtn) {
+                    removeBtn.disabled = false;
+                    removeBtn.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>';
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
+                return;
+            }
+            
+            // Modern discount removal with clean error handling
+            try {
+                const data = await makeRequest("{{ route('front.course.remove-discount', $course->slug) }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+                
                 if (data.success) {
-                    appliedDiscount = null;
+                    // Clear sessionStorage to prevent auto-restore
+                    sessionStorage.removeItem('discount_code_input');
+                    sessionStorage.removeItem('last_valid_discount');
                     
-                    // Update pricing display with server response
-                    updatePricingDisplay(data.pricing, data.formatted);
+                    // Update pricing display in real-time instead of reloading
+                    if (data.pricing && data.formatted) {
+                        updatePricingDisplay(data.pricing, data.formatted);
+                        hideAppliedDiscount();
+                    }
                     
-                    // Hide applied discount and show input again
-                    hideAppliedDiscount();
-                    showDiscountInput();
-                    hideDiscountMessage();
+                    // Clear discount input
+                    const discountCodeInput = document.getElementById('discount-code');
+                    if (discountCodeInput) {
+                        discountCodeInput.value = '';
+                    }
+                    
+                    showDiscountMessage('Diskon berhasil dihapus', 'success');
                 } else {
                     showDiscountMessage(data.message, 'error');
                 }
-            })
-            .catch(error => {
-                showDiscountMessage('Terjadi kesalahan. Silakan coba lagi.', 'error');
-            });
+                
+            } catch (error) {
+                console.error('Remove discount error:', error);
+                
+                // Hanya tampilkan pesan error jika benar-benar ada masalah
+                let errorMessage = '';
+                
+                if (!isOnline) {
+                    errorMessage = 'Tidak ada koneksi internet. Silakan coba lagi.';
+                } else if (error.message.includes('500')) {
+                    errorMessage = 'Server sedang bermasalah. Silakan coba lagi.';
+                } else if (error.message.includes('Koneksi terputus')) {
+                    errorMessage = error.message;
+                }
+                
+                // Hanya tampilkan pesan jika ada error message yang spesifik
+                if (errorMessage) {
+                    showDiscountMessage(errorMessage, 'error');
+                }
+                
+            } finally {
+                isValidating = false;
+                
+                if (removeBtn) {
+                    removeBtn.disabled = false;
+                    removeBtn.innerHTML = '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>';
+                }
+            }
         }
         
         function updatePricingDisplay(pricing, formatted) {
-            // Update subtotal
+            // Add price update animation class
+            const pricingElements = [
+                document.getElementById('subtotal-amount'),
+                document.getElementById('discount-amount'),
+                document.getElementById('total-payment')
+            ].filter(el => el);
+            
+            // Apply animation to all pricing elements
+            pricingElements.forEach(el => {
+                el.classList.add('price-update');
+            });
+            
+            // Update subtotal IMMEDIATELY for real-time response
             const subtotalElement = document.getElementById('subtotal-amount');
             if (subtotalElement) {
                 subtotalElement.textContent = formatted.subtotal;
             }
             
-            // Show/hide discount amount
+            // Show/hide discount amount with immediate update
             const discountRow = document.getElementById('discount-amount-row');
             const discountAmount = document.getElementById('discount-amount');
             
             if (pricing.discount_amount > 0) {
-                discountRow.classList.remove('hidden');
-                discountAmount.textContent = '-' + formatted.discount_amount;
+                // Update discount amount IMMEDIATELY
+                if (discountAmount) {
+                    discountAmount.textContent = '-' + formatted.discount_amount;
+                }
+                
+                if (discountRow && discountRow.classList.contains('hidden')) {
+                    discountRow.style.opacity = '0';
+                    discountRow.style.transform = 'translateY(-10px)';
+                    discountRow.style.transition = 'all 0.3s ease-in-out';
+                    discountRow.classList.remove('hidden');
+                    
+                    // Use requestAnimationFrame for smooth animation
+                    requestAnimationFrame(() => {
+                        discountRow.style.opacity = '1';
+                        discountRow.style.transform = 'translateY(0)';
+                    });
+                }
             } else {
-                discountRow.classList.add('hidden');
+                if (discountRow && !discountRow.classList.contains('hidden')) {
+                    discountRow.style.transition = 'all 0.3s ease-in-out';
+                    discountRow.style.opacity = '0';
+                    discountRow.style.transform = 'translateY(-10px)';
+                    
+                    // Use event listener for animation end instead of setTimeout
+                    const handleTransitionEnd = () => {
+                        discountRow.classList.add('hidden');
+                        discountRow.style.transform = 'translateY(0)';
+                        discountRow.removeEventListener('transitionend', handleTransitionEnd);
+                    };
+                    discountRow.addEventListener('transitionend', handleTransitionEnd);
+                }
             }
             
-            // Update total payment
+            // Update total payment IMMEDIATELY with emphasis
             const totalPayment = document.getElementById('total-payment');
             if (totalPayment) {
                 totalPayment.textContent = formatted.grand_total;
+                
+                // Add emphasis animation for total payment
+                totalPayment.style.color = '#059669';
+                totalPayment.style.fontWeight = 'bold';
+                
+                // Use requestAnimationFrame for better performance
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        totalPayment.style.color = '';
+                        totalPayment.style.fontWeight = '';
+                    }, 1000);
+                });
             }
+            
+            // Remove animation classes using requestAnimationFrame
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    pricingElements.forEach(el => {
+                        el.classList.remove('price-update');
+                    });
+                }, 400);
+            });
         }
         
         function showAppliedDiscount(discount, savings) {
@@ -475,6 +933,7 @@
             const discountDetails = document.getElementById('discount-details');
             
             if (appliedDiscountDiv && discountName && discountDetails) {
+                // Update content IMMEDIATELY for real-time response
                 discountName.textContent = discount.name + ' (' + discount.code + ')';
                 
                 let detailText = 'Hemat ' + savings;
@@ -485,38 +944,131 @@
                 }
                 discountDetails.textContent = detailText;
                 
+                // Show with smooth animation
+                appliedDiscountDiv.style.opacity = '0';
+                appliedDiscountDiv.style.transform = 'translateY(10px)';
+                appliedDiscountDiv.style.transition = 'all 0.3s ease-in-out';
                 appliedDiscountDiv.classList.remove('hidden');
+                
+                // Trigger animation using requestAnimationFrame for better performance
+                requestAnimationFrame(() => {
+                    appliedDiscountDiv.style.opacity = '1';
+                    appliedDiscountDiv.style.transform = 'translateY(0)';
+                });
+                
+                // Add success highlight effect IMMEDIATELY
+                appliedDiscountDiv.style.backgroundColor = '#f0fdf4';
+                appliedDiscountDiv.style.borderColor = '#22c55e';
+                
+                // Use requestAnimationFrame for better performance
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        appliedDiscountDiv.style.backgroundColor = '';
+                        appliedDiscountDiv.style.borderColor = '';
+                    }, 1000);
+                });
             }
         }
         
         function hideAppliedDiscount() {
             const appliedDiscountDiv = document.getElementById('applied-discount');
-            if (appliedDiscountDiv) {
-                appliedDiscountDiv.classList.add('hidden');
+            if (appliedDiscountDiv && !appliedDiscountDiv.classList.contains('hidden')) {
+                // Hide with smooth animation
+                appliedDiscountDiv.style.transition = 'all 0.3s ease-in-out';
+                appliedDiscountDiv.style.opacity = '0';
+                appliedDiscountDiv.style.transform = 'translateY(-10px)';
+                
+                // Use event listener for animation end instead of setTimeout
+                const handleTransitionEnd = () => {
+                    appliedDiscountDiv.classList.add('hidden');
+                    appliedDiscountDiv.style.transform = 'translateY(0)';
+                    appliedDiscountDiv.removeEventListener('transitionend', handleTransitionEnd);
+                };
+                appliedDiscountDiv.addEventListener('transitionend', handleTransitionEnd);
             }
         }
         
         function showDiscountInput() {
             const discountInputSection = document.getElementById('discount-input-section');
-            
             if (discountInputSection) {
+                // Show with smooth animation
+                discountInputSection.style.opacity = '0';
+                discountInputSection.style.transform = 'translateY(10px)';
+                discountInputSection.style.transition = 'all 0.3s ease-in-out';
                 discountInputSection.classList.remove('hidden');
+                
+                // Trigger animation using requestAnimationFrame
+                requestAnimationFrame(() => {
+                    discountInputSection.style.opacity = '1';
+                    discountInputSection.style.transform = 'translateY(0)';
+                });
+                
+                // Focus on input for better UX using event listener
+                const discountInput = document.getElementById('discount-code');
+                if (discountInput) {
+                    const handleTransitionEnd = () => {
+                        discountInput.focus();
+                        discountInputSection.removeEventListener('transitionend', handleTransitionEnd);
+                    };
+                    discountInputSection.addEventListener('transitionend', handleTransitionEnd);
+                }
             }
         }
         
         function showDiscountMessage(message, type) {
-            const messageDiv = document.getElementById('discount-message');
-            if (messageDiv) {
-                messageDiv.textContent = message;
-                messageDiv.className = 'mt-2 text-sm ' + (type === 'error' ? 'text-red-600' : 'text-green-600');
-                messageDiv.classList.remove('hidden');
+            const messageElement = document.getElementById('discount-message');
+            if (messageElement) {
+                // Clear any existing timeout
+                if (window.discountMessageTimeout) {
+                    clearTimeout(window.discountMessageTimeout);
+                }
+                
+                // Update content IMMEDIATELY for real-time response
+                messageElement.textContent = message;
+                messageElement.className = `mt-2 text-sm transition-all duration-300 ease-in-out ${
+                    type === 'success' ? 'text-green-600 bg-green-50 border border-green-200 px-3 py-2 rounded-md' : 'text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-md'
+                }`;
+                
+                // Show with animation
+                messageElement.style.opacity = '0';
+                messageElement.style.transform = 'translateY(-10px)';
+                messageElement.classList.remove('hidden');
+                
+                // Trigger animation using requestAnimationFrame for better performance
+                requestAnimationFrame(() => {
+                    messageElement.style.opacity = '1';
+                    messageElement.style.transform = 'translateY(0)';
+                });
+                
+                // Auto-hide success messages after 5 seconds
+                if (type === 'success') {
+                    window.discountMessageTimeout = setTimeout(() => {
+                        hideDiscountMessage();
+                    }, 5000);
+                }
             }
         }
         
         function hideDiscountMessage() {
-            const messageDiv = document.getElementById('discount-message');
-            if (messageDiv) {
-                messageDiv.classList.add('hidden');
+            const messageElement = document.getElementById('discount-message');
+            if (messageElement && !messageElement.classList.contains('hidden')) {
+                // Clear any existing timeout
+                if (window.discountMessageTimeout) {
+                    clearTimeout(window.discountMessageTimeout);
+                }
+                
+                // Hide with animation
+                messageElement.style.transition = 'all 0.3s ease-in-out';
+                messageElement.style.opacity = '0';
+                messageElement.style.transform = 'translateY(-10px)';
+                
+                // Use event listener for animation end instead of setTimeout
+                const handleTransitionEnd = () => {
+                    messageElement.classList.add('hidden');
+                    messageElement.style.transform = 'translateY(0)';
+                    messageElement.removeEventListener('transitionend', handleTransitionEnd);
+                };
+                messageElement.addEventListener('transitionend', handleTransitionEnd);
             }
         }
         

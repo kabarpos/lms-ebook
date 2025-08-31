@@ -240,21 +240,33 @@ class FrontController extends Controller
             ]);
             
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Kode diskon tidak boleh kosong.',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (Exception $e) {
-            Log::error('Discount validation error', [
+            // Handle validation errors specifically
+            Log::warning('Discount validation failed', [
                 'course_id' => $course->id,
                 'discount_code' => $request->discount_code ?? 'N/A',
-                'error' => $e->getMessage()
+                'validation_errors' => $e->errors()
             ]);
             
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memvalidasi kode diskon. Silakan coba lagi.'
+                'message' => 'Kode diskon tidak boleh kosong atau tidak valid.',
+                'errors' => $e->errors()
+            ], 422);
+            
+        } catch (Exception $e) {
+            Log::error('Discount validation error', [
+                'course_id' => $course->id,
+                'discount_code' => $request->discount_code ?? 'N/A',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Clear any partial discount session data on error
+            session()->forget(['applied_discount', 'discount_amount']);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem. Silakan refresh halaman dan coba lagi.'
             ], 500);
         }
     }

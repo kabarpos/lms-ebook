@@ -13,7 +13,7 @@ alwaysApply: true
 - Jangan menambahkan fitur baru tanpa memastikan kode yang sudah ada tidak bermasalah
 - Selalu croscek log setelah melakukan perbaikan atau pembuatan fitur baru
 - Hindari downgrade versi libary, package, dan lain-lain
-- Project ini Laravel 12, jadi jangan menggunakan versi lain
+- Project ini Laravel 12, jadi jangan menggunakan versi lain, PAKAI LARAVEL 12
 - Arsitektur menggunakan repository pattern (WAJIB)
 - Selalu gunakan UI class cursor-pointer untuk setiap link, tombol dan seluruh event yang memiliki fungsi klik
 - WAJIB gunakan warna yang telah ditentukan pada file app.css, itu panduan warna brand color

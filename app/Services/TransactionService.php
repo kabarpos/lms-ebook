@@ -10,6 +10,7 @@ use App\Repositories\PricingRepositoryInterface;
 use App\Repositories\TransactionRepositoryInterface;
 use App\Services\DiscountService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TransactionService
 {

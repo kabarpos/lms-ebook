@@ -17,6 +17,7 @@
         </style>
         <title>@yield('title')</title>
         <meta name="description" content="LMS is an innovative online learning platform that empowers students and professionals with high-quality, accessible courses.">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- Favicon -->
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/logos/logo-64.png') }}">
