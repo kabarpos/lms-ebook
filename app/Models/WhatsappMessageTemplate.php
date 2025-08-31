@@ -115,4 +115,12 @@ class WhatsappMessageTemplate extends Model
 
         return $variables[$type] ?? [];
     }
+
+    /**
+     * Get system variables for template type (alias for getDefaultVariables)
+     */
+    public static function getSystemVariables(string $type): array
+    {
+        return static::getDefaultVariables($type);
+    }
 }

@@ -15,6 +15,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Resources\WhatsappMessageTemplateResource\Pages;
@@ -128,20 +129,20 @@ class WhatsappMessageTemplateResource extends Resource
                     ->label('Subject')
                     ->limit(30),
 
-                TextColumn::make('message')
-                    ->label('Isi Pesan')
-                    ->limit(50)
-                    ->wrap(),
+                // TextColumn::make('message')
+                //     ->label('Isi Pesan')
+                //     ->limit(50)
+                //     ->wrap(),
 
-                TextColumn::make('created_at')
-                    ->label('Dibuat')
-                    ->dateTime()
-                    ->sortable(),
+                // TextColumn::make('created_at')
+                //     ->label('Dibuat')
+                //     ->dateTime()
+                //     ->sortable(),
 
-                TextColumn::make('updated_at')
-                    ->label('Diperbarui')
-                    ->dateTime()
-                    ->sortable(),
+                // TextColumn::make('updated_at')
+                //     ->label('Diperbarui')
+                //     ->dateTime()
+                //     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('type')
@@ -155,6 +156,12 @@ class WhatsappMessageTemplateResource extends Resource
                     ->falseLabel('Tidak Aktif'),
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->label('Lihat')
+                    ->modalHeading('Detail Template WhatsApp')
+                    ->modalContent(fn (WhatsappMessageTemplate $record) => view('filament.resources.whatsapp-message-template.show', compact('record')))
+                    ->modalWidth('4xl')
+                    ->form([]), // Menghapus form fields default
                 EditAction::make(),
             ])
             ->toolbarActions([
