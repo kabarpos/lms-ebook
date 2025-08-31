@@ -65,8 +65,8 @@ class TestCourseWhatsAppCommand extends Command
         $mockTransaction->created_at = now();
         $mockTransaction->updated_at = now();
         
-        // Manually set the user relationship
-        $mockTransaction->setRelation('user', $user);
+        // Manually set the student relationship
+        $mockTransaction->setRelation('student', $user);
         $mockTransaction->setRelation('course', $course);
         
         try {

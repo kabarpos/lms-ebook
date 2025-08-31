@@ -45,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 'General' => NavigationGroup::make()
-                    ->label('Umum')
+                    ->label('Dashboard')
                     ->icon('heroicon-o-home')
                     ->collapsed(false),
                 'Products' => NavigationGroup::make()

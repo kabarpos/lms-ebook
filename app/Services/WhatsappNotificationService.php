@@ -94,7 +94,7 @@ class WhatsappNotificationService
                 throw new \Exception('Order completion template not found');
             }
 
-            $user = $transaction->user;
+            $user = $transaction->student;
             if (!$user || !$user->whatsapp_number) {
                 throw new \Exception('User or WhatsApp number is not available');
             }
@@ -164,7 +164,7 @@ class WhatsappNotificationService
                 throw new \Exception('Payment received template not found');
             }
 
-            $user = $transaction->user;
+            $user = $transaction->student;
             if (!$user || !$user->whatsapp_number) {
                 throw new \Exception('User or WhatsApp number is not available');
             }
@@ -229,7 +229,7 @@ class WhatsappNotificationService
                 throw new \Exception('Course purchase template not found');
             }
 
-            $user = $transaction->user;
+            $user = $transaction->student;
             if (!$user || !$user->whatsapp_number) {
                 throw new \Exception('User or WhatsApp number is not available');
             }

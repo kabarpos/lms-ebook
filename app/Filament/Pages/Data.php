@@ -3,6 +3,9 @@
 namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
+use App\Filament\Widgets\DataOverview;
+use App\Filament\Widgets\RecentTransactions;
+use App\Filament\Widgets\TopCourses;
 
 class Data extends Page
 {
@@ -26,5 +29,33 @@ class Data extends Page
         return 'Data';
     }
 
-    protected string $view = 'filament.pages.data';
+    public function getView(): string
+    {
+        return 'filament.pages.data';
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            DataOverview::class,
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            RecentTransactions::class,
+            TopCourses::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int | array
+    {
+        return 1;
+    }
+
+    public function getFooterWidgetsColumns(): int | array
+    {
+        return 1;
+    }
 }
