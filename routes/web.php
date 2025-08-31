@@ -71,6 +71,12 @@ Route::post('/course/{course:slug}/checkout', function() {
     return response()->json(['error' => 'Form submission not allowed. Please use the Pay Now button.'], 400);
 });
 
+// Discount validation route
+Route::post('/course/{course:slug}/validate-discount', [FrontController::class, 'validateDiscount'])->name('front.course.validate-discount');
+
+// Remove discount code
+Route::post('/course/{course:slug}/remove-discount', [FrontController::class, 'removeDiscount'])->name('front.course.remove-discount');
+
 // Debug route for checkout issues
 Route::get('/debug-checkout/{course:slug}', function(\App\Models\Course $course) {
     return response()->json([

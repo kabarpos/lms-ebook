@@ -20,7 +20,7 @@ class TransactionsList extends BaseWidget
         return $table
             ->query(
                 Transaction::query()
-                    ->with(['student', 'course'])
+                    ->with(['student', 'course', 'discount'])
                     ->where('is_paid', true)
                     ->latest()
                     ->limit(10)
@@ -40,6 +40,11 @@ class TransactionsList extends BaseWidget
                     ->label('Course')
                     ->searchable()
                     ->limit(30)
+                    ->extraAttributes(['class' => 'cursor-pointer']),
+                    
+                TextColumn::make('discount_amount')
+                    ->label('Diskon')
+                    ->formatStateUsing(fn ($state) => $state > 0 ? 'Rp ' . number_format($state, 0, '', '.') : '-')
                     ->extraAttributes(['class' => 'cursor-pointer']),
                     
                 TextColumn::make('grand_total_amount')

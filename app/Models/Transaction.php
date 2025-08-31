@@ -17,6 +17,8 @@ class Transaction extends Model
         'sub_total_amount',
         'grand_total_amount',
         'admin_fee_amount',
+        'discount_amount',
+        'discount_id',
         'is_paid',
         'payment_type',
         'proof',
@@ -37,6 +39,11 @@ class Transaction extends Model
     public function student()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class, 'discount_id');
     }
 
     public function isActive(): bool

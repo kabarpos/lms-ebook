@@ -85,6 +85,17 @@
                                         <div class="bg-lochmara-50 border border-lochmara-200 rounded-lg p-4">
                                             <div class="flex items-center justify-between">
                                                 <div>
+                                                    @if($course->original_price && $course->original_price > $course->price)
+                                                        <!-- Show original price with strikethrough -->
+                                                        <div class="flex items-center space-x-2 mb-1">
+                                                            <span class="text-lg text-gray-500 line-through">
+                                                                Rp {{ number_format($course->original_price, 0, '', '.') }}
+                                                            </span>
+                                                            <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">
+                                                                {{ round((($course->original_price - $course->price) / $course->original_price) * 100) }}% OFF
+                                                            </span>
+                                                        </div>
+                                                    @endif
                                                     <div class="text-2xl font-bold text-lochmara-700">
                                                         Rp {{ number_format($course->price, 0, '', '.') }}
                                                     </div>
@@ -120,6 +131,17 @@
                                     <div class="bg-lochmara-50 border border-lochmara-200 rounded-lg p-4">
                                         <div class="flex items-center justify-between">
                                             <div>
+                                                @if($course->original_price && $course->original_price > $course->price)
+                                                    <!-- Show original price with strikethrough -->
+                                                    <div class="flex items-center space-x-2 mb-1">
+                                                        <span class="text-lg text-gray-500 line-through">
+                                                            Rp {{ number_format($course->original_price, 0, '', '.') }}
+                                                        </span>
+                                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">
+                                                            {{ round((($course->original_price - $course->price) / $course->original_price) * 100) }}% OFF
+                                                        </span>
+                                                    </div>
+                                                @endif
                                                 <div class="text-2xl font-bold text-lochmara-700">
                                                     Rp {{ number_format($course->price, 0, '', '.') }}
                                                 </div>

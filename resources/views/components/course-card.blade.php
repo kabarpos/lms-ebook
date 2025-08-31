@@ -47,9 +47,26 @@
                     @if($course->price > 0)
                         <!-- Course Price -->
                         <div class="text-left">
-                            <div class="text-lg font-bold text-lochmara-600">
-                                Rp {{ number_format($course->price, 0, '', '.') }}
-                            </div>
+                            @if($course->original_price && $course->original_price > $course->price)
+                                <!-- Original Price (Strikethrough) -->
+                                <div class="text-sm text-gray-500 line-through">
+                                    Rp {{ number_format($course->original_price, 0, '', '.') }}
+                                </div>
+                                <!-- Current Price with Discount Badge -->
+                                <div class="flex items-center space-x-2">
+                                    <div class="text-lg font-bold text-lochmara-600">
+                                        Rp {{ number_format($course->price, 0, '', '.') }}
+                                    </div>
+                                    <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded">
+                                        {{ round((($course->original_price - $course->price) / $course->original_price) * 100) }}% OFF
+                                    </span>
+                                </div>
+                            @else
+                                <!-- Regular Price -->
+                                <div class="text-lg font-bold text-lochmara-600">
+                                    Rp {{ number_format($course->price, 0, '', '.') }}
+                                </div>
+                            @endif
                         </div>
                         
                         @auth

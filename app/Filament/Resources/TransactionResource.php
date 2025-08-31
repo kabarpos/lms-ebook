@@ -76,13 +76,14 @@ class TransactionResource extends Resource
                                         ->preload()
                                         ->required()
                                         ->live()
-                                        ->afterStateUpdated(function ($state, callable $set) {
+                                        ->afterStateUpdated(function ($state, callable $set, callable $get) {
                             if ($state) {
                                 $course = Course::find($state);
                                 $price = $course->price;
                                 $adminFee = $course->admin_fee_amount ?? 0;
+                                $discountAmount = $get('discount_amount') ?? 0;
                                 $subTotal = $price;
-                                $grandTotal = $subTotal + $adminFee;
+                                $grandTotal = $subTotal + $adminFee - $discountAmount;
                                 
                                 $set('admin_fee_amount', $adminFee);
                                 $set('grand_total_amount', $grandTotal);
@@ -91,7 +92,7 @@ class TransactionResource extends Resource
                         }),
                                 ]),
 
-                            Grid::make(3)
+                            Grid::make(2)
                             ->schema([
                                 TextInput::make('sub_total_amount')
                                     ->required()
@@ -105,13 +106,41 @@ class TransactionResource extends Resource
                                     ->prefix('IDR')
                                     ->readOnly()
                                     ->helperText('Admin fee dari course'),
+                            ]),
 
+                            Grid::make(2)
+                            ->schema([
+                                TextInput::make('discount_amount')
+                                    ->numeric()
+                                    ->prefix('IDR')
+                                    ->default(0)
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                        $subTotal = $get('sub_total_amount') ?? 0;
+                                        $adminFee = $get('admin_fee_amount') ?? 0;
+                                        $discountAmount = $state ?? 0;
+                                        $grandTotal = $subTotal + $adminFee - $discountAmount;
+                                        
+                                        $set('grand_total_amount', $grandTotal);
+                                    })
+                                    ->helperText('Jumlah diskon yang diterapkan'),
+
+                                Select::make('discount_id')
+                                    ->relationship('discount', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->nullable()
+                                    ->helperText('Diskon yang diterapkan (opsional)'),
+                            ]),
+
+                            Grid::make(1)
+                            ->schema([
                                 TextInput::make('grand_total_amount')
                                     ->required()
                                     ->numeric()
                                     ->prefix('IDR')
                                     ->readOnly()
-                                    ->helperText('Total dengan biaya admin'),
+                                    ->helperText('Total setelah admin fee dan diskon'),
                             ]),
 
 
@@ -220,6 +249,16 @@ class TransactionResource extends Resource
                     ->label('Admin Fee')
                     ->formatStateUsing(fn ($state) => $state > 0 ? 'Rp ' . number_format($state, 0, '', '.') : '-')
                     ->sortable(),
+
+                TextColumn::make('discount_amount')
+                    ->label('Diskon')
+                    ->formatStateUsing(fn ($state) => $state > 0 ? 'Rp ' . number_format($state, 0, '', '.') : '-')
+                    ->sortable(),
+
+                TextColumn::make('discount.name')
+                    ->label('Nama Diskon')
+                    ->formatStateUsing(fn ($state) => $state ?? '-')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('grand_total_amount')
                     ->label('Total Amount')

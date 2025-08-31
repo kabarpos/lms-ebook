@@ -90,6 +90,14 @@ class CourseResource extends Resource
                     ->helperText('Set to 0 for free courses')
                     ->required(),
 
+                TextInput::make('original_price')
+                    ->label('Original Price (Rp) - Optional')
+                    ->numeric()
+                    ->prefix('Rp')
+                    ->minValue(0)
+                    ->helperText('Harga coret untuk menampilkan diskon. Kosongkan jika tidak ada harga coret.')
+                    ->nullable(),
+
                 TextInput::make('admin_fee_amount')
                     ->label('Admin Fee (Rp)')
                     ->numeric()

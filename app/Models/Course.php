@@ -22,6 +22,7 @@ class Course extends Model
         'is_popular',
         'category_id',
         'price',
+        'original_price',
         'admin_fee_amount',
     ];
 

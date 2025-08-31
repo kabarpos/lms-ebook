@@ -40,8 +40,71 @@ class PaymentService
         $user = Auth::user();
         $course = Course::findOrFail($courseId);
         
+        // Get discount from session if available
+        $appliedDiscount = session()->get('applied_discount');
+        $discountAmount = 0;
+        $discountId = null;
+        
+        if ($appliedDiscount) {
+            $discountId = $appliedDiscount['id'] ?? null;
+            
+            // SELALU hitung ulang discount_amount dari applied_discount
+            // JANGAN bergantung pada session discount_amount yang bisa tidak sinkron
+            if (isset($appliedDiscount['type']) && isset($appliedDiscount['value'])) {
+                if ($appliedDiscount['type'] === 'percentage') {
+                    $discountAmount = ($course->price * $appliedDiscount['value']) / 100;
+                    // Apply maximum discount limit if exists
+                    if (isset($appliedDiscount['max_amount']) && $appliedDiscount['max_amount'] > 0) {
+                        $discountAmount = min($discountAmount, $appliedDiscount['max_amount']);
+                    }
+                } else {
+                    $discountAmount = min($appliedDiscount['value'], $course->price);
+                }
+            }
+            
+            // Log untuk debugging
+            Log::info('PaymentService discount calculation', [
+                'course_id' => $course->id,
+                'course_price' => $course->price,
+                'applied_discount' => $appliedDiscount,
+                'calculated_discount_amount' => $discountAmount,
+                'session_discount_amount' => session()->get('discount_amount', 'not_set')
+            ]);
+        }
+        
         $adminFeeAmount = $course->admin_fee_amount ?? 0;
-        $grandTotal = $course->price + $adminFeeAmount;
+        $subTotal = $course->price;
+        $grandTotal = $subTotal + $adminFeeAmount - $discountAmount;
+
+        // Prepare item details with discount consideration
+        $itemDetails = [
+            [
+                'id' => $course->id,
+                'price' => (int) $course->price,
+                'quantity' => 1,
+                'name' => $course->name,
+            ]
+        ];
+        
+        // Add admin fee if exists
+        if ($adminFeeAmount > 0) {
+            $itemDetails[] = [
+                'id' => 'admin_fee',
+                'price' => (int) $adminFeeAmount,
+                'quantity' => 1,
+                'name' => 'Biaya Admin',
+            ];
+        }
+        
+        // Add discount as negative item if exists
+        if ($discountAmount > 0) {
+            $itemDetails[] = [
+                'id' => 'discount',
+                'price' => -(int) $discountAmount,
+                'quantity' => 1,
+                'name' => 'Diskon: ' . ($appliedDiscount['name'] ?? 'Diskon'),
+            ];
+        }
 
         $params = [
             'transaction_details' => [
@@ -53,24 +116,15 @@ class PaymentService
                 'email' => $user->email,
                 'phone' => $user->whatsapp_number ?? '089998501293218'
             ],
-            'item_details' => array_filter([
-                [
-                    'id' => $course->id,
-                    'price' => (int) $course->price,
-                    'quantity' => 1,
-                    'name' => $course->name,
-                ],
-                $adminFeeAmount > 0 ? [
-                    'id' => 'admin_fee',
-                    'price' => (int) $adminFeeAmount,
-                    'quantity' => 1,
-                    'name' => 'Biaya Admin',
-                ] : null,
-            ]),
+            'item_details' => $itemDetails,
             'custom_field1' => $user->id,
             'custom_field2' => $courseId,
             'custom_field3' => 'course', // Mark as course purchase
-            'custom_expiry' => json_encode(['admin_fee_amount' => $adminFeeAmount])
+            'custom_expiry' => json_encode([
+                'admin_fee_amount' => $adminFeeAmount,
+                'discount_amount' => $discountAmount,
+                'discount_id' => $discountId
+            ])
         ];
 
         return $this->midtransService->createSnapToken($params);
@@ -115,12 +169,19 @@ class PaymentService
         // Get admin fee amount from course model
         $adminFeeAmount = $course->admin_fee_amount ?? 0;
         
+        // Parse custom_expiry to get discount information
+        $customExpiry = json_decode($notification['custom_expiry'] ?? '{}', true);
+        $discountAmount = $customExpiry['discount_amount'] ?? 0;
+        $discountId = $customExpiry['discount_id'] ?? null;
+        
         $transactionData = [
             'user_id' => $notification['custom_field1'],
             'pricing_id' => null, // No pricing for course purchase
             'course_id' => $notification['custom_field2'],
             'sub_total_amount' => $course->price,
             'admin_fee_amount' => $adminFeeAmount,
+            'discount_amount' => $discountAmount,
+            'discount_id' => $discountId,
             'grand_total_amount' => $notification['gross_amount'],
             'payment_type' => 'Midtrans',
             'is_paid' => true,

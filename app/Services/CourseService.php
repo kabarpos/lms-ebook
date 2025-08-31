@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Course;
+use App\Models\Discount;
 use App\Models\UserLessonProgress;
 use App\Repositories\CourseRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -256,5 +257,89 @@ class CourseService
         return $purchasedCourses->groupBy(function ($course) {
             return $course->category->name ?? 'Uncategorized';
         });
+    }
+    
+    /**
+     * Apply discount to course and calculate final price
+     */
+    public function applyDiscountToCourse(Course $course, string $discountCode = null)
+    {
+        $originalPrice = $course->price;
+        $finalPrice = $originalPrice;
+        $discount = null;
+        $discountAmount = 0;
+        
+        if ($discountCode) {
+            $discount = Discount::where('code', $discountCode)
+                ->active()
+                ->available()
+                ->first();
+                
+            if ($discount && $discount->isValid($originalPrice)) {
+                $discountAmount = $discount->calculateDiscount($originalPrice);
+                $finalPrice = max(0, $originalPrice - $discountAmount);
+            }
+        }
+        
+        return [
+            'original_price' => $originalPrice,
+            'final_price' => $finalPrice,
+            'discount_amount' => $discountAmount,
+            'discount' => $discount,
+            'savings' => $originalPrice - $finalPrice
+        ];
+    }
+    
+    /**
+     * Validate discount code for a course
+     */
+    public function validateDiscountCode(string $discountCode, Course $course)
+    {
+        $discount = Discount::where('code', $discountCode)
+            ->active()
+            ->available()
+            ->first();
+            
+        if (!$discount) {
+            return [
+                'valid' => false,
+                'message' => 'Kode diskon tidak valid atau sudah tidak aktif.'
+            ];
+        }
+        
+        if (!$discount->isValid($course->price)) {
+            $reasons = [];
+            
+            if ($discount->minimum_amount && $course->price < $discount->minimum_amount) {
+                $reasons[] = 'Minimum pembelian Rp ' . number_format($discount->minimum_amount, 0, '', '.');
+            }
+            
+            if ($discount->usage_limit && $discount->used_count >= $discount->usage_limit) {
+                $reasons[] = 'Kuota penggunaan sudah habis';
+            }
+            
+            if ($discount->start_date && now() < $discount->start_date) {
+                $reasons[] = 'Diskon belum berlaku';
+            }
+            
+            if ($discount->end_date && now() > $discount->end_date) {
+                $reasons[] = 'Diskon sudah berakhir';
+            }
+            
+            return [
+                'valid' => false,
+                'message' => 'Kode diskon tidak dapat digunakan: ' . implode(', ', $reasons)
+            ];
+        }
+        
+        $discountAmount = $discount->calculateDiscount($course->price);
+        
+        return [
+            'valid' => true,
+            'discount' => $discount,
+            'discount_amount' => $discountAmount,
+            'final_price' => max(0, $course->price - $discountAmount),
+            'message' => 'Kode diskon berhasil diterapkan!'
+        ];
     }
 }

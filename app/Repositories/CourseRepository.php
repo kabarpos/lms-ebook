@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Course;
+use App\Models\Discount;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -74,5 +75,35 @@ class CourseRepository implements CourseRepositoryInterface
         }
 
         return $query->paginate($perPage);
+    }
+    
+    /**
+     * Get active discounts
+     */
+    public function getActiveDiscounts(): Collection
+    {
+        return Discount::active()->available()->get();
+    }
+    
+    /**
+     * Find discount by code
+     */
+    public function findDiscountByCode(string $code): ?Discount
+    {
+        return Discount::where('code', $code)
+            ->active()
+            ->available()
+            ->first();
+    }
+    
+    /**
+     * Get courses with discounts applied
+     */
+    public function getCoursesWithDiscounts(): Collection
+    {
+        return Course::with(['category'])
+            ->where('original_price', '>', 0)
+            ->whereColumn('original_price', '>', 'price')
+            ->get();
     }
 }

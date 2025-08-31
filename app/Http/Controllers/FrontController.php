@@ -191,6 +191,113 @@ class FrontController extends Controller
     }
     
     /**
+     * Validate discount code for course
+     */
+    public function validateDiscount(Course $course, Request $request)
+    {
+        try {
+            $request->validate([
+                'discount_code' => 'required|string|max:50'
+            ]);
+            
+            $discountCode = strtoupper(trim($request->discount_code));
+            
+            // Use DiscountService to validate discount
+            $discountService = app(\App\Services\DiscountService::class);
+            $validation = $discountService->validateDiscountForCourse($discountCode, $course);
+            
+            if (!$validation['valid']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validation['message']
+                ], 422);
+            }
+            
+            // Apply discount to session using TransactionService
+            $this->transactionService->applyDiscount($validation['discount']);
+            
+            // Calculate new totals using TransactionService
+            $pricing = $this->transactionService->calculatePricingWithDiscount($course, $validation['discount']);
+            
+            return response()->json([
+                'success' => true,
+                'message' => $validation['message'],
+                'discount' => [
+                    'id' => $validation['discount']->id,
+                    'name' => $validation['discount']->name,
+                    'code' => $validation['discount']->code,
+                    'type' => $validation['discount']->type,
+                    'value' => $validation['discount']->value
+                ],
+                'pricing' => $pricing,
+                'formatted' => [
+                    'subtotal' => 'Rp ' . number_format($pricing['subtotal'], 0, ',', '.'),
+                    'discount_amount' => 'Rp ' . number_format($pricing['discount_amount'], 0, ',', '.'),
+                    'admin_fee' => 'Rp ' . number_format($pricing['admin_fee'], 0, ',', '.'),
+                    'grand_total' => 'Rp ' . number_format($pricing['grand_total'], 0, ',', '.'),
+                    'savings' => 'Rp ' . number_format($pricing['savings'], 0, ',', '.')
+                ]
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode diskon tidak boleh kosong.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (Exception $e) {
+            Log::error('Discount validation error', [
+                'course_id' => $course->id,
+                'discount_code' => $request->discount_code ?? 'N/A',
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memvalidasi kode diskon. Silakan coba lagi.'
+            ], 500);
+        }
+    }
+    
+    /**
+     * Remove discount code from session
+     */
+    public function removeDiscount(Course $course, Request $request)
+    {
+        try {
+            // Remove discount from session using TransactionService
+            $this->transactionService->removeDiscount();
+            
+            // Recalculate pricing without discount
+            $pricing = $this->transactionService->calculatePricingWithDiscount($course, null);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Diskon berhasil dihapus.',
+                'pricing' => $pricing,
+                'formatted' => [
+                    'subtotal' => 'Rp ' . number_format($pricing['subtotal'], 0, ',', '.'),
+                    'discount_amount' => 'Rp ' . number_format($pricing['discount_amount'], 0, ',', '.'),
+                    'admin_fee' => 'Rp ' . number_format($pricing['admin_fee'], 0, ',', '.'),
+                    'grand_total' => 'Rp ' . number_format($pricing['grand_total'], 0, ',', '.'),
+                    'savings' => 'Rp ' . number_format($pricing['savings'], 0, ',', '.')
+                ]
+            ]);
+            
+        } catch (Exception $e) {
+            Log::error('Remove discount error', [
+                'course_id' => $course->id,
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus diskon. Silakan coba lagi.'
+            ], 500);
+        }
+    }
+    
+    /**
      * Handle course payment processing
      */
     public function paymentStoreCoursesMidtrans()
