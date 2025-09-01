@@ -315,15 +315,46 @@ class FrontController extends Controller
     public function paymentStoreCoursesMidtrans(Request $request)
     {
         try {
-            // Retrieve the course ID from the session
-            $courseId = session()->get('course_id');
+            // ENHANCED LOGGING: Log semua data request dan session
+            Log::info('=== PAYMENT REQUEST RECEIVED ===', [
+                'session_id' => session()->getId(),
+                'user_id' => Auth::id(),
+                'request_data' => $request->all(),
+                'request_applied_discount' => $request->input('applied_discount'),
+                'request_has_applied_discount' => $request->has('applied_discount'),
+                'session_course_id' => session()->get('course_id'),
+                'session_applied_discount' => session()->get('applied_discount'),
+                'all_session_data' => session()->all(),
+                'request_method' => $request->method(),
+                'request_content_type' => $request->header('Content-Type'),
+                'request_raw_body' => $request->getContent()
+            ]);
+            
+            // Retrieve the course ID from request first, then fallback to session
+            $courseId = $request->input('course_id') ?? session()->get('course_id');
 
             if (!$courseId) {
-                return response()->json(['error' => 'No course data found in the session.'], 400);
+                Log::error('No course ID in request or session', [
+                    'session_id' => session()->getId(),
+                    'user_id' => Auth::id(),
+                    'request_course_id' => $request->input('course_id'),
+                    'session_course_id' => session()->get('course_id')
+                ]);
+                return response()->json(['error' => 'No course data found in the request or session.'], 400);
             }
+            
+            Log::info('Course ID resolved', [
+                'course_id' => $courseId,
+                'source' => $request->input('course_id') ? 'request' : 'session'
+            ]);
 
             // Handle applied discount from frontend request
             $appliedDiscount = $request->input('applied_discount');
+            Log::info('Processing discount from frontend', [
+                'applied_discount_from_request' => $appliedDiscount,
+                'session_discount_before' => session()->get('applied_discount')
+            ]);
+            
             if ($appliedDiscount) {
                 // Validate and apply discount to session
                 $discountService = app(\App\Services\DiscountService::class);
@@ -336,24 +367,56 @@ class FrontController extends Controller
                 
                 if ($validation['valid']) {
                     $this->transactionService->applyDiscount($validation['discount']);
+                    Log::info('Discount applied successfully', [
+                        'discount_code' => $appliedDiscount['code'],
+                        'session_discount_after' => session()->get('applied_discount')
+                    ]);
                 } else {
                     Log::warning('Invalid discount applied during payment', [
                         'discount_code' => $appliedDiscount['code'],
-                        'course_id' => $courseId
+                        'course_id' => $courseId,
+                        'validation_message' => $validation['message']
                     ]);
                 }
+            } else {
+                Log::info('No discount in frontend request, checking session', [
+                    'session_discount' => session()->get('applied_discount')
+                ]);
             }
+
+            // Log final session state before calling PaymentService
+            Log::info('Final session state before PaymentService', [
+                'course_id' => session()->get('course_id'),
+                'applied_discount' => session()->get('applied_discount'),
+                'session_id' => session()->getId()
+            ]);
 
             // Call the PaymentService to generate the Snap token for course
             $snapToken = $this->paymentService->createCoursePayment($courseId);
 
             if (!$snapToken) {
+                Log::error('Failed to create Midtrans transaction', [
+                    'course_id' => $courseId,
+                    'user_id' => Auth::id()
+                ]);
                 return response()->json(['error' => 'Failed to create Midtrans transaction.'], 500);
             }
+
+            Log::info('Payment token created successfully', [
+                'course_id' => $courseId,
+                'user_id' => Auth::id(),
+                'snap_token_length' => strlen($snapToken)
+            ]);
 
             // Return the Snap token to the frontend
             return response()->json(['snap_token' => $snapToken], 200);
         } catch (Exception $e) {
+            Log::error('Payment failed with exception', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'course_id' => $courseId ?? null,
+                'user_id' => Auth::id()
+            ]);
             // Handle any exceptions that occur during transaction creation
             return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
         }

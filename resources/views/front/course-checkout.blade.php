@@ -380,12 +380,15 @@
 
     <script type="text/javascript">
         // Global variables for discount management
-        let appliedDiscount = null;
+        let appliedDiscount = @if(isset($appliedDiscount)) @json($appliedDiscount) @else null @endif;
         let originalPricing = {
             subtotal: {{ $sub_total_amount }},
             adminFee: {{ $admin_fee_amount ?? 0 }},
             grandTotal: {{ $grand_total_amount }}
         }
+        
+        // Log applied discount for debugging
+        console.log('Applied discount from server:', appliedDiscount);
         
         // Progressive Enhancement: Keyboard shortcuts and accessibility
         document.addEventListener('keydown', function(e) {
@@ -680,6 +683,9 @@
                 });
                 
                 if (data.success) {
+                    // CRITICAL FIX: Set appliedDiscount variable untuk payment request
+                    appliedDiscount = data.discount;
+                    
                     // Store applied discount for session persistence
                     sessionStorage.setItem('last_valid_discount', JSON.stringify({
                         code: discountCode,
@@ -696,6 +702,8 @@
                         updatePricingDisplay(data.pricing, data.formatted);
                         showAppliedDiscount(data.discount, data.formatted.savings);
                     }
+                    
+                    console.log('✅ Applied discount set:', appliedDiscount);
                 } else {
                     if (!silent) {
                         showDiscountMessage(data.message, 'error');
@@ -792,6 +800,9 @@
                 });
                 
                 if (data.success) {
+                    // CRITICAL FIX: Reset appliedDiscount variable
+                    appliedDiscount = null;
+                    
                     // Clear sessionStorage to prevent auto-restore
                     sessionStorage.removeItem('discount_code_input');
                     sessionStorage.removeItem('last_valid_discount');
@@ -808,6 +819,7 @@
                         discountCodeInput.value = '';
                     }
                     
+                    console.log('✅ Applied discount cleared:', appliedDiscount);
                     showDiscountMessage('Diskon berhasil dihapus', 'success');
                 } else {
                     showDiscountMessage(data.message, 'error');
@@ -1100,7 +1112,9 @@
             }
             
             // Prepare payment data including applied discount
-            let paymentData = {};
+            let paymentData = {
+                course_id: {{ $course->id }}
+            };
             
             // Include applied discount if exists
             if (appliedDiscount) {
@@ -1111,6 +1125,10 @@
                     type: appliedDiscount.type,
                     value: appliedDiscount.value
                 };
+                
+                console.log('💰 Sending payment data with discount:', paymentData);
+            } else {
+                console.log('💰 Sending payment data without discount:', paymentData);
             }
             
             // Make payment request

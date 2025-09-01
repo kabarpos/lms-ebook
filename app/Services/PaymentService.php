@@ -5,6 +5,7 @@ namespace App\Services;
 use Exception;
 use App\Helpers\TransactionHelper;
 use App\Models\Course;
+use App\Models\PaymentTemp;
 use App\Models\User;
 use App\Mail\CoursePurchaseConfirmation;
 use App\Notifications\CoursePurchasedNotification;
@@ -37,15 +38,41 @@ class PaymentService
      */
     public function createCoursePayment(int $courseId)
     {
+        // ENHANCED LOGGING: Log awal proses payment
+        Log::info('=== PAYMENT SERVICE START ===', [
+            'course_id' => $courseId,
+            'user_id' => Auth::id(),
+            'session_id' => session()->getId(),
+            'timestamp' => now()->toISOString()
+        ]);
+        
         $user = Auth::user();
         $course = Course::findOrFail($courseId);
+        
+        Log::info('Course and user loaded', [
+            'course_id' => $course->id,
+            'course_name' => $course->name,
+            'course_price' => $course->price,
+            'user_id' => $user->id,
+            'user_name' => $user->name
+        ]);
         
         // Get discount from session if available
         $appliedDiscount = session()->get('applied_discount');
         $discountAmount = 0;
         $discountId = null;
         
+        Log::info('Checking session for discount', [
+            'session_applied_discount' => $appliedDiscount,
+            'session_all_data' => session()->all()
+        ]);
+        
         if ($appliedDiscount) {
+            Log::info('Discount found in session, calculating amount', [
+                'discount_data' => $appliedDiscount,
+                'course_price' => $course->price
+            ]);
+            
             $discountId = $appliedDiscount['id'] ?? null;
             
             // SELALU hitung ulang discount_amount dari applied_discount
@@ -53,22 +80,45 @@ class PaymentService
             if (isset($appliedDiscount['type']) && isset($appliedDiscount['value'])) {
                 if ($appliedDiscount['type'] === 'percentage') {
                     $discountAmount = ($course->price * $appliedDiscount['value']) / 100;
+                    Log::info('Percentage discount calculated', [
+                        'percentage' => $appliedDiscount['value'],
+                        'calculated_amount' => $discountAmount
+                    ]);
                     // Apply maximum discount limit if exists
                     if (isset($appliedDiscount['maximum_discount']) && $appliedDiscount['maximum_discount'] > 0) {
+                        $originalAmount = $discountAmount;
                         $discountAmount = min($discountAmount, $appliedDiscount['maximum_discount']);
+                        Log::info('Maximum discount limit applied', [
+                            'original_amount' => $originalAmount,
+                            'max_limit' => $appliedDiscount['maximum_discount'],
+                            'final_amount' => $discountAmount
+                        ]);
                     }
                 } else {
                     $discountAmount = min($appliedDiscount['value'], $course->price);
+                    Log::info('Fixed discount applied', [
+                        'fixed_amount' => $discountAmount
+                    ]);
                 }
             }
             
             // Log untuk debugging
-            Log::info('PaymentService discount calculation', [
+            Log::info('Final discount calculation', [
                 'course_id' => $course->id,
                 'course_price' => $course->price,
                 'applied_discount' => $appliedDiscount,
                 'calculated_discount_amount' => $discountAmount,
-                'session_discount_amount' => session()->get('discount_amount', 'not_set')
+                'session_discount_amount' => session()->get('discount_amount', 'not_set'),
+                'discount_id' => $discountId,
+                'discount_type' => $appliedDiscount['type'],
+                'discount_value' => $appliedDiscount['value'],
+                'final_price' => $course->price - $discountAmount
+            ]);
+        } else {
+            Log::warning('No discount found in session', [
+                'session_id' => session()->getId(),
+                'user_id' => Auth::id(),
+                'course_id' => $courseId
             ]);
         }
         
@@ -106,6 +156,22 @@ class PaymentService
             ];
         }
 
+        // Prepare custom_expiry data
+        $customExpiryData = [
+            'admin_fee_amount' => $adminFeeAmount,
+            'discount_amount' => $discountAmount,
+            'discount_id' => $discountId
+        ];
+        
+        Log::info('Preparing Midtrans parameters', [
+            'order_id' => TransactionHelper::generateUniqueTrxId(),
+            'gross_amount' => $grandTotal,
+            'item_details' => $itemDetails,
+            'custom_expiry_data' => $customExpiryData,
+            'user_id' => $user->id,
+            'course_id' => $courseId
+        ]);
+
         $params = [
             'transaction_details' => [
                 'order_id' => TransactionHelper::generateUniqueTrxId(),
@@ -120,14 +186,56 @@ class PaymentService
             'custom_field1' => $user->id,
             'custom_field2' => $courseId,
             'custom_field3' => 'course', // Mark as course purchase
-            'custom_expiry' => json_encode([
-                'admin_fee_amount' => $adminFeeAmount,
-                'discount_amount' => $discountAmount,
-                'discount_id' => $discountId
-            ])
+            'custom_expiry' => json_encode($customExpiryData)
         ];
+        
+        Log::info('Final Midtrans parameters', [
+            'params' => $params,
+            'custom_expiry_json' => json_encode($customExpiryData)
+        ]);
 
-        return $this->midtransService->createSnapToken($params);
+        $orderId = $params['transaction_details']['order_id'];
+        $snapToken = $this->midtransService->createSnapToken($params);
+        
+        Log::info('Snap token created', [
+            'order_id' => $orderId,
+            'snap_token_length' => strlen($snapToken ?? ''),
+            'success' => !empty($snapToken)
+        ]);
+        
+        // Save payment data to temporary table for reliable access during webhook
+        if ($snapToken) {
+            try {
+                PaymentTemp::createPaymentRecord([
+                    'order_id' => $orderId,
+                    'user_id' => $user->id,
+                    'course_id' => $courseId,
+                    'sub_total_amount' => $subTotal,
+                    'admin_fee_amount' => $adminFeeAmount,
+                    'discount_amount' => $discountAmount,
+                    'discount_id' => $discountId,
+                    'grand_total_amount' => $grandTotal,
+                    'snap_token' => $snapToken,
+                    'discount_data' => $appliedDiscount
+                ]);
+                
+                Log::info('Payment temp record created successfully', [
+                    'order_id' => $orderId,
+                    'user_id' => $user->id,
+                    'course_id' => $courseId,
+                    'discount_amount' => $discountAmount,
+                    'discount_id' => $discountId
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Failed to create payment temp record', [
+                    'order_id' => $orderId,
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+            }
+        }
+        
+        return $snapToken;
     }
 
     public function handlePaymentNotification()
@@ -169,16 +277,43 @@ class PaymentService
         // Get admin fee amount from course model
         $adminFeeAmount = $course->admin_fee_amount ?? 0;
         
-        // Parse custom_expiry to get discount information
+        // Try to get discount information from custom_expiry first
         $customExpiry = json_decode($notification['custom_expiry'] ?? '{}', true);
         $discountAmount = $customExpiry['discount_amount'] ?? 0;
         $discountId = $customExpiry['discount_id'] ?? null;
         
-        Log::info('Parsing discount data from custom_expiry:', [
+        // If custom_expiry is null or empty, fallback to payment_temp table
+        if (empty($notification['custom_expiry']) || ($discountAmount == 0 && $discountId === null)) {
+            $paymentTemp = PaymentTemp::findByOrderId($notification['order_id']);
+            if ($paymentTemp) {
+                $discountAmount = $paymentTemp->discount_amount ?? 0;
+                $discountId = $paymentTemp->discount_id;
+                $adminFeeAmount = $paymentTemp->admin_fee_amount ?? $adminFeeAmount;
+                
+                Log::info('=== USING PAYMENT_TEMP DATA (CUSTOM_EXPIRY FALLBACK) ===', [
+                    'order_id' => $notification['order_id'],
+                    'payment_temp_found' => true,
+                    'discount_amount_from_temp' => $discountAmount,
+                    'discount_id_from_temp' => $discountId,
+                    'admin_fee_from_temp' => $adminFeeAmount,
+                    'discount_data' => $paymentTemp->getDiscountInfo()
+                ]);
+            } else {
+                Log::warning('=== NO PAYMENT_TEMP DATA FOUND ===', [
+                    'order_id' => $notification['order_id'],
+                    'custom_expiry_empty' => empty($notification['custom_expiry']),
+                    'fallback_failed' => true
+                ]);
+            }
+        }
+        
+        Log::info('=== FINAL DISCOUNT DATA FOR TRANSACTION ===', [
+            'notification_order_id' => $notification['order_id'] ?? 'unknown',
             'raw_custom_expiry' => $notification['custom_expiry'] ?? 'null',
-            'parsed_custom_expiry' => $customExpiry,
-            'discount_amount' => $discountAmount,
-            'discount_id' => $discountId
+            'custom_expiry_parsed' => $customExpiry,
+            'final_discount_amount' => $discountAmount,
+            'final_discount_id' => $discountId,
+            'data_source' => empty($notification['custom_expiry']) ? 'payment_temp' : 'custom_expiry'
         ]);
         
         $transactionData = [
@@ -208,6 +343,23 @@ class PaymentService
                 'user_id' => $transaction->user_id,
                 'course_id' => $transaction->course_id
             ]);
+            
+            // Clean up payment_temp record after successful transaction creation
+            try {
+                $paymentTemp = PaymentTemp::findByOrderId($notification['order_id']);
+                if ($paymentTemp) {
+                    $paymentTemp->delete();
+                    Log::info('Payment temp record cleaned up', [
+                        'order_id' => $notification['order_id'],
+                        'payment_temp_id' => $paymentTemp->id
+                    ]);
+                }
+            } catch (\Exception $cleanupError) {
+                Log::warning('Failed to cleanup payment temp record', [
+                    'order_id' => $notification['order_id'],
+                    'error' => $cleanupError->getMessage()
+                ]);
+            }
             
             return $transaction;
         } catch (Exception $e) {
