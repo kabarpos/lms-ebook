@@ -90,17 +90,7 @@ class TransactionService
     {
         $user = Auth::user();
 
-        // if (!$user) {
-        //     return collect(); // Return an empty collection if the user is not authenticated
-        // }
-
         return $this->transactionRepository->getUserTransactions($user->id);
-
-        // n+1 query
-        // return Transaction::with('pricing') // Assuming `Transaction` has a `pricing` relationship
-        //     ->where('user_id', $user->id)
-        //     ->orderBy('created_at', 'desc')
-        //     ->get();
     }
     
 

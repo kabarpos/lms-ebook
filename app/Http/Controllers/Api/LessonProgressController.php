@@ -55,10 +55,10 @@ class LessonProgressController extends Controller
 
         // Verify user has access to this course
         $user = Auth::user();
-        if (!$user->hasActiveSubscription()) {
+        if (!$user->canAccessCourse($courseId)) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Active subscription required to track progress.'
+                'message' => 'Course access required to track progress.'
             ], 403);
         }
 

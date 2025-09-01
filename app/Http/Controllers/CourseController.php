@@ -28,18 +28,7 @@ class CourseController extends Controller
         return view('courses.index', compact('coursesByCategory'));
     }
 
-    // public function index()
-    // {
-    //     $coursesByCategory = Course::with('category')
-    //         ->latest()
-    //         ->get()
-    //         ->groupBy(function ($course) {
-    //             return $course->category->name ?? 'Uncategorized';
-    //             // Programming, UI UX, Marketing, Uncategorized
-    //         });
 
-    //     return view('courses.index', compact('coursesByCategory'));
-    // }
 
     public function join(Course $course)
     {
@@ -64,18 +53,7 @@ class CourseController extends Controller
         return view('courses.learning_finished', compact('course'));
     }
 
-    // public function search_courses(Request $request)
-    // {
-    //     $request->validate([
-    //         'search' => 'required|string',
-    //     ]);
-    //     $keyword = $request->search;
-    //     $courses = Course::where('name', 'like', "%{$keyword}%")
-    //         ->orWhere('about', 'like', "%{$keyword}%")
-    //         ->get();
 
-    //     return view('courses.search', compact('courses', 'keyword'));
-    // }
 
     public function search_courses(Request $request)
     {
