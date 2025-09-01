@@ -129,94 +129,21 @@
         </div>
     </section>
         
-        @if(isset($featuredCourses) && $featuredCourses->count() > 0)
-        <!-- Featured Courses Section -->
-        <section id="featured-courses" class="bg-gray-50 py-16 lg:py-24">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center space-y-4 mb-12">
-                    <h2 class="text-3xl lg:text-4xl font-extrabold text-gray-900">Featured Courses</h2>
-                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                        Kursus terpopuler yang diikuti oleh ribuan students
-                    </p>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    @foreach($featuredCourses as $course)
-                    <a href="{{ route('front.course.details', $course->slug) }}" 
-                       class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg hover:border-lochmara-300 transition-all duration-300 cursor-pointer">
-                        <!-- Course Image -->
-                        <div class="aspect-video bg-gray-100 overflow-hidden">
-                            @if($course->thumbnail)
-                                @if(str_starts_with($course->thumbnail, 'http'))
-                                    <x-lazy-image src="{{ $course->thumbnail }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $course->name }}" loading="lazy" />
-                                @else
-                                    <x-lazy-image 
-                                        src="{{ Storage::disk('public')->url($course->thumbnail) }}" 
-                                        alt="{{ $course->name }}" 
-                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                        loading="lazy" />
-                                @endif
-                            @else
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-lochmara-500 to-lochmara-600">
-                                    <span class="text-white font-bold text-2xl">{{ substr($course->name, 0, 2) }}</span>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <!-- Course Content -->
-                        <div class="p-6 space-y-4">
-                            <!-- Course Meta -->
-                            <div class="flex items-center justify-between">
-                                @if($course->category)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-lochmara-100 text-lochmara-700">
-                                        {{ $course->category->name }}
-                                    </span>
-                                @endif
-                                <span class="text-sm text-gray-500">
-                                    {{ $course->course_students_count ?? 0 }} students
-                                </span>
-                            </div>
-                            
-                            <!-- Course Title -->
-                            <h3 class="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-lochmara-700 transition-colors duration-200">
-                                {{ $course->name }}
-                            </h3>
-                            
-                            <!-- Course Description -->
-                            <p class="text-gray-600 line-clamp-3 text-sm leading-relaxed">
-                                {{ $course->about }}
-                            </p>
-                            
-                            <!-- Course Rating & CTA -->
-                            <div class="flex items-center justify-between pt-2">
-                                <div class="flex items-center space-x-2">
-                                    <div class="flex items-center">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                            </svg>
-                                        @endfor
-                                    </div>
-                                    <span class="text-sm font-semibold text-gray-700">5.0</span>
-                                </div>
-                                
-                                <span class="text-sm font-semibold text-lochmara-600 group-hover:text-lochmara-700 transition-colors duration-200">
-                                    View Details →
-                                </span>
-                            </div>
-                        </div>
-                    </a>
-                    @endforeach
-                </div>
-                
-                <!-- View All Button -->
-                <div class="text-center mt-12">
-                    <a href="{{ route('front.courses') }}" 
-                       class="inline-flex items-center px-8 py-3 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer">
-                        View All Courses
-                    </a>
-                </div>
+ <!-- Featured Courses Section -->
+    @if($featuredCourses->isNotEmpty())
+    <section class="bg-gray-50 py-16 font-manrope">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl lg:text-3xl font-bold text-gray-900 mb-4">Featured Courses</h2>
+                <p class="text-lg text-gray-600">Hand-picked courses from our experts</p>
             </div>
-        </section>
-        @endif
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($featuredCourses as $course)
+                    <x-course-card :course="$course" />
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 @endsection

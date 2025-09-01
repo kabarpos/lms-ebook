@@ -153,7 +153,7 @@ class CourseService
 
     public function getFeaturedCourses($limit = 6)
     {
-        return Cache::remember('featured_courses', 3600, function () use ($limit) {
+        return Cache::remember("featured_courses_{$limit}", 3600, function () use ($limit) {
             return $this->courseRepository->getFeaturedCourses($limit);
         });
     }

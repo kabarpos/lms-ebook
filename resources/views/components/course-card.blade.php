@@ -74,19 +74,19 @@
                                 <div class="flex items-center space-x-2">
 
                                     <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">
-                                        Continue Learning →
+                                        Lanjut Belajar →
                                     </span>
                                 </div>
                             @else
-                                <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Buy Now →</span>
+                                <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Beli Sekarang →</span>
                             @endif
                         @else
-                            <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Buy Now →</span>
+                            <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Beli Sekarang →</span>
                         @endauth
                     @else
                         <!-- Free Course -->
                         <div class="text-lg font-bold text-green-600">Free</div>
-                        <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Start Learning →</span>
+                        <span class="text-lochmara-600 font-semibold text-sm group-hover:text-lochmara-700 transition-colors duration-200">Mulai Belajar →</span>
                     @endif
                 </div>
                 

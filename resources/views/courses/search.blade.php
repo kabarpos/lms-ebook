@@ -2,70 +2,8 @@
 @section('title', 'Search Courses - LMS DripCourse')
 @section('content')
     <x-navigation-auth />
-    <nav id="bottom-nav" class="flex w-full bg-white border-b border-LMS-grey py-[14px]">
-        <ul class="flex w-full max-w-[1280px] px-[75px] mx-auto gap-3">
-            <li class="group">
-                <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <x-lazy-image 
-                        src="{{ asset ('assets/images/icons/home-trend-up.svg') }}" 
-                        alt="icon" 
-                        class="flex shrink-0 w-5"
-                        loading="eager" />
-                    <span>Overview</span>
-                </a>
-            </li>
-            <li class="group">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <x-lazy-image 
-                        src="{{ asset ('assets/images/icons/note-favorite.svg') }}" 
-                        alt="icon" 
-                        class="flex shrink-0 w-5"
-                        loading="eager" />
-                    <span>Courses</span>
-                </a>
-            </li>
-            <li class="group">
-                <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <x-lazy-image 
-                        src="{{ asset ('assets/images/icons/message-programming.svg') }}" 
-                        alt="icon" 
-                        class="flex shrink-0 w-5"
-                        loading="eager" />
-                    <span>Quizzess</span>
-                </a>
-            </li>
-            <li class="group">
-                <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <x-lazy-image 
-                        src="{{ asset ('assets/images/icons/cup.svg') }}" 
-                        alt="icon" 
-                        class="flex shrink-0 w-5"
-                        loading="eager" />
-                    <span>Certificates</span>
-                </a>
-            </li>
-            <li class="group">
-                <a href="#" class="flex items-center gap-2 rounded-full border border-LMS-grey py-2 px-[14px] hover:border-LMS-green bg-white transition-all duration-300 group-[.active]:bg-LMS-light-green group-[.active]:border-LMS-light-green">
-                    <x-lazy-image 
-                        src="{{ asset ('assets/images/icons/ruler&pen.svg') }}" 
-                        alt="icon" 
-                        class="flex shrink-0 w-5"
-                        loading="eager" />
-                    <span>Portfolios</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
     <main class="flex flex-col gap-10 pb-10 mt-[50px]">
         <div class="flex flex-col items-center gap-[10px] max-w-[500px] w-full mx-auto">
-            <p class="flex items-center gap-[6px] w-fit rounded-full py-2 px-[14px] bg-LMS-light-green">
-                <x-lazy-image 
-                    src="{{ asset ('assets/images/icons/crown-green.svg') }}" 
-                    alt="icon" 
-                    class="flex shrink-0 w-5"
-                    loading="eager" />
-                <span class="font-bold text-sm">GROW CAREER</span>
-            </p>
             <h1 class="font-bold text-[28px] leading-[42px] text-center">Explore Our Greatest Courses</h1>
             <form method="GET" action="{{ route('dashboard.search.courses') }}" class="relative ">
                 <label class="group">
@@ -81,8 +19,8 @@
             </form>
         </div>
         <section id="result" class="flex flex-col w-full max-w-[1280px] px-[75px] gap-5 mx-auto">
-            <h2 class="font-bold text-[22px] leading-[33px]">Search Result: JavaScript</h2>
-            <div id="result-list" class="tab-content grid grid-cols-4 gap-5">
+            <h2 class="font-bold text-[22px] leading-[33px]">Search Result for: {{ request()->search }}</h2>
+            <div id="result-list" class="tab-content grid grid-cols-3 gap-5">
 
                 @forelse($courses as $course)
                     <x-course-card :course="$course" />

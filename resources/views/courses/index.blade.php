@@ -10,7 +10,7 @@
             <section class="space-y-6">
                 <div class="text-center space-y-4">
                     <h1 class="text-3xl lg:text-4xl font-bold text-gray-900">My Learning Dashboard</h1>
-                    <p class="text-lg text-gray-600 max-w-2xl mb-12 mx-auto">Continue your learning journey with your purchased courses</p>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Continue your learning journey with your purchased courses</p>
                 </div>
                 
                 <!-- Course Content -->

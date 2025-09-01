@@ -41,7 +41,7 @@
                 <p class="text-lg text-gray-600">Hand-picked courses from our experts</p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($featuredCourses as $course)
                     <x-course-card :course="$course" />
                 @endforeach
@@ -59,7 +59,7 @@
             </div>
             
             @if($allCourses->isNotEmpty())
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($allCourses as $course)
                         <x-course-card :course="$course" />
                     @endforeach

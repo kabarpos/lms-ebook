@@ -26,6 +26,13 @@ class Course extends Model
         'admin_fee_amount',
     ];
 
+    protected $casts = [
+        'price' => 'integer',
+        'original_price' => 'integer',
+        'admin_fee_amount' => 'integer',
+        'is_popular' => 'boolean',
+    ];
+
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = $value;
