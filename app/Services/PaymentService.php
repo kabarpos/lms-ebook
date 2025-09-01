@@ -5,11 +5,13 @@ namespace App\Services;
 use Exception;
 use App\Helpers\TransactionHelper;
 use App\Models\Course;
+use App\Models\Discount;
 use App\Models\PaymentTemp;
 use App\Models\User;
 use App\Mail\CoursePurchaseConfirmation;
 use App\Notifications\CoursePurchasedNotification;
 use App\Services\WhatsappNotificationService;
+use App\Services\DiscountService;
 use App\Repositories\TransactionRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -21,16 +23,19 @@ class PaymentService
     protected $pricingRepository;
     protected $transactionRepository;
     protected $whatsappService;
+    protected $discountService;
 
     public function __construct(
         MidtransService $midtransService,
         TransactionRepositoryInterface $transactionRepository,
-        WhatsappNotificationService $whatsappService
+        WhatsappNotificationService $whatsappService,
+        DiscountService $discountService
     )
     {
         $this->midtransService = $midtransService;
         $this->transactionRepository = $transactionRepository;
         $this->whatsappService = $whatsappService;
+        $this->discountService = $discountService;
     }
 
     /**
@@ -343,6 +348,28 @@ class PaymentService
                 'user_id' => $transaction->user_id,
                 'course_id' => $transaction->course_id
             ]);
+            
+            // Increment discount usage counter if discount was used
+            if ($discountId) {
+                try {
+                    $discount = Discount::find($discountId);
+                    if ($discount) {
+                        $this->discountService->useDiscount($discount);
+                        Log::info('Discount usage incremented successfully:', [
+                            'discount_id' => $discountId,
+                            'discount_code' => $discount->code,
+                            'new_used_count' => $discount->fresh()->used_count,
+                            'transaction_id' => $transaction->id
+                        ]);
+                    }
+                } catch (\Exception $discountError) {
+                    Log::warning('Failed to increment discount usage:', [
+                        'discount_id' => $discountId,
+                        'transaction_id' => $transaction->id,
+                        'error' => $discountError->getMessage()
+                    ]);
+                }
+            }
             
             // Clean up payment_temp record after successful transaction creation
             try {
