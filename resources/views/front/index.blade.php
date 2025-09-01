@@ -30,8 +30,8 @@
                     <!-- Main Heading -->
                     <div class="space-y-4">
                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight">
-                            Tingkatkan Skills,<br>
-                            <span class="text-lochmara-600">Get Higher Salary</span>
+                            Belajar Bisnis Online,
+                            <span class="text-lochmara-600">Mulai Dari 0</span>
                         </h1>
                         <p class="text-lg text-gray-600 leading-relaxed max-w-lg">
                             Materi terbaru disusun oleh professional dan perusahaan besar agar lebih sesuai kebutuhan dan anda.
@@ -88,11 +88,11 @@
                 
                 <!-- Hero Image -->
                 <div class="relative">
-                    <div class="aspect-square lg:aspect-auto lg:h-[600px] relative">
+                    <div class="lg:aspect-auto lg:h-full relative items-center">
                         <x-lazy-image 
-                            src="{{ asset('assets/images/backgrounds/hero-image.png') }}" 
+                            src="{{ asset('assets/images/backgrounds/dashboard.webp') }}" 
                             alt="Learning Platform Hero" 
-                            class="w-full h-full object-cover rounded-2xl shadow-2xl"
+                            class="w-full h-[300px] lg:h-[600px] object-cover rounded-2xl shadow-2xl"
                             loading="eager" />
                         
                         <!-- Floating Cards -->

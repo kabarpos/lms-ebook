@@ -174,6 +174,13 @@ class PaymentService
         $discountAmount = $customExpiry['discount_amount'] ?? 0;
         $discountId = $customExpiry['discount_id'] ?? null;
         
+        Log::info('Parsing discount data from custom_expiry:', [
+            'raw_custom_expiry' => $notification['custom_expiry'] ?? 'null',
+            'parsed_custom_expiry' => $customExpiry,
+            'discount_amount' => $discountAmount,
+            'discount_id' => $discountId
+        ]);
+        
         $transactionData = [
             'user_id' => $notification['custom_field1'],
             'pricing_id' => null, // No pricing for course purchase

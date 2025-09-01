@@ -312,7 +312,7 @@ class FrontController extends Controller
     /**
      * Handle course payment processing
      */
-    public function paymentStoreCoursesMidtrans()
+    public function paymentStoreCoursesMidtrans(Request $request)
     {
         try {
             // Retrieve the course ID from the session
@@ -320,6 +320,28 @@ class FrontController extends Controller
 
             if (!$courseId) {
                 return response()->json(['error' => 'No course data found in the session.'], 400);
+            }
+
+            // Handle applied discount from frontend request
+            $appliedDiscount = $request->input('applied_discount');
+            if ($appliedDiscount) {
+                // Validate and apply discount to session
+                $discountService = app(\App\Services\DiscountService::class);
+                $course = Course::findOrFail($courseId);
+                
+                $validation = $discountService->validateDiscountForCourse(
+                    $appliedDiscount['code'], 
+                    $course
+                );
+                
+                if ($validation['valid']) {
+                    $this->transactionService->applyDiscount($validation['discount']);
+                } else {
+                    Log::warning('Invalid discount applied during payment', [
+                        'discount_code' => $appliedDiscount['code'],
+                        'course_id' => $courseId
+                    ]);
+                }
             }
 
             // Call the PaymentService to generate the Snap token for course

@@ -141,6 +141,7 @@ class MidtransService {
                 'custom_field1' => $notification->custom_field1, // User ID
                 'custom_field2' => $notification->custom_field2, // Course ID
                 'custom_field3' => $notification->custom_field3 ?? null, // Purchase type (course)
+                'custom_expiry' => $notification->custom_expiry ?? null, // Discount data
             ];
         } catch (Exception $e) {
             Log::error('Midtrans notification error: ' . $e->getMessage(), [

@@ -375,8 +375,18 @@ class="bg-gray-50 min-h-screen">
                             </div>
                         </header>
                         
+                        <!-- YouTube Player (if available) -->
+                        @if($currentContent->youtube_url && $currentContent->getYoutubeVideoId())
+                            <div class="mb-8">
+                                <x-youtube-player 
+                                    :videoId="$currentContent->getYoutubeVideoId()" 
+                                    :title="$currentContent->name" 
+                                />
+                            </div>
+                        @endif
+
                         <!-- Lesson Content -->
-                        <div class="filament-rich-content prose prose-lg max-w-none content-typography mb-12 tiptap-content" data-debug="true">
+                        <div class="filament-rich-content prose prose-lg max-w-none content-typography mb-12 tiptap-content">
                             @php
                                 // Debug: Check content rendering
                                 $renderedContent = \Filament\Forms\Components\RichEditor\RichContentRenderer::make($currentContent->content ?? '')->toHtml();

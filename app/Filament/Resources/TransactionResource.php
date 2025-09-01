@@ -81,7 +81,7 @@ class TransactionResource extends Resource
                                 $course = Course::find($state);
                                 $price = $course->price;
                                 $adminFee = $course->admin_fee_amount ?? 0;
-                                $discountAmount = $get('discount_amount') ?? 0;
+                                $discountAmount = $get('discount_amount') ?: 0;
                                 $subTotal = $price;
                                 $grandTotal = $subTotal + $adminFee - $discountAmount;
                                 
@@ -113,23 +113,45 @@ class TransactionResource extends Resource
                                 TextInput::make('discount_amount')
                                     ->numeric()
                                     ->prefix('IDR')
-                                    ->default(0)
-                                    ->live()
-                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                        $subTotal = $get('sub_total_amount') ?? 0;
-                                        $adminFee = $get('admin_fee_amount') ?? 0;
-                                        $discountAmount = $state ?? 0;
-                                        $grandTotal = $subTotal + $adminFee - $discountAmount;
-                                        
-                                        $set('grand_total_amount', $grandTotal);
-                                    })
-                                    ->helperText('Jumlah diskon yang diterapkan'),
+                                    ->readOnly()
+                                    ->helperText('Jumlah diskon yang diterapkan (otomatis dihitung)'),
 
                                 Select::make('discount_id')
                                     ->relationship('discount', 'name')
                                     ->searchable()
                                     ->preload()
                                     ->nullable()
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                        if ($state) {
+                                            $discount = \App\Models\Discount::find($state);
+                                            $subTotal = $get('sub_total_amount') ?? 0;
+                                            
+                                            if ($discount && $subTotal > 0) {
+                                                $discountAmount = 0;
+                                                
+                                                if ($discount->type === 'percentage') {
+                                                    $discountAmount = ($subTotal * $discount->value) / 100;
+                                                } elseif ($discount->type === 'fixed') {
+                                                    $discountAmount = $discount->value;
+                                                }
+                                                
+                                                $adminFee = $get('admin_fee_amount') ?? 0;
+                                                $grandTotal = $subTotal + $adminFee - $discountAmount;
+                                                
+                                                $set('discount_amount', $discountAmount);
+                                                $set('grand_total_amount', $grandTotal);
+                                            }
+                                        } else {
+                                            // Jika discount_id dihapus, reset discount_amount
+                                            $subTotal = $get('sub_total_amount') ?? 0;
+                                            $adminFee = $get('admin_fee_amount') ?? 0;
+                                            $grandTotal = $subTotal + $adminFee;
+                                            
+                                            $set('discount_amount', 0);
+                                            $set('grand_total_amount', $grandTotal);
+                                        }
+                                    })
                                     ->helperText('Diskon yang diterapkan (opsional)'),
                             ]),
 
@@ -258,7 +280,7 @@ class TransactionResource extends Resource
                 TextColumn::make('discount.name')
                     ->label('Nama Diskon')
                     ->formatStateUsing(fn ($state) => $state ?? '-')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('grand_total_amount')
                     ->label('Total Amount')

@@ -1099,6 +1099,20 @@
                 return;
             }
             
+            // Prepare payment data including applied discount
+            let paymentData = {};
+            
+            // Include applied discount if exists
+            if (appliedDiscount) {
+                paymentData.applied_discount = {
+                    id: appliedDiscount.id,
+                    code: appliedDiscount.code,
+                    name: appliedDiscount.name,
+                    type: appliedDiscount.type,
+                    value: appliedDiscount.value
+                };
+            }
+            
             // Make payment request
             fetch('{{ route('front.payment_store_courses_midtrans') }}', {
                 method: 'POST',
@@ -1106,7 +1120,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': tokenInput.value
                 },
-                body: JSON.stringify({})
+                body: JSON.stringify(paymentData)
             })
             .then(response => {
                 if (!response.ok) {

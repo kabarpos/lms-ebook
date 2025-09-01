@@ -16,7 +16,8 @@
 
     <!-- YouTube Player Container - BULLETPROOF -->
     <div class="youtube-player-wrapper relative w-full overflow-hidden rounded-lg shadow-lg youtube-container" 
-        data-youtube-component="true">
+         style="padding-bottom: 56.25%; height: 0;"
+         data-youtube-component="true">
         <!-- YouTube Iframe - IMMEDIATELY VISIBLE - BULLETPROOF -->
         <iframe 
             id="youtube-iframe-{{ $videoId }}"
@@ -24,7 +25,7 @@
             src="https://www.youtube.com/embed/{{ $videoId }}?rel=0&modestbranding=1&controls=1&playsinline=1&enablejsapi=0"
             title="{{ $title }}"
             frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen
             webkitallowfullscreen
             mozallowfullscreen
@@ -52,6 +53,9 @@
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
         position: relative !important;
         z-index: 1 !important;
+        padding-bottom: 56.25% !important; /* 16:9 aspect ratio */
+        height: 0 !important;
+        width: 100% !important;
     }
     
     /* BULLETPROOF iframe styling - Proper Z-Index */
