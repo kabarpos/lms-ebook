@@ -19,7 +19,7 @@ class MidtransService {
     }
     
     /**
-     * Load Midtrans configuration from database
+     * Load Midtrans configuration with flexible environment switching
      */
     private function loadConfiguration(): void
     {
@@ -39,27 +39,48 @@ class MidtransService {
                     'merchant_id' => $this->config->merchant_id,
                 ]);
             } else {
-                // Fallback to env configuration
-                Config::$serverKey = config('midtrans.serverKey');
-                Config::$isProduction = config('midtrans.isProduction');
-                Config::$isSanitized = config('midtrans.isSanitized');
-                Config::$is3ds = config('midtrans.is3ds');
+                // Use flexible environment configuration from config
+                $this->loadEnvironmentConfig();
                 
                 Log::warning('Midtrans configuration loaded from env (fallback)', [
-                    'reason' => $this->config ? 'invalid_config' : 'no_active_config'
+                    'reason' => $this->config ? 'invalid_config' : 'no_active_config',
+                    'environment' => config('midtrans.environment')
                 ]);
             }
         } catch (Exception $e) {
             // If database is not available, fallback to env
-            Config::$serverKey = config('midtrans.serverKey');
-            Config::$isProduction = config('midtrans.isProduction');
-            Config::$isSanitized = config('midtrans.isSanitized');
-            Config::$is3ds = config('midtrans.is3ds');
+            $this->loadEnvironmentConfig();
             
             Log::error('Failed to load Midtrans config from database, using env fallback', [
                 'error' => $e->getMessage()
             ]);
         }
+    }
+    
+    /**
+     * Load configuration from environment with flexible switching
+     */
+    private function loadEnvironmentConfig(): void
+    {
+        $environment = config('midtrans.environment', 'sandbox');
+        
+        if ($environment === 'production') {
+            // Use production configuration
+            Config::$serverKey = config('midtrans.production.serverKey');
+            Config::$isProduction = true;
+        } else {
+            // Use sandbox configuration (default)
+            Config::$serverKey = config('midtrans.sandbox.serverKey');
+            Config::$isProduction = false;
+        }
+        
+        Config::$isSanitized = config('midtrans.isSanitized');
+        Config::$is3ds = config('midtrans.is3ds');
+        
+        Log::info('Midtrans environment configuration loaded', [
+            'environment' => $environment,
+            'is_production' => Config::$isProduction
+        ]);
     }
     
     /**
