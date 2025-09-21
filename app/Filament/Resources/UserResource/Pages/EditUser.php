@@ -32,6 +32,9 @@ class EditUser extends EditRecord
         $data['email_verified_at'] = $this->record->email_verified_at !== null;
         $data['whatsapp_verified_at'] = $this->record->whatsapp_verified_at !== null;
         
+        // Handle roles relationship - get the first role ID
+        $data['roles'] = $this->record->roles->first()?->id;
+        
         $this->form->fill($data);
     }
     
