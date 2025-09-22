@@ -41,9 +41,11 @@ class AdminPanelProvider extends PanelProvider
                 '/admin/pdf/*',
                 // URL yang menggunakan target="_blank"
                 '/admin/external-link/*',
+                // Pastikan endpoint Livewire tidak diintersepsi SPA
+                '/livewire/*',
             ])
             ->login()
-            ->homeUrl('/admin/statistik')
+            ->homeUrl('/admin/')
             ->colors([
                 'primary' => Color::Cyan,
                 'secondary' => Color::Amber,
