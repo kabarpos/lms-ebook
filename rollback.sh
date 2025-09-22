@@ -10,9 +10,9 @@
 set -e  # Exit on any error
 
 # Konfigurasi
-PROJECT_DIR="/var/www/lms-ebook"
-BACKUP_DIR="/var/backups/lms-ebook"
-LOG_FILE="/var/log/lms-ebook-deploy.log"
+PROJECT_DIR="/var/www/dscourse"
+BACKUP_DIR="/var/backups/dscourse"
+LOG_FILE="/var/log/dscourse-deploy.log"
 
 # Warna untuk output
 RED='\033[0;31m'

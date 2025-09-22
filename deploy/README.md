@@ -30,8 +30,8 @@ Script untuk melakukan deployment otomatis dengan fitur backup dan health check.
 
 ```bash
 # Upload script ke VPS
-scp deploy/update.sh user@your-vps:/var/www/lms-ebook/
-scp deploy/rollback.sh user@your-vps:/var/www/lms-ebook/
+scp deploy/update.sh user@your-vps:/var/www/dscourse/
+scp deploy/rollback.sh user@your-vps:/var/www/dscourse/
 
 # Atau jika sudah ada di repository
 git pull origin main
@@ -40,8 +40,8 @@ git pull origin main
 #### 2. Set Permission
 
 ```bash
-chmod +x /var/www/lms-ebook/update.sh
-chmod +x /var/www/lms-ebook/rollback.sh
+chmod +x /var/www/dscourse/update.sh
+chmod +x /var/www/dscourse/rollback.sh
 ```
 
 #### 3. Jalankan Update
@@ -153,14 +153,14 @@ Script untuk mengembalikan aplikasi ke backup sebelumnya jika terjadi masalah.
 
 ```bash
 # 1. Pastikan repository sudah di-clone di VPS
-cd /var/www/lms-ebook
+cd /var/www/dscourse
 
 # 2. Set permission script
 chmod +x update.sh rollback.sh
 
 # 3. Pastikan direktori backup ada
-sudo mkdir -p /var/backups/lms-ebook
-sudo chown www-data:www-data /var/backups/lms-ebook
+sudo mkdir -p /var/backups/dscourse
+sudo chown www-data:www-data /var/backups/dscourse
 ```
 
 ### 2. Deployment Normal
@@ -170,7 +170,7 @@ sudo chown www-data:www-data /var/backups/lms-ebook
 ./update.sh --branch main
 
 # 2. Monitor log jika diperlukan
-tail -f /var/log/lms-ebook-deploy.log
+tail -f /var/log/dscourse-deploy.log
 
 # 3. Verifikasi aplikasi berjalan normal
 curl -I http://your-domain.com
@@ -193,9 +193,9 @@ curl -I http://your-domain.com
 
 ### Direktori yang Digunakan
 
-- **Project Directory**: `/var/www/lms-ebook`
-- **Backup Directory**: `/var/backups/lms-ebook`
-- **Log File**: `/var/log/lms-ebook-deploy.log`
+- **Project Directory**: `/var/www/dscourse`
+- **Backup Directory**: `/var/backups/dscourse`
+- **Log File**: `/var/log/dscourse-deploy.log`
 
 ### Services yang Di-manage
 
@@ -214,20 +214,20 @@ curl -I http://your-domain.com
 
 Semua aktivitas deployment dan rollback dicatat di:
 ```
-/var/log/lms-ebook-deploy.log
+/var/log/dscourse-deploy.log
 ```
 
 ### Melihat Log
 
 ```bash
 # Lihat log terbaru
-tail -f /var/log/lms-ebook-deploy.log
+tail -f /var/log/dscourse-deploy.log
 
 # Lihat log hari ini
-grep "$(date +%Y-%m-%d)" /var/log/lms-ebook-deploy.log
+grep "$(date +%Y-%m-%d)" /var/log/dscourse-deploy.log
 
 # Lihat log error saja
-grep "ERROR" /var/log/lms-ebook-deploy.log
+grep "ERROR" /var/log/dscourse-deploy.log
 ```
 
 ### Health Check
@@ -251,7 +251,7 @@ Script akan melakukan health check otomatis:
 chmod +x update.sh rollback.sh
 
 # Fix permission direktori
-sudo chown -R www-data:www-data /var/www/lms-ebook
+sudo chown -R www-data:www-data /var/www/dscourse
 ```
 
 #### 2. Database Connection Error
@@ -294,20 +294,20 @@ Jika semua backup gagal:
 ```bash
 # 1. Clone fresh dari repository
 cd /var/www/
-sudo rm -rf lms-ebook-broken
-sudo mv lms-ebook lms-ebook-broken
-sudo git clone https://github.com/your-repo/lms-ebook.git
+sudo rm -rf dscourse-broken
+sudo mv dscourse dscourse-broken
+sudo git clone https://github.com/your-repo/dscourse.git
 
 # 2. Copy konfigurasi penting
-sudo cp lms-ebook-broken/.env lms-ebook/
-sudo cp -r lms-ebook-broken/storage lms-ebook/
+sudo cp dscourse-broken/.env dscourse/
+sudo cp -r dscourse-broken/storage dscourse/
 
 # 3. Set permission
-sudo chown -R www-data:www-data lms-ebook
-sudo chmod -R 755 lms-ebook
+sudo chown -R www-data:www-data dscourse
+sudo chmod -R 755 dscourse
 
 # 4. Install dependencies
-cd lms-ebook
+cd dscourse
 composer install --no-dev --optimize-autoloader
 php artisan key:generate
 php artisan migrate
@@ -350,7 +350,7 @@ php artisan view:cache
 
 Jika mengalami masalah:
 
-1. Cek log file: `/var/log/lms-ebook-deploy.log`
+1. Cek log file: `/var/log/dscourse-deploy.log`
 2. Jalankan health check manual: `php artisan migrate:status`
 3. Cek status services: `systemctl status php8.2-fpm nginx`
 4. Hubungi tim development jika masalah persisten

@@ -10,10 +10,10 @@
 set -e  # Exit on any error
 
 # Konfigurasi
-PROJECT_DIR="/var/www/lms-ebook"
-BACKUP_DIR="/var/backups/lms-ebook"
-LOG_FILE="/var/log/lms-ebook-deploy.log"
-HEALTH_CHECK_URL="http://localhost/health-check"
+PROJECT_DIR="/var/www/dscourse"
+BACKUP_DIR="/var/backups/dscourse"
+LOG_FILE="/var/log/dscourse-deploy.log"
+HEALTH_CHECK_URL="https://dscourse.top/health-check"
 MAX_BACKUP_KEEP=5
 
 # Warna untuk output
