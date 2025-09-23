@@ -46,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->login()
             ->registration()
-            ->homeUrl('/admin/statistik')
+            ->homeUrl('/admin/')
             ->colors([
                 'primary' => Color::Cyan,
                 'secondary' => Color::Amber,

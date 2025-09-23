@@ -12,7 +12,7 @@ set -e  # Exit on any error
 # Konfigurasi
 PROJECT_DIR="/var/www/dscourse"
 BACKUP_DIR="/var/backups/dscourse"
-LOG_FILE="/var/log/dscourse-deploy.log"
+LOG_FILE="$PROJECT_DIR/storage/logs/deploy.log"
 HEALTH_CHECK_URL="https://dscourse.top/health-check"
 MAX_BACKUP_KEEP=5
 
@@ -23,21 +23,53 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Fungsi untuk setup log directory
+setup_logging() {
+    # Pastikan direktori log ada dan dapat diakses
+    local log_dir=$(dirname "$LOG_FILE")
+    if [ ! -d "$log_dir" ]; then
+        mkdir -p "$log_dir"
+    fi
+    
+    # Test write permission
+    if ! touch "$LOG_FILE" 2>/dev/null; then
+        echo -e "${RED}[ERROR]${NC} Tidak dapat menulis ke log file: $LOG_FILE"
+        echo -e "${YELLOW}[WARNING]${NC} Menggunakan log ke stdout saja"
+        LOG_FILE="/dev/null"
+    fi
+}
+
 # Fungsi logging
 log() {
-    echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"
+    if [ "$LOG_FILE" != "/dev/null" ]; then
+        echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"
+    else
+        echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
+    fi
 }
 
 error() {
-    echo -e "${RED}[ERROR]${NC} $1" | tee -a "$LOG_FILE"
+    if [ "$LOG_FILE" != "/dev/null" ]; then
+        echo -e "${RED}[ERROR]${NC} $1" | tee -a "$LOG_FILE"
+    else
+        echo -e "${RED}[ERROR]${NC} $1"
+    fi
 }
 
 success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1" | tee -a "$LOG_FILE"
+    if [ "$LOG_FILE" != "/dev/null" ]; then
+        echo -e "${GREEN}[SUCCESS]${NC} $1" | tee -a "$LOG_FILE"
+    else
+        echo -e "${GREEN}[SUCCESS]${NC} $1"
+    fi
 }
 
 warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"
+    if [ "$LOG_FILE" != "/dev/null" ]; then
+        echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"
+    else
+        echo -e "${YELLOW}[WARNING]${NC} $1"
+    fi
 }
 
 # Fungsi untuk membuat backup
@@ -235,6 +267,9 @@ restart_services() {
 
 # Main execution
 main() {
+    # Setup logging terlebih dahulu
+    setup_logging
+    
     log "=== Memulai deployment update ==="
     
     # Cek apakah script dijalankan sebagai user yang tepat
