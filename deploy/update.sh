@@ -236,29 +236,31 @@ update_application() {
 restart_services() {
     log "Restart services..."
     
-    # Restart PHP-FPM
-    if systemctl is-active --quiet php8.2-fpm; then
-        sudo systemctl restart php8.2-fpm
+    # Restart PHP-FPM (tanpa sudo, skip jika gagal)
+    if systemctl is-active --quiet php8.2-fpm 2>/dev/null; then
+        systemctl restart php8.2-fpm 2>/dev/null || log "Warning: Tidak bisa restart PHP 8.2-FPM (skip)"
         log "PHP-FPM direstart"
-    elif systemctl is-active --quiet php8.1-fpm; then
-        sudo systemctl restart php8.1-fpm
+    elif systemctl is-active --quiet php8.1-fpm 2>/dev/null; then
+        systemctl restart php8.1-fpm 2>/dev/null || log "Warning: Tidak bisa restart PHP 8.1-FPM (skip)"
         log "PHP-FPM direstart"
     fi
     
-    # Restart web server
-    if systemctl is-active --quiet nginx; then
-        sudo systemctl reload nginx
+    # Restart web server (tanpa sudo, skip jika gagal)
+    if systemctl is-active --quiet nginx 2>/dev/null; then
+        systemctl reload nginx 2>/dev/null || log "Warning: Tidak bisa reload Nginx (skip)"
         log "Nginx direload"
-    elif systemctl is-active --quiet apache2; then
-        sudo systemctl restart apache2
+    elif systemctl is-active --quiet apache2 2>/dev/null; then
+        systemctl restart apache2 2>/dev/null || log "Warning: Tidak bisa restart Apache2 (skip)"
         log "Apache2 direstart"
     fi
     
-    # Restart queue workers jika ada
-    if systemctl is-active --quiet laravel-worker; then
-        sudo systemctl restart laravel-worker
+    # Restart queue workers jika ada (tanpa sudo, skip jika gagal)
+    if systemctl is-active --quiet laravel-worker 2>/dev/null; then
+        systemctl restart laravel-worker 2>/dev/null || log "Warning: Tidak bisa restart Laravel worker (skip)"
         log "Laravel queue worker direstart"
     fi
+    
+    log "Services restart selesai (dengan atau tanpa privilege)"
 }
 
 # Main execution
