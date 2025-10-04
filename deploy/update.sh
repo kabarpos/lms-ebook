@@ -9,11 +9,23 @@
 
 set -e  # Exit on any error
 
-# Konfigurasi
-PROJECT_DIR="/var/www/dscourse"
-BACKUP_DIR="/var/backups/dscourse"
-LOG_FILE="/var/log/dscourse-deploy.log"
-HEALTH_CHECK_URL="https://dscourse.top/health-check"
+# Deteksi lingkungan (Windows atau Linux/Produksi)
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OS" == "Windows_NT" ]]; then
+    # Windows Development Environment
+    PROJECT_DIR="$(pwd)"
+    BACKUP_DIR="$PROJECT_DIR/storage/backups"
+    LOG_FILE="storage/logs/deploy.log"
+    HEALTH_CHECK_URL="http://localhost:8000/health-check"
+    IS_WINDOWS=true
+else
+    # Linux Production Environment
+    PROJECT_DIR="/var/www/dscourse"
+    BACKUP_DIR="/var/backups/dscourse"
+    LOG_FILE="/var/log/dscourse-deploy.log"
+    HEALTH_CHECK_URL="https://dscourse.top/health-check"
+    IS_WINDOWS=false
+fi
+
 MAX_BACKUP_KEEP=5
 
 # Warna untuk output
@@ -25,6 +37,7 @@ NC='\033[0m' # No Color
 
 # Fungsi logging
 log() {
+    mkdir -p "$(dirname "$LOG_FILE")"
     echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1" | tee -a "$LOG_FILE"
 }
 
@@ -235,11 +248,29 @@ restart_services() {
 
 # Main execution
 main() {
+    # Parse arguments
+    case "${1:-}" in
+        --help|-h)
+            show_help
+            exit 0
+            ;;
+        *)
+            ;;
+    esac
+    
     log "=== Memulai deployment update ==="
     
-    # Cek apakah script dijalankan sebagai user yang tepat
-    if [ "$EUID" -eq 0 ]; then
-        warning "Script dijalankan sebagai root. Pastikan permission file sudah benar."
+    # Skip backup untuk development environment (Windows)
+    if [ "$IS_WINDOWS" = true ]; then
+        log "Development environment terdeteksi - melewati backup"
+    else
+        # Cek apakah script dijalankan sebagai user yang tepat
+        if [ "$EUID" -eq 0 ]; then
+            warning "Script dijalankan sebagai root. Pastikan permission file sudah benar."
+        fi
+        
+        # Buat backup sebelum update (hanya untuk production)
+        create_backup
     fi
     
     # Cek apakah direktori project ada
@@ -248,29 +279,52 @@ main() {
         exit 1
     fi
     
-    # Buat backup sebelum update
-    create_backup
-    
     # Update aplikasi
     if update_application; then
-        # Restart services
-        restart_services
+        # Restart services (hanya untuk production)
+        if [ "$IS_WINDOWS" = false ]; then
+            restart_services
+        fi
         
         # Health check
         if health_check; then
             success "=== Deployment berhasil! ==="
-            log "Backup tersimpan di: $(cat $PROJECT_DIR/.last_backup)"
+            if [ "$IS_WINDOWS" = false ]; then
+                log "Backup tersimpan di: $(cat $PROJECT_DIR/.last_backup)"
+            fi
         else
             error "=== Health check gagal! ==="
             warning "Aplikasi mungkin tidak berjalan dengan baik."
-            warning "Gunakan script rollback.sh jika diperlukan."
+            if [ "$IS_WINDOWS" = false ]; then
+                warning "Gunakan script rollback.sh jika diperlukan."
+            fi
             exit 1
         fi
     else
         error "=== Update gagal! ==="
-        warning "Gunakan script rollback.sh untuk mengembalikan ke versi sebelumnya."
+        if [ "$IS_WINDOWS" = false ]; then
+            warning "Gunakan script rollback.sh untuk mengembalikan ke versi sebelumnya."
+        fi
         exit 1
     fi
+}
+
+# Fungsi show_help
+show_help() {
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --help, -h    Tampilkan bantuan ini"
+    echo ""
+    echo "Deskripsi:"
+    echo "  Script untuk melakukan update aplikasi Laravel dengan:"
+    echo "  - Backup otomatis (hanya production)"
+    echo "  - Git pull untuk mendapatkan update terbaru"
+    echo "  - Update dependencies (composer & npm)"
+    echo "  - Database migration"
+    echo "  - Cache clearing"
+    echo "  - Health check"
+    echo ""
 }
 
 # Jalankan script
