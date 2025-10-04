@@ -21,12 +21,14 @@ else
     # Linux Production Environment
     PROJECT_DIR="/var/www/dscourse"
     BACKUP_DIR="/var/backups/dscourse"
-    LOG_FILE="/var/log/dscourse-deploy.log"
+    # Gunakan log file di project directory untuk menghindari permission issue
+    LOG_FILE="$PROJECT_DIR/storage/logs/deploy.log"
     HEALTH_CHECK_URL="https://dscourse.top/health-check"
     IS_WINDOWS=false
 fi
 
 MAX_BACKUP_KEEP=5
+BRANCH="main"  # Default branch
 
 # Warna untuk output
 RED='\033[0;31m'
@@ -167,20 +169,25 @@ update_application() {
     
     # Cek apakah ada update
     LOCAL=$(git rev-parse HEAD)
-    REMOTE=$(git rev-parse origin/main 2>/dev/null || git rev-parse origin/master)
+    REMOTE=$(git rev-parse "origin/$BRANCH" 2>/dev/null)
+    
+    if [ -z "$REMOTE" ]; then
+        error "Branch '$BRANCH' tidak ditemukan di remote repository!"
+        exit 1
+    fi
     
     if [ "$LOCAL" = "$REMOTE" ]; then
-        success "Aplikasi sudah up-to-date!"
+        success "Aplikasi sudah up-to-date di branch $BRANCH!"
         return 0
     fi
     
     # Show what will be updated
-    log "Perubahan yang akan diterapkan:"
+    log "Perubahan yang akan diterapkan dari branch $BRANCH:"
     git log --oneline "$LOCAL..$REMOTE"
     
     # Pull latest changes
-    log "Menerapkan update..."
-    git pull origin main 2>/dev/null || git pull origin master
+    log "Menerapkan update dari branch $BRANCH..."
+    git pull origin "$BRANCH"
     
     # Install/update dependencies jika composer.json berubah
     if git diff --name-only "$LOCAL" HEAD | grep -q "composer.json\|composer.lock"; then
@@ -249,16 +256,24 @@ restart_services() {
 # Main execution
 main() {
     # Parse arguments
-    case "${1:-}" in
-        --help|-h)
-            show_help
-            exit 0
-            ;;
-        *)
-            ;;
-    esac
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            --branch)
+                BRANCH="$2"
+                shift 2
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
     
     log "=== Memulai deployment update ==="
+    log "Branch yang akan digunakan: $BRANCH"
     
     # Skip backup untuk development environment (Windows)
     if [ "$IS_WINDOWS" = true ]; then
@@ -314,7 +329,8 @@ show_help() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  --help, -h    Tampilkan bantuan ini"
+    echo "  --help, -h         Tampilkan bantuan ini"
+    echo "  --branch <name>    Specify branch yang akan di-pull (default: main)"
     echo ""
     echo "Deskripsi:"
     echo "  Script untuk melakukan update aplikasi Laravel dengan:"
@@ -324,6 +340,11 @@ show_help() {
     echo "  - Database migration"
     echo "  - Cache clearing"
     echo "  - Health check"
+    echo ""
+    echo "Contoh penggunaan:"
+    echo "  $0                    # Update dari branch main"
+    echo "  $0 --branch develop   # Update dari branch develop"
+    echo "  $0 --help            # Tampilkan bantuan"
     echo ""
 }
 

@@ -68,21 +68,22 @@ chmod +x /var/www/dscourse/rollback.sh
 | Parameter | Deskripsi |
 |-----------|-----------|
 | `--branch <name>` | Specify branch yang akan di-pull (default: main) |
-| `--force` | Skip konfirmasi dan jalankan update langsung |
-| `--no-restart` | Skip restart services setelah update |
 | `--help` | Tampilkan bantuan |
 
 ### Contoh Penggunaan
 
 ```bash
+# Update dari branch main (default)
+./update.sh
+
+# Update dari branch develop
+./update.sh --branch develop
+
 # Update dari branch production
 ./update.sh --branch production
 
-# Update dengan force mode (untuk automation)
-./update.sh --force --branch main
-
-# Update tanpa restart services
-./update.sh --no-restart
+# Tampilkan bantuan
+./update.sh --help
 ```
 
 ## 🔄 Script Rollback (rollback.sh)
