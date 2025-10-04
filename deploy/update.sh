@@ -65,10 +65,14 @@ create_backup() {
     log "Membuat backup ke: $backup_path"
     
     # Buat direktori backup jika belum ada
-    mkdir -p "$BACKUP_DIR"
+    mkdir -p "$backup_path"
     
-    # Backup kode aplikasi
-    cp -r "$PROJECT_DIR" "$backup_path"
+    # Backup kode aplikasi (exclude storage/backups untuk menghindari recursive copy)
+    log "Backup file aplikasi..."
+    rsync -av --exclude='storage/backups' --exclude='node_modules' --exclude='.git' \
+          --exclude='vendor' --exclude='storage/logs' --exclude='storage/framework/cache' \
+          --exclude='storage/framework/sessions' --exclude='storage/framework/views' \
+          "$PROJECT_DIR/" "$backup_path/"
     
     # Backup database
     if [ -f "$PROJECT_DIR/.env" ]; then
@@ -78,7 +82,9 @@ create_backup() {
         
         if [ ! -z "$DB_NAME" ]; then
             log "Backup database: $DB_NAME"
-            mysqldump -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$backup_path/database_backup.sql"
+            mysqldump -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$backup_path/database_backup.sql" 2>/dev/null || {
+                log "Warning: Database backup gagal, melanjutkan tanpa backup database"
+            }
         fi
     fi
     
