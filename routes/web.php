@@ -85,19 +85,7 @@ Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
     ->middleware('throttle:webhook')
     ->name('front.payment_midtrans_notification');
 
-// Test webhook endpoint
-Route::get('/test-webhook', function() {
-    return view('test-webhook');
-})->name('test.webhook');
 
-Route::post('/test-webhook-receiver', function(\Illuminate\Http\Request $request) {
-    \Illuminate\Support\Facades\Log::info('Test webhook received:', [
-        'headers' => $request->headers->all(),
-        'body' => $request->all(),
-        'method' => $request->method()
-    ]);
-    return response()->json(['status' => 'received', 'timestamp' => now()]);
-})->name('test.webhook.receiver');
 
 // WhatsApp Verification routes (public)
 Route::get('/verify/{id}/{token}', [VerificationController::class, 'verify'])
