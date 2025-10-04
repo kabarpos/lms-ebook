@@ -207,7 +207,7 @@ update_application() {
         error "Direktori ini bukan repository git!"
         exit 1
     fi
-    
+
     # Simpan perubahan lokal jika ada
     if ! git diff-index --quiet HEAD --; then
         warning "Ada perubahan lokal yang belum di-commit"
@@ -215,11 +215,15 @@ update_application() {
         log "Perubahan lokal di-stash"
     fi
     
-    # Fetch latest changes
+    # Fetch latest changes dengan force
     log "Mengambil perubahan terbaru dari repository..."
-    git fetch origin
+    git fetch origin --force
     
-    # Cek apakah ada update
+    # Reset ke remote branch untuk memastikan sinkronisasi
+    log "Memastikan sinkronisasi dengan remote repository..."
+    git reset --hard "origin/$BRANCH"
+    
+    # Cek apakah ada update setelah reset
     LOCAL=$(git rev-parse HEAD)
     REMOTE=$(git rev-parse "origin/$BRANCH" 2>/dev/null)
     
@@ -228,37 +232,31 @@ update_application() {
         exit 1
     fi
     
+    log "Local commit: $LOCAL"
+    log "Remote commit: $REMOTE"
+    
     if [ "$LOCAL" = "$REMOTE" ]; then
-        success "Aplikasi sudah up-to-date di branch $BRANCH!"
-        return 0
+        success "Aplikasi berhasil disinkronkan dengan remote repository!"
+    else
+        warning "Masih ada perbedaan antara local dan remote setelah reset"
     fi
     
-    # Show what will be updated
-    log "Perubahan yang akan diterapkan dari branch $BRANCH:"
-    git log --oneline "$LOCAL..$REMOTE"
-    
-    # Pull latest changes
-    log "Menerapkan update dari branch $BRANCH..."
-    git pull origin "$BRANCH"
-    
-    # Install/update dependencies jika composer.json berubah
-    if git diff --name-only "$LOCAL" HEAD | grep -q "composer.json\|composer.lock"; then
-        log "Composer dependencies berubah, menjalankan composer install..."
+    # Install/update dependencies jika composer.json ada
+    if [ -f "composer.json" ]; then
+        log "Menjalankan composer install..."
         composer install --no-dev --optimize-autoloader
     fi
     
-    # Install/update NPM dependencies jika package.json berubah
-    if git diff --name-only "$LOCAL" HEAD | grep -q "package.json\|package-lock.json"; then
-        log "NPM dependencies berubah, menjalankan npm install..."
+    # Install/update NPM dependencies jika package.json ada
+    if [ -f "package.json" ]; then
+        log "Menjalankan npm install..."
         npm ci --production
         npm run build
     fi
     
-    # Jalankan migrasi jika ada perubahan database
-    if git diff --name-only "$LOCAL" HEAD | grep -q "database/migrations"; then
-        log "Ada migrasi database baru, menjalankan migrasi..."
-        php artisan migrate --force
-    fi
+    # Jalankan migrasi database
+    log "Menjalankan migrasi database..."
+    php artisan migrate --force
     
     # Clear cache
     log "Membersihkan cache..."
