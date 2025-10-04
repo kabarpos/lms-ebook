@@ -19,8 +19,10 @@ if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OS" == "Windows_NT" ]]; 
     IS_WINDOWS=true
 else
     # Linux Production Environment
-    PROJECT_DIR="/var/www/dscourse"
-    BACKUP_DIR="/var/backups/dscourse"
+    # Deteksi path project secara otomatis berdasarkan lokasi script
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+    BACKUP_DIR="$PROJECT_DIR/storage/backups"
     # Gunakan log file di project directory untuk menghindari permission issue
     LOG_FILE="$PROJECT_DIR/storage/logs/deploy.log"
     HEALTH_CHECK_URL="https://dscourse.top/health-check"
