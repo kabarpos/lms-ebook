@@ -9,10 +9,22 @@
 
 set -e  # Exit on any error
 
-# Konfigurasi
-PROJECT_DIR="/var/www/dscourse"
-BACKUP_DIR="/var/backups/dscourse"
-LOG_FILE="/var/log/dscourse-deploy.log"
+# Deteksi environment dan set konfigurasi
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    # Windows environment
+    PROJECT_DIR="$(pwd)"
+    BACKUP_DIR="$PROJECT_DIR/storage/backups"
+    LOG_FILE="$PROJECT_DIR/storage/logs/deploy.log"
+    HEALTH_CHECK_URL="http://localhost:8000"
+    IS_WINDOWS=true
+else
+    # Linux/Production environment
+    PROJECT_DIR="/var/www/dscourse"
+    BACKUP_DIR="/var/backups/dscourse"
+    LOG_FILE="/var/log/dscourse-deploy.log"
+    HEALTH_CHECK_URL="https://dscourse.top/health-check"
+    IS_WINDOWS=false
+fi
 
 # Warna untuk output
 RED='\033[0;31m'
