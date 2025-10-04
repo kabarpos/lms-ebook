@@ -50,64 +50,65 @@ warning() {
     echo -e "${YELLOW}[WARNING]${NC} $1" | tee -a "$LOG_FILE"
 }
 
-# Fungsi untuk menampilkan daftar backup
-list_backups() {
-    log "Daftar backup yang tersedia:"
+# Fungsi untuk menampilkan daftar commit
+list_commits() {
+    log "Daftar commit yang tersedia:"
     echo ""
     
-    if [ ! -d "$BACKUP_DIR" ] || [ -z "$(ls -A $BACKUP_DIR 2>/dev/null)" ]; then
-        error "Tidak ada backup yang tersedia!"
+    # Ambil 10 commit terakhir
+    local commits=$(git log --oneline -10 --pretty=format:"%h %s (%cr)")
+    
+    if [ -z "$commits" ]; then
+        error "Tidak ada commit yang tersedia!"
         exit 1
     fi
     
     local counter=1
-    for backup in $(ls -1t "$BACKUP_DIR"); do
-        local backup_path="$BACKUP_DIR/$backup"
-        local backup_date=$(stat -c %y "$backup_path" | cut -d' ' -f1,2 | cut -d'.' -f1)
-        echo -e "${BLUE}[$counter]${NC} $backup (dibuat: $backup_date)"
+    while IFS= read -r commit; do
+        echo -e "${BLUE}[$counter]${NC} $commit"
         counter=$((counter + 1))
-    done
+    done <<< "$commits"
     echo ""
 }
 
-# Fungsi untuk memilih backup
-select_backup() {
-    list_backups
+# Fungsi untuk memilih commit
+select_commit() {
+    list_commits
     
-    local backup_array=($(ls -1t "$BACKUP_DIR"))
-    local backup_count=${#backup_array[@]}
+    local commit_array=($(git log --oneline -10 --pretty=format:"%h"))
+    local commit_count=${#commit_array[@]}
     
-    if [ "$backup_count" -eq 0 ]; then
-        error "Tidak ada backup yang tersedia!"
+    if [ "$commit_count" -eq 0 ]; then
+        error "Tidak ada commit yang tersedia!"
         exit 1
     fi
     
     # Jika ada parameter, gunakan sebagai pilihan
     if [ ! -z "$1" ]; then
-        if [[ "$1" =~ ^[0-9]+$ ]] && [ "$1" -ge 1 ] && [ "$1" -le "$backup_count" ]; then
-            selected_backup="${backup_array[$((1-1))]}"
-            log "Menggunakan backup: $selected_backup"
+        if [[ "$1" =~ ^[0-9]+$ ]] && [ "$1" -ge 1 ] && [ "$1" -le "$commit_count" ]; then
+            selected_commit="${commit_array[$((1-1))]}"
+            log "Menggunakan commit: $selected_commit"
             return 0
         else
-            error "Pilihan backup tidak valid: $1"
+            error "Pilihan commit tidak valid: $1"
             exit 1
         fi
     fi
     
     # Interactive selection
-    echo -n "Pilih backup yang akan digunakan (1-$backup_count) atau 'latest' untuk backup terbaru: "
+    echo -n "Pilih commit yang akan digunakan (1-$commit_count) atau 'latest' untuk commit terbaru: "
     read choice
     
     if [ "$choice" = "latest" ]; then
-        selected_backup="${backup_array[0]}"
-    elif [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "$backup_count" ]; then
-        selected_backup="${backup_array[$((choice-1))]}"
+        selected_commit="${commit_array[0]}"
+    elif [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "$commit_count" ]; then
+        selected_commit="${commit_array[$((choice-1))]}"
     else
         error "Pilihan tidak valid!"
         exit 1
     fi
     
-    log "Backup yang dipilih: $selected_backup"
+    log "Commit yang dipilih: $selected_commit"
 }
 
 # Fungsi untuk konfirmasi rollback
@@ -288,14 +289,14 @@ show_help() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  -l, --list              Tampilkan daftar backup yang tersedia"
-    echo "  -r, --rollback [NUM]    Rollback ke backup tertentu (NUM = nomor backup)"
+    echo "  -l, --list              Tampilkan daftar commit yang tersedia"
+    echo "  -r, --rollback [NUM]    Rollback ke commit tertentu (NUM = nomor commit)"
     echo "  -h, --help              Tampilkan bantuan ini"
     echo ""
     echo "Examples:"
-    echo "  $0 --list              # Tampilkan daftar backup"
+    echo "  $0 --list              # Tampilkan daftar commit"
     echo "  $0 --rollback          # Rollback interaktif"
-    echo "  $0 --rollback 1        # Rollback ke backup nomor 1"
+    echo "  $0 --rollback 1        # Rollback ke commit nomor 1"
     echo ""
 }
 
@@ -303,19 +304,19 @@ show_help() {
 main() {
     case "${1:-}" in
         -l|--list)
-            list_backups
+            list_commits
             exit 0
             ;;
         -r|--rollback)
             log "=== Memulai rollback ==="
-            select_backup "$2"
+            select_commit "$2"
             confirm_rollback
+            backup_current_state
             restore_application
-            restore_database
             restart_services
             if health_check; then
                 success "=== Rollback berhasil! ==="
-                log "Aplikasi telah dikembalikan ke backup: $selected_backup"
+                log "Aplikasi telah dikembalikan ke commit: $selected_commit"
             else
                 error "=== Health check gagal setelah rollback! ==="
                 warning "Periksa log aplikasi untuk detail error."
@@ -328,14 +329,14 @@ main() {
         "")
             # Default behavior - interactive rollback
             log "=== Memulai rollback ==="
-            select_backup
+            select_commit
             confirm_rollback
+            backup_current_state
             restore_application
-            restore_database
             restart_services
             if health_check; then
                 success "=== Rollback berhasil! ==="
-                log "Aplikasi telah dikembalikan ke backup: $selected_backup"
+                log "Aplikasi telah dikembalikan ke commit: $selected_commit"
             else
                 error "=== Health check gagal setelah rollback! ==="
                 warning "Periksa log aplikasi untuk detail error."
