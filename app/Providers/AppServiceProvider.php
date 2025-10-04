@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Transaction;
 use App\Observers\TransactionObserver;
+use App\Observers\QueryOptimizationObserver;
 use App\Repositories\CourseRepository;
 use App\Repositories\CourseRepositoryInterface;
 use App\Repositories\TransactionRepository;
@@ -29,6 +30,8 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Transaction::observe(TransactionObserver::class);
-
+        
+        // Boot query optimization observer for database monitoring
+        QueryOptimizationObserver::boot();
     }
 }

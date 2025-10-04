@@ -82,7 +82,7 @@
     <x-navigation-auth />
     
     <!-- Breadcrumb -->
-    <div id="path" class="flex w-full bg-white border-b border-gray-200 py-4">
+    <div id="path" class="flex w-full bg-white border-b border-gray-200 py-4 hidden lg:block">
         <div class="flex items-center w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto gap-3">
             <a href="{{ route('front.index') }}" class="text-gray-600 hover:text-lochmara-600 cursor-pointer">Home</a>
             <div class="h-4 w-px bg-gray-300"></div>
@@ -93,8 +93,97 @@
     </div>
 
     <main class="bg-gray-50 min-h-screen py-8">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- Course Preview -->
+                <div class="space-y-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- Course Image -->
+                        <div class="aspect-video bg-gray-100">
+                            @if($course->thumbnail)
+                                @if(str_starts_with($course->thumbnail, 'http'))
+                                    <x-lazy-image 
+                                        src="{{ $course->thumbnail }}" 
+                                        alt="{{ $course->name }}" 
+                                        class="w-full h-full object-cover"
+                                        loading="lazy" />
+                                @else
+                                    <x-lazy-image 
+                                        src="{{ Storage::disk('public')->url($course->thumbnail) }}" 
+                                        alt="{{ $course->name }}" 
+                                        class="w-full h-full object-cover"
+                                        loading="lazy" />
+                                @endif
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-lochmara-100">
+                                    <div class="text-center">
+                                        <div class="text-lochmara-600 font-bold text-3xl mb-2">{{ substr($course->name, 0, 2) }}</div>
+                                        <div class="text-lochmara-500 text-sm">Course Preview</div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Course Info -->
+                        <div class="p-6 space-y-6">
+                            <!-- Course Title and Category -->
+                            <div class="space-y-3">
+                                @if($course->category)
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-lochmara-100 text-lochmara-700">
+                                        {{ $course->category->name }}
+                                    </span>
+                                @endif
+                                <h2 class="text-xl font-bold text-gray-900">{{ $course->name }}</h2>
+                                <p class="text-gray-600 leading-relaxed">{{ $course->about }}</p>
+                            </div>
+                            
+                            <!-- Course Stats -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-lochmara-600">{{ $course->courseSections->sum(function($section) { return $section->sectionContents->count(); }) }}</div>
+                                    <div class="text-sm text-gray-600">Total Lessons</div>
+                                </div>
+                                <div class="text-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="text-2xl font-bold text-lochmara-600">{{ $course->courseStudents->count() }}</div>
+                                    <div class="text-sm text-gray-600">Students Enrolled</div>
+                                </div>
+                            </div>
+                            
+                            <!-- What You Get -->
+                            <div class="space-y-4">
+                                <h3 class="font-semibold text-gray-900">What You'll Get:</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3">
+                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span class="text-gray-700">Lifetime access to all course content</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span class="text-gray-700">Certificate of completion</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span class="text-gray-700">Access from any device</span>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span class="text-gray-700">Learn at your own pace</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Checkout Form -->
                 <div class="space-y-8">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -280,93 +369,7 @@
                     </div>
                 </div>
                 
-                <!-- Course Preview -->
-                <div class="space-y-8">
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <!-- Course Image -->
-                        <div class="aspect-video bg-gray-100">
-                            @if($course->thumbnail)
-                                @if(str_starts_with($course->thumbnail, 'http'))
-                                    <x-lazy-image 
-                                        src="{{ $course->thumbnail }}" 
-                                        alt="{{ $course->name }}" 
-                                        class="w-full h-full object-cover"
-                                        loading="lazy" />
-                                @else
-                                    <x-lazy-image 
-                                        src="{{ Storage::disk('public')->url($course->thumbnail) }}" 
-                                        alt="{{ $course->name }}" 
-                                        class="w-full h-full object-cover"
-                                        loading="lazy" />
-                                @endif
-                            @else
-                                <div class="w-full h-full flex items-center justify-center bg-lochmara-100">
-                                    <div class="text-center">
-                                        <div class="text-lochmara-600 font-bold text-3xl mb-2">{{ substr($course->name, 0, 2) }}</div>
-                                        <div class="text-lochmara-500 text-sm">Course Preview</div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        <!-- Course Info -->
-                        <div class="p-6 space-y-6">
-                            <!-- Course Title and Category -->
-                            <div class="space-y-3">
-                                @if($course->category)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-lochmara-100 text-lochmara-700">
-                                        {{ $course->category->name }}
-                                    </span>
-                                @endif
-                                <h2 class="text-xl font-bold text-gray-900">{{ $course->name }}</h2>
-                                <p class="text-gray-600 leading-relaxed">{{ $course->about }}</p>
-                            </div>
-                            
-                            <!-- Course Stats -->
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                    <div class="text-2xl font-bold text-lochmara-600">{{ $course->courseSections->sum(function($section) { return $section->sectionContents->count(); }) }}</div>
-                                    <div class="text-sm text-gray-600">Total Lessons</div>
-                                </div>
-                                <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                    <div class="text-2xl font-bold text-lochmara-600">{{ $course->courseStudents->count() }}</div>
-                                    <div class="text-sm text-gray-600">Students Enrolled</div>
-                                </div>
-                            </div>
-                            
-                            <!-- What You Get -->
-                            <div class="space-y-4">
-                                <h3 class="font-semibold text-gray-900">What You'll Get:</h3>
-                                <div class="space-y-3">
-                                    <div class="flex items-center space-x-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span class="text-gray-700">Lifetime access to all course content</span>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span class="text-gray-700">Certificate of completion</span>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span class="text-gray-700">Access from any device</span>
-                                    </div>
-                                    <div class="flex items-center space-x-3">
-                                        <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span class="text-gray-700">Learn at your own pace</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
     </main>

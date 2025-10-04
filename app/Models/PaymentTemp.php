@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Carbon\Carbon;
 
 class PaymentTemp extends Model
 {
+    use HasFactory;
     protected $table = 'payment_temp';
     
     protected $fillable = [
@@ -21,7 +23,8 @@ class PaymentTemp extends Model
         'grand_total_amount',
         'snap_token',
         'discount_data',
-        'expires_at'
+        'expires_at',
+        'status'
     ];
     
     protected $casts = [

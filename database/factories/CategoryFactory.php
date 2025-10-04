@@ -27,11 +27,33 @@ class CategoryFactory extends Factory
             'UI/UX Design',
             'Digital Marketing',
             'Cloud Computing',
-            'Cybersecurity'
+            'Cybersecurity',
+            'DevOps',
+            'Backend Development',
+            'Frontend Development',
+            'Full Stack Development',
+            'Game Development',
+            'Blockchain',
+            'Artificial Intelligence',
+            'Internet of Things',
+            'Software Testing',
+            'Database Management',
+            'Network Administration',
+            'Project Management',
+            'Business Analysis',
+            'Quality Assurance',
+            'System Administration',
+            'Technical Writing',
+            'Product Management',
+            'Agile Methodology',
+            'Software Architecture',
+            'API Development',
+            'Microservices',
+            'Containerization'
         ];
 
         return [
-            'name' => $this->faker->unique()->randomElement($categories),
+            'name' => $this->faker->randomElement($categories) . ' ' . $this->faker->numberBetween(1, 1000),
         ];
     }
 }

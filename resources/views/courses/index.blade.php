@@ -14,16 +14,8 @@
                 </div>
                 
                 <!-- Course Content -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach ($coursesByCategory as $category => $courses)
-                        @foreach($courses as $course)
-                            <div class="w-full">
-                                <x-course-card :course="$course" />
-                            </div>
-                        @endforeach
-                    @endforeach
-                    
-                    @if($coursesByCategory->isEmpty() || $coursesByCategory->flatten()->isEmpty())
+                <div class="w-full bg-white rounded-lg shadow-md p-6">
+                 @if($coursesByCategory->isEmpty() || $coursesByCategory->flatten()->isEmpty())
                         <div class="w-full text-center py-16">
                             <div class="w-20 h-20 bg-gradient-to-br from-lochmara-100 to-lochmara-200 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <svg class="w-10 h-10 text-lochmara-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,6 +37,17 @@
                             </div>
                         </div>
                     @endif
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach ($coursesByCategory as $category => $courses)
+                        @foreach($courses as $course)
+                            <div class="w-full">
+                                <x-course-card :course="$course" />
+                            </div>
+                        @endforeach
+                    @endforeach
+                    
+                </div>
                 </div>
             </section>
         </div>

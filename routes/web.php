@@ -153,3 +153,9 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Security Report Endpoints
+Route::post('/security/csp-report', [App\Http\Controllers\SecurityReportController::class, 'cspReport'])->name('security.csp-report');
+Route::post('/security/hpkp-report', [App\Http\Controllers\SecurityReportController::class, 'hpkpReport'])->name('security.hpkp-report');
+Route::post('/security/ct-report', [App\Http\Controllers\SecurityReportController::class, 'ctReport'])->name('security.ct-report');
+Route::post('/security/nel-report', [App\Http\Controllers\SecurityReportController::class, 'nelReport'])->name('security.nel-report');

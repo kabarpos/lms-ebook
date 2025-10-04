@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Course;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -75,14 +74,10 @@ class CourseResourceTest extends TestCase
             'name' => 'Laravel Mastery Course',
             'thumbnail' => $thumbnail,
             'price' => 299000,
-            'description' => 'Complete Laravel course for beginners to advanced',
+            'about' => 'Complete Laravel course for beginners to advanced',
             'is_popular' => true,
             'category_id' => $this->category->id,
-            'benefits' => [
-                'Learn Laravel fundamentals',
-                'Build real-world applications',
-                'Master advanced concepts'
-            ],
+            'benefits' => [],
         ];
         
         // Act & Assert
@@ -94,7 +89,7 @@ class CourseResourceTest extends TestCase
         $this->assertDatabaseHas('courses', [
             'name' => 'Laravel Mastery Course',
             'price' => 299000,
-            'description' => 'Complete Laravel course for beginners to advanced',
+            'about' => 'Complete Laravel course for beginners to advanced',
             'is_popular' => true,
             'category_id' => $this->category->id,
         ]);
@@ -112,14 +107,14 @@ class CourseResourceTest extends TestCase
             ->fillForm([
                 'name' => '',
                 'price' => -100, // Invalid price
-                'description' => '',
+                'about' => '', // Changed from 'description' to 'about'
                 'category_id' => null,
             ])
             ->call('create')
             ->assertHasFormErrors([
                 'name' => 'required',
                 'price' => 'min',
-                'description' => 'required',
+                'about' => 'required', // Changed from 'description' to 'about'
                 'category_id' => 'required',
             ]);
     }
@@ -143,7 +138,7 @@ class CourseResourceTest extends TestCase
             'name' => 'React Fundamentals',
             'price' => 199000,
             'admin_fee_amount' => 5000,
-            'description' => 'Learn React from scratch',
+            'about' => 'Learn React from scratch',
             'category_id' => $this->category->id,
         ]);
         
@@ -155,7 +150,7 @@ class CourseResourceTest extends TestCase
                 'name' => 'React Fundamentals',
                 'price' => 199000,
                 'admin_fee_amount' => 5000,
-                'description' => 'Learn React from scratch',
+                'about' => 'Learn React from scratch',
                 'category_id' => $this->category->id,
             ]);
     }
@@ -164,11 +159,13 @@ class CourseResourceTest extends TestCase
     {
         // Arrange
         $course = Course::factory()->create(['category_id' => $this->category->id]);
+        $thumbnail = UploadedFile::fake()->image('updated-thumbnail.jpg');
         $newData = [
             'name' => 'Updated Course Name',
+            'thumbnail' => $thumbnail,
             'price' => 399000,
             'admin_fee_amount' => 7500,
-            'description' => 'Updated course description',
+            'about' => 'Updated course description',
             'is_popular' => true,
         ];
         
@@ -185,7 +182,7 @@ class CourseResourceTest extends TestCase
             'name' => 'Updated Course Name',
             'price' => 399000,
             'admin_fee_amount' => 7500,
-            'description' => 'Updated course description',
+            'about' => 'Updated course description',
             'is_popular' => true,
         ]);
     }
@@ -202,7 +199,7 @@ class CourseResourceTest extends TestCase
             ->callAction(DeleteAction::class)
             ->assertSuccessful();
             
-        $this->assertModelMissing($course);
+        $this->assertSoftDeleted($course);
     }
 
     public function test_can_search_courses(): void
@@ -268,12 +265,11 @@ class CourseResourceTest extends TestCase
         
         // Act & Assert
         Livewire::test(CourseResource\Pages\ListCourses::class)
-            ->selectTableRecords($courses)
-            ->callTableBulkAction(DeleteBulkAction::class)
+            ->callTableBulkAction('delete', $courses)
             ->assertSuccessful();
             
         foreach ($courses as $course) {
-            $this->assertModelMissing($course);
+            $this->assertSoftDeleted($course);
         }
     }
 

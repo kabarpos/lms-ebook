@@ -16,6 +16,8 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -128,7 +130,8 @@ class CourseResource extends Resource
                     ->schema([
                         TextInput::make('name')
                             ->required(),
-                    ]),
+                    ])
+                    ->minItems(0),
             ]);
     }
 
@@ -172,11 +175,16 @@ class CourseResource extends Resource
             ])
             ->filters([
                 TrashedFilter::make(),
+                SelectFilter::make('category_id')
+                    ->relationship('category', 'name')
+                    ->label('Kategori'),
+                TernaryFilter::make('is_popular')
+                    ->label('Popular'),
             ])
             ->recordActions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),

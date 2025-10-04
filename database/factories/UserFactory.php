@@ -23,9 +23,12 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        // Use microtime and random string for truly unique emails
+        $uniqueId = microtime(true) . '_' . Str::random(8);
+        
         return [
             'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'email' => 'test_user_' . $uniqueId . '@example.com',
             'email_verified_at' => now(),
             'whatsapp_verified_at' => now(),
             'is_account_active' => true,
@@ -36,7 +39,7 @@ class UserFactory extends Factory
                 'https://via.placeholder.com/200x200/10b981/ffffff?text=Avatar',
                 'https://via.placeholder.com/200x200/f59e0b/ffffff?text=Profile'
             ]),
-            'whatsapp_number' => '+62' . fake()->numerify('8#########'),
+            'whatsapp_number' => fake()->phoneNumber(),
         ];
     }
 

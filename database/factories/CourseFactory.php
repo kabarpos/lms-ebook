@@ -34,7 +34,7 @@ class CourseFactory extends Factory
         ];
 
         return [
-            'name' => $this->faker->unique()->randomElement($courses),
+            'name' => $this->faker->randomElement($courses) . ' ' . $this->faker->numberBetween(1, 10000),
             'thumbnail' => 'https://via.placeholder.com/400x300/4f46e5/ffffff?text=Course+Thumbnail',
             'about' => $this->faker->paragraphs(3, true),
             'is_popular' => $this->faker->boolean(30), // 30% chance to be popular

@@ -11,28 +11,34 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
-        $middleware->trustProxies(at: '*');
-        
-        // Add security headers globally
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
-        
-        // Add rate limit logging globally
-        $middleware->append(\App\Http\Middleware\RateLimitLogger::class);
-        
-        $middleware->validateCsrfTokens(except: [
-            '/booking/payment/midtrans/notification', // Exclude Midtrans notification route
+        // Global middleware
+        $middleware->append([
+            \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\RateLimitLogger::class,
+            \App\Http\Middleware\RequestLogger::class,
+            \App\Http\Middleware\PerformanceMonitor::class,
+            \App\Http\Middleware\SecurityScanner::class,
         ]);
+
+        // Middleware aliases
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'check.subscription' => \App\Http\Middleware\CheckSubscription::class,
-            'check.subscription.or.admin' => \App\Http\Middleware\CheckSubscriptionOrAdmin::class,
-            'check.course.access' => \App\Http\Middleware\CheckCourseAccess::class,
+            'subscription' => \App\Http\Middleware\CheckSubscription::class,
+            'course.access' => \App\Http\Middleware\CheckCourseAccess::class,
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
             'login.rate.limit' => \App\Http\Middleware\LoginRateLimit::class,
             'rate.limit.logger' => \App\Http\Middleware\RateLimitLogger::class,
+            'request.logger' => \App\Http\Middleware\RequestLogger::class,
+            'performance.monitor' => \App\Http\Middleware\PerformanceMonitor::class,
+            'security.scanner' => \App\Http\Middleware\SecurityScanner::class,
+        ]);
+
+        // CSRF exceptions
+        $middleware->validateCsrfTokens(except: [
+            'midtrans/notification',
+            'security/*', // Exclude security report endpoints from CSRF
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

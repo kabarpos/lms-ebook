@@ -23,9 +23,9 @@ class AdminDashboardJourneyTest extends TestCase
     {
         parent::setUp();
         
-        // Create roles
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $customerRole = Role::firstOrCreate(['name' => 'customer']);
+        // Create roles with explicit guard_name
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $customerRole = Role::firstOrCreate(['name' => 'customer', 'guard_name' => 'web']);
         
         // Create users
         $this->adminUser = User::factory()->create();
@@ -51,7 +51,7 @@ class AdminDashboardJourneyTest extends TestCase
         $courseData = [
             'name' => 'Complete Laravel Course',
             'price' => 299000,
-            'description' => 'Learn Laravel from beginner to advanced level',
+            'about' => 'Learn Laravel from beginner to advanced level',
             'category_id' => $this->category->id,
             'is_popular' => true,
             'benefits' => [

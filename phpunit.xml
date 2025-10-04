@@ -48,6 +48,11 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="VITE_APP_NAME" value="${APP_NAME}"/>
+        <!-- Security Configuration for Testing -->
+        <env name="DETECT_SQL_INJECTION" value="false"/>
+        <env name="SECURITY_LOG_XSS_ATTEMPTS" value="false"/>
+        <env name="SECURITY_LOG_SUSPICIOUS_HEADERS" value="false"/>
+        <env name="SECURITY_LOG_SQL_INJECTION" value="false"/>
         <env name="FILAMENT_TESTING" value="true"/>
         <env name="LOG_CHANNEL" value="single"/>
         <env name="LOG_LEVEL" value="emergency"/>
