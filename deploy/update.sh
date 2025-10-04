@@ -238,25 +238,25 @@ restart_services() {
     
     # Restart PHP-FPM
     if systemctl is-active --quiet php8.2-fpm; then
-        systemctl restart php8.2-fpm
+        sudo systemctl restart php8.2-fpm
         log "PHP-FPM direstart"
     elif systemctl is-active --quiet php8.1-fpm; then
-        systemctl restart php8.1-fpm
+        sudo systemctl restart php8.1-fpm
         log "PHP-FPM direstart"
     fi
     
     # Restart web server
     if systemctl is-active --quiet nginx; then
-        systemctl reload nginx
+        sudo systemctl reload nginx
         log "Nginx direload"
     elif systemctl is-active --quiet apache2; then
-        systemctl restart apache2
+        sudo systemctl restart apache2
         log "Apache2 direstart"
     fi
     
     # Restart queue workers jika ada
     if systemctl is-active --quiet laravel-worker; then
-        systemctl restart laravel-worker
+        sudo systemctl restart laravel-worker
         log "Laravel queue worker direstart"
     fi
 }
