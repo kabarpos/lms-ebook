@@ -121,10 +121,46 @@ health_check() {
             return 1
         fi
         
-        # Check if PHP-FPM is running (skip for Windows development)
-        if ! pgrep -x "php-fpm" > /dev/null; then
+        # Check if PHP-FPM is running - try multiple versions and process names
+        PHP_FPM_RUNNING=false
+        
+        # Check common PHP-FPM process names
+        for php_process in "php-fpm" "php8.3-fpm" "php8.2-fpm" "php8.1-fpm" "php8.0-fpm" "php7.4-fpm"; do
+            if pgrep -x "$php_process" > /dev/null 2>&1; then
+                PHP_FPM_RUNNING=true
+                log "PHP-FPM ditemukan: $php_process"
+                break
+            fi
+        done
+        
+        # Also check by port (PHP-FPM usually runs on port 9000)
+        if [ "$PHP_FPM_RUNNING" = false ] && netstat -tlnp 2>/dev/null | grep -q ":9000.*LISTEN"; then
+            PHP_FPM_RUNNING=true
+            log "PHP-FPM ditemukan pada port 9000"
+        fi
+        
+        if [ "$PHP_FPM_RUNNING" = false ]; then
             error "PHP-FPM tidak berjalan!"
-            return 1
+            log "Mencoba restart PHP-FPM..."
+            
+            # Try to restart PHP-FPM with different service names
+            for service_name in "php-fpm" "php8.3-fpm" "php8.2-fpm" "php8.1-fpm" "php8.0-fpm" "php7.4-fpm"; do
+                if systemctl is-enabled "$service_name" >/dev/null 2>&1; then
+                    log "Mencoba restart $service_name..."
+                    if systemctl restart "$service_name" 2>/dev/null; then
+                        log "Berhasil restart $service_name"
+                        PHP_FPM_RUNNING=true
+                        break
+                    else
+                        warning "Gagal restart $service_name"
+                    fi
+                fi
+            done
+            
+            if [ "$PHP_FPM_RUNNING" = false ]; then
+                error "Tidak dapat menjalankan PHP-FPM!"
+                return 1
+            fi
         fi
     else
         # For Windows, check if Laravel dev server is running on port 8000
