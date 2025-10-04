@@ -149,11 +149,11 @@ class SecurityHeaders
         
         $csp = [
             "default-src" => "'self'",
-            "script-src" => "'self' 'nonce-$nonce' https://cdn.tailwindcss.com https://app.sandbox.midtrans.com https://app.midtrans.com" . ($viteDevServer ? " $viteDevServer" : ""),
+            "script-src" => "'self' 'unsafe-inline' 'nonce-$nonce' https://cdn.tailwindcss.com https://app.sandbox.midtrans.com https://app.midtrans.com https://ui-avatars.com" . ($viteDevServer ? " $viteDevServer" : ""),
             "style-src" => "'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com" . ($viteDevServer ? " $viteDevServer" : ""),
             "font-src" => "'self' https://fonts.gstatic.com" . ($viteDevServer ? " $viteDevServer" : ""),
-            "img-src" => "'self' data: https:" . ($viteDevServer ? " $viteDevServer" : ""),
-            "connect-src" => "'self' https://api.sandbox.midtrans.com https://api.midtrans.com ws: wss:" . ($viteDevServer ? " $viteDevServer ws://localhost:5173" : ""),
+            "img-src" => "'self' data: https: https://ui-avatars.com" . ($viteDevServer ? " $viteDevServer" : ""),
+            "connect-src" => "'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://ui-avatars.com ws: wss:" . ($viteDevServer ? " $viteDevServer ws://localhost:5173" : ""),
             "object-src" => "'none'",
             "media-src" => "'self' https://www.youtube.com https://www.youtube-nocookie.com",
             "frame-src" => "'self' https://www.youtube.com https://www.youtube-nocookie.com https://app.sandbox.midtrans.com https://app.midtrans.com",
