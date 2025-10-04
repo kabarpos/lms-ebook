@@ -15,7 +15,7 @@ if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OS" == "Windows_NT" ]]; 
     PROJECT_DIR="$(pwd)"
     BACKUP_DIR="$PROJECT_DIR/storage/backups"
     LOG_FILE="storage/logs/deploy.log"
-    HEALTH_CHECK_URL="http://localhost:8000/health-check"
+    HEALTH_CHECK_URL="http://localhost:8000/health"
     IS_WINDOWS=true
 else
     # Linux Production Environment
@@ -25,7 +25,7 @@ else
     BACKUP_DIR="$PROJECT_DIR/storage/backups"
     # Gunakan log file di project directory untuk menghindari permission issue
     LOG_FILE="$PROJECT_DIR/storage/logs/deploy.log"
-    HEALTH_CHECK_URL="https://dscourse.top/health-check"
+    HEALTH_CHECK_URL="https://dscourse.top/health"
     IS_WINDOWS=false
 fi
 
@@ -114,16 +114,24 @@ cleanup_old_backups() {
 health_check() {
     log "Melakukan health check..."
     
-    # Check if web server is running
-    if ! pgrep -x "nginx" > /dev/null && ! pgrep -x "apache2" > /dev/null; then
-        error "Web server tidak berjalan!"
-        return 1
-    fi
-    
-    # Check if PHP-FPM is running
-    if ! pgrep -x "php-fpm" > /dev/null; then
-        error "PHP-FPM tidak berjalan!"
-        return 1
+    # Check if web server is running (skip for Windows development)
+    if [ "$IS_WINDOWS" = false ]; then
+        if ! pgrep -x "nginx" > /dev/null && ! pgrep -x "apache2" > /dev/null; then
+            error "Web server tidak berjalan!"
+            return 1
+        fi
+        
+        # Check if PHP-FPM is running (skip for Windows development)
+        if ! pgrep -x "php-fpm" > /dev/null; then
+            error "PHP-FPM tidak berjalan!"
+            return 1
+        fi
+    else
+        # For Windows, check if Laravel dev server is running on port 8000
+        if ! netstat -an | grep -q ":8000.*LISTENING"; then
+            error "Laravel development server tidak berjalan di port 8000!"
+            return 1
+        fi
     fi
     
     # Check Laravel application
@@ -139,7 +147,7 @@ health_check() {
         return 1
     fi
     
-    # Check if application is accessible via HTTP (optional)
+    # Check if application is accessible via HTTP
     if command -v curl > /dev/null; then
         if curl -f -s "$HEALTH_CHECK_URL" > /dev/null 2>&1; then
             success "HTTP health check berhasil"
