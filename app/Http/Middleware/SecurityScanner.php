@@ -28,6 +28,11 @@ class SecurityScanner
             return $next($request);
         }
         
+        // Skip scanning for static assets and service worker to avoid false positives
+        if ($this->isStaticAsset($request)) {
+            return $next($request);
+        }
+        
         // Check for various security threats
         $this->scanForSqlInjection($request);
         $this->scanForXssAttempts($request);
@@ -320,11 +325,14 @@ class SecurityScanner
         $ip = $request->ip();
         $userAgent = $request->userAgent();
         
+        // More lenient request frequency for production
+        $requestThreshold = app()->environment('production') ? 120 : 60;
+        
         // Check request frequency
         $requestKey = "requests_per_minute_{$ip}";
         $requestCount = Cache::get($requestKey, 0);
         
-        if ($requestCount > 60) { // More than 60 requests per minute
+        if ($requestCount > $requestThreshold) { // More lenient for production
             $this->logSecurityThreat('high_frequency_requests', $request, [
                 'requests_per_minute' => $requestCount,
             ]);
@@ -360,12 +368,16 @@ class SecurityScanner
         $ip = $request->ip();
         $path = $request->getPathInfo();
         
-        // Check for login attempts
-        if (str_contains($path, '/login') || str_contains($path, '/auth')) {
+        // More lenient thresholds for production
+        $loginThreshold = app()->environment('production') ? 20 : 10;
+        $adminThreshold = app()->environment('production') ? 10 : 5;
+        
+        // Check for login attempts (POST only)
+        if ($request->isMethod('POST') && (str_contains($path, '/login') || str_contains($path, '/auth'))) {
             $loginKey = "login_attempts_{$ip}";
             $attempts = Cache::get($loginKey, 0);
             
-            if ($attempts > 10) { // More than 10 login attempts
+            if ($attempts > $loginThreshold) { // More lenient for production
                 $this->logSecurityThreat('brute_force_login', $request, [
                     'attempts' => $attempts,
                 ]);
@@ -376,12 +388,12 @@ class SecurityScanner
             Cache::put($loginKey, $attempts + 1, 3600); // 1 hour
         }
         
-        // Check for admin panel access attempts
-        if (str_contains($path, '/admin') || str_contains($path, '/wp-admin')) {
+        // Check for admin panel access attempts (only when unauthenticated)
+        if (!auth()->check() && (str_contains($path, '/admin') || str_contains($path, '/wp-admin'))) {
             $adminKey = "admin_attempts_{$ip}";
             $attempts = Cache::get($adminKey, 0);
             
-            if ($attempts > 5) {
+            if ($attempts > $adminThreshold) {
                 $this->logSecurityThreat('admin_brute_force', $request, [
                     'attempts' => $attempts,
                 ]);
@@ -401,8 +413,11 @@ class SecurityScanner
         $ip = $request->ip();
         $threatScore = Cache::get("threat_score_{$ip}", 0);
         
+        // Increase threshold for production to reduce false positives
+        $blockingThreshold = app()->environment('production') ? 100 : 50;
+        
         // Block if threat score is too high
-        if ($threatScore >= 50) {
+        if ($threatScore >= $blockingThreshold) {
             return true;
         }
         
@@ -412,18 +427,26 @@ class SecurityScanner
             return true;
         }
         
-        // Rate limiting for suspicious activity
-        $key = "suspicious_activity_{$ip}";
-        $executed = RateLimiter::attempt(
-            $key,
-            config('security.rate_limiting.suspicious_activity.max_attempts', 5),
-            function () {
-                return true;
-            },
-            config('security.rate_limiting.suspicious_activity.decay_minutes', 30) * 60
-        );
-        
-        return !$executed;
+        // Do not globally rate limit normal traffic here; only block on high threat score or explicit blocklist
+        return false;
+    }
+
+    /**
+     * Determine if the request is for static assets or service worker
+     */
+    private function isStaticAsset(Request $request): bool
+    {
+        // Skip common static paths and service worker
+        return $request->is('sw.js')
+            || $request->is('favicon.ico')
+            || $request->is('robots.txt')
+            || $request->is('assets/*')
+            || $request->is('css/*')
+            || $request->is('js/*')
+            || $request->is('images/*')
+            || $request->is('fonts/*')
+            || $request->is('vendor/*')
+            || $request->is('livewire/*');
     }
     
     /**

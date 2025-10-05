@@ -2,10 +2,10 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Dashboard;
+use Filament\Pages\Page;
 use App\Filament\Widgets\StatsOverview;
 
-class Statistik extends Dashboard
+class Statistik extends Page
 {
     protected static string | \BackedEnum | null $navigationIcon = null;
 
@@ -36,15 +36,6 @@ class Statistik extends Dashboard
     {
         return [
             StatsOverview::class,
-        ];
-    }
-
-    public function getColumns(): array | int
-    {
-        return [
-            'sm' => 1,
-            'md' => 2,
-            'xl' => 4,
         ];
     }
 }
