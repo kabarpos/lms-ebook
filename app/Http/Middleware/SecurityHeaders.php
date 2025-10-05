@@ -50,12 +50,8 @@ class SecurityHeaders
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
         
-        // Adjust COEP for development environment
-        if (app()->environment('local')) {
-            $response->headers->set('Cross-Origin-Embedder-Policy', 'unsafe-none');
-        } else {
-            $response->headers->set('Cross-Origin-Embedder-Policy', 'require-corp');
-        }
+        // Relax COEP to avoid blocking cross-origin assets like ui-avatars
+        $response->headers->set('Cross-Origin-Embedder-Policy', 'unsafe-none');
         
         $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin');
         $response->headers->set('Cross-Origin-Resource-Policy', 'same-origin');
@@ -76,7 +72,6 @@ class SecurityHeaders
             'magnetometer' => '()',
             'gyroscope' => '()',
             'accelerometer' => '()',
-            'ambient-light-sensor' => '()',
             'autoplay' => '(self)',
             'encrypted-media' => '(self)',
             'fullscreen' => '(self)',
@@ -149,7 +144,8 @@ class SecurityHeaders
         
         $csp = [
             "default-src" => "'self'",
-            "script-src" => "'self' 'unsafe-inline' 'nonce-$nonce' https://cdn.tailwindcss.com https://app.sandbox.midtrans.com https://app.midtrans.com https://ui-avatars.com" . ($viteDevServer ? " $viteDevServer" : ""),
+            // Remove nonce from script-src so 'unsafe-inline' can allow inline scripts
+            "script-src" => "'self' 'unsafe-inline' https://cdn.tailwindcss.com https://app.sandbox.midtrans.com https://app.midtrans.com https://ui-avatars.com" . ($viteDevServer ? " $viteDevServer" : ""),
             "style-src" => "'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com" . ($viteDevServer ? " $viteDevServer" : ""),
             "font-src" => "'self' https://fonts.gstatic.com" . ($viteDevServer ? " $viteDevServer" : ""),
             "img-src" => "'self' data: https: https://ui-avatars.com" . ($viteDevServer ? " $viteDevServer" : ""),
