@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Dashboard;
 
 use Filament\Pages\Page;
 use App\Filament\Widgets\DataOverview;
+use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\TransactionsList;
 use App\Filament\Widgets\TopCourses;
 
@@ -13,7 +14,7 @@ class Data extends Page
 
     protected static \UnitEnum | string | null $navigationGroup = 'General';
 
-    protected static ?int $navigationSort = 11;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $title = 'Data';
 
@@ -32,6 +33,7 @@ class Data extends Page
     public function getHeaderWidgets(): array
     {
         return [
+            StatsOverview::class,
             DataOverview::class,
         ];
     }

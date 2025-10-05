@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Dashboard;
 
 use Filament\Pages\Page;
-use App\Filament\Widgets\StatsOverview;
+use App\Filament\Widgets\MonthlyRevenueChart;
+use App\Filament\Widgets\SalesPerCategoryChart;
 
 class Statistik extends Page
 {
@@ -11,7 +12,7 @@ class Statistik extends Page
 
     protected static \UnitEnum | string | null $navigationGroup = 'General';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 11;
 
     protected static ?string $title = 'Statistik';
 
@@ -22,20 +23,20 @@ class Statistik extends Page
         return null;
     }
 
-    public static function getSlug(?\Filament\Panel $panel = null): string
-    {
-        return 'statistik';
-    }
+    // Gunakan properti bawaan untuk title/slug agar konsisten dengan navigasi
 
-    public function getTitle(): string
-    {
-        return 'Statistik';
-    }
+    protected static ?string $slug = 'statistics';
 
-    public function getWidgets(): array
+    public function getHeaderWidgets(): array
     {
         return [
-            StatsOverview::class,
+            MonthlyRevenueChart::class,
+            SalesPerCategoryChart::class,
         ];
+    }
+
+    public function getFooterWidgets(): array
+    {
+        return [];
     }
 }
