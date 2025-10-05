@@ -157,6 +157,11 @@ class SecurityHeaders
             "form-action" => "'self'",
             "frame-ancestors" => "'none'",
         ];
+
+        // In production, allow eval needed by certain CDN scripts (e.g., Tailwind)
+        if (config('app.env') === 'production') {
+            $csp["script-src"] .= " 'unsafe-eval' 'wasm-unsafe-eval'";
+        }
         
         // Only add upgrade-insecure-requests and block-all-mixed-content in production
         if (config('app.env') === 'production') {
