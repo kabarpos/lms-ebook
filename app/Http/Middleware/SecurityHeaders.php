@@ -139,17 +139,37 @@ class SecurityHeaders
         // Store nonce in request for use in views
         $request->attributes->set('csp_nonce', $nonce);
         
-        // Get Vite dev server URL for development
-        $viteDevServer = config('app.env') === 'local' ? 'http://localhost:5173' : '';
+        // Get Vite dev server URLs for development (IPv4 and IPv6 loopback)
+        $isLocal = config('app.env') === 'local' || config('app.env') === 'development';
+        $viteDevServerV4 = $isLocal ? 'http://localhost:5173' : '';
+        $viteDevServerV6 = $isLocal ? 'http://[::1]:5173' : '';
         
+        $isProd = config('app.env') === 'production';
+
+        $scriptCdn = "https://app.sandbox.midtrans.com https://app.midtrans.com https://code.jquery.com https://cdnjs.cloudflare.com";
+        $styleCdn = "https://fonts.googleapis.com https://fonts.bunny.net https://cdnjs.cloudflare.com";
+
+        $scriptSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' " : "'unsafe-inline' ") . $scriptCdn
+            . ($viteDevServerV4 ? " $viteDevServerV4" : "")
+            . ($viteDevServerV6 ? " $viteDevServerV6" : "");
+        $scriptSrcElem = $scriptSrc;
+
+        $styleSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' " : "'unsafe-inline' ") . $styleCdn
+            . ($viteDevServerV4 ? " $viteDevServerV4" : "")
+            . ($viteDevServerV6 ? " $viteDevServerV6" : "");
+        $styleSrcElem = $styleSrc;
+
         $csp = [
             "default-src" => "'self'",
-            // Remove nonce from script-src so 'unsafe-inline' can allow inline scripts
-            "script-src" => "'self' 'unsafe-inline' https://cdn.tailwindcss.com https://app.sandbox.midtrans.com https://app.midtrans.com https://ui-avatars.com" . ($viteDevServer ? " $viteDevServer" : ""),
-            "style-src" => "'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com" . ($viteDevServer ? " $viteDevServer" : ""),
-            "font-src" => "'self' https://fonts.gstatic.com" . ($viteDevServer ? " $viteDevServer" : ""),
-            "img-src" => "'self' data: https: https://ui-avatars.com" . ($viteDevServer ? " $viteDevServer" : ""),
-            "connect-src" => "'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://ui-avatars.com ws: wss:" . ($viteDevServer ? " $viteDevServer ws://localhost:5173" : ""),
+            "script-src" => $scriptSrc,
+            "script-src-elem" => $scriptSrcElem,
+            "style-src" => $styleSrc,
+            "style-src-elem" => $styleSrcElem,
+            "font-src" => "'self' data: https://fonts.gstatic.com https://fonts.bunny.net",
+            "img-src" => "'self' data: https: https://ui-avatars.com",
+            "connect-src" => "'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://ui-avatars.com ws: wss:"
+                . ($viteDevServerV4 ? " $viteDevServerV4 ws://localhost:5173" : "")
+                . ($viteDevServerV6 ? " $viteDevServerV6 ws://[::1]:5173" : ""),
             "object-src" => "'none'",
             "media-src" => "'self' https://www.youtube.com https://www.youtube-nocookie.com",
             "frame-src" => "'self' https://www.youtube.com https://www.youtube-nocookie.com https://app.sandbox.midtrans.com https://app.midtrans.com",
@@ -158,10 +178,7 @@ class SecurityHeaders
             "frame-ancestors" => "'none'",
         ];
 
-        // In production, allow eval needed by certain CDN scripts (e.g., Tailwind)
-        if (config('app.env') === 'production') {
-            $csp["script-src"] .= " 'unsafe-eval' 'wasm-unsafe-eval'";
-        }
+        // In production, tighten rules: remove unsafe-eval and unsafe-inline (handled above)
         
         // Only add upgrade-insecure-requests and block-all-mixed-content in production
         if (config('app.env') === 'production') {

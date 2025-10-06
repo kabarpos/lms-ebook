@@ -75,7 +75,7 @@
                 </form>
             </div>
             
-            <script>
+            <script nonce="{{ request()->attributes->get('csp_nonce') }}">
                 // Show resend section if there's a verification error
                 document.addEventListener('DOMContentLoaded', function() {
                     const errorMessages = document.querySelectorAll('.text-red-600');

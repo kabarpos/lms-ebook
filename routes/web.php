@@ -88,8 +88,13 @@ Route::match(['get', 'post'], '/booking/payment/midtrans/notification',
 
 
 // WhatsApp Verification routes (public)
-Route::get('/verify/{id}/{token}', [VerificationController::class, 'verify'])
+Route::get('/verify/{id}/{token}', [VerificationController::class, 'verifyWhatsapp'])
     ->name('whatsapp.verification.verify')
+    ->where(['id' => '[0-9]+', 'token' => '[a-zA-Z0-9]+']);
+
+// Email Verification via token (public)
+Route::get('/verify-email/{id}/{token}', [VerificationController::class, 'verifyEmail'])
+    ->name('email.verification.verify')
     ->where(['id' => '[0-9]+', 'token' => '[a-zA-Z0-9]+']);
 
 Route::post('/verification/resend', [VerificationController::class, 'resend'])

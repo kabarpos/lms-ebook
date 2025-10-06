@@ -12,9 +12,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Mail\RegistrationEmailVerification;
 
 class RegisteredUserController extends Controller
 {
@@ -60,13 +62,27 @@ class RegisteredUserController extends Controller
             $result = $whatsappService->sendRegistrationVerification($user);
             
             if ($result['success']) {
+                // Send Email verification as well
+                try {
+                    Mail::to($user->email)->send(new RegistrationEmailVerification($user));
+                    Log::info('Registration email verification sent successfully', [
+                        'user_id' => $user->id,
+                        'email' => $user->email
+                    ]);
+                } catch (\Exception $emailEx) {
+                    Log::warning('Failed to send registration email verification', [
+                        'user_id' => $user->id,
+                        'email' => $user->email,
+                        'error' => $emailEx->getMessage()
+                    ]);
+                }
                 Log::info('Registration verification WhatsApp sent successfully', [
                     'user_id' => $user->id,
                     'email' => $user->email
                 ]);
                 
                 return redirect()->route('login')
-                    ->with('success', 'Pendaftaran berhasil! Link verifikasi telah dikirim ke WhatsApp Anda. Silakan klik link tersebut untuk mengaktifkan akun sebelum login.');
+                    ->with('success', 'Pendaftaran berhasil! Link verifikasi telah dikirim ke WhatsApp dan Email Anda. Silakan verifikasi keduanya sebelum login.');
             } else {
                 Log::warning('Registration successful but WhatsApp notification failed', [
                     'user_id' => $user->id,

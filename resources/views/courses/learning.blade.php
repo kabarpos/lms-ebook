@@ -14,11 +14,6 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <style>
-        body {
-            font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;
-        }
-    </style>
 </head>
 <body class="antialiased">
 
@@ -94,7 +89,7 @@
         }, 3000);
     }
 }" 
-class="bg-gray-50 min-h-screen">
+class="learning-page bg-gray-50 min-h-screen">
     
     <!-- Modern Sidebar -->
     <aside :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" 
@@ -515,7 +510,7 @@ class="bg-gray-50 min-h-screen">
 @push('after-styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="{{ asset('css/content.css') }}">
-    <style>
+    {{-- Styles moved to resources/css/custom.css (.learning-page)
         /* Unified Layout - Clean Design */
         body, html {
             font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
@@ -1134,14 +1129,14 @@ class="bg-gray-50 min-h-screen">
         .btn-primary:active {
             transform: translateY(0);
         }
-    </style>
+    --}}
 @endpush
 
 @push('after-scripts')
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
-<script>
+<script nonce="{{ request()->attributes->get('csp_nonce') }}">
 document.addEventListener('DOMContentLoaded', () => {
     
     // Debug: Check if content exists

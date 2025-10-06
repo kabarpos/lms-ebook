@@ -81,7 +81,7 @@
 </div>
 
 @push('styles')
-<style>
+<style nonce="{{ request()->attributes->get('csp_nonce') }}">
 .lazy-image-container {
     position: relative;
     display: inline-block;

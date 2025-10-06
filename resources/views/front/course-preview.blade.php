@@ -26,7 +26,7 @@
     
 
     
-    <style>
+    <style nonce="{{ request()->attributes->get('csp_nonce') }}">
         body {
             font-family: 'Manrope', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif !important;
         }
@@ -551,7 +551,7 @@
         </div>
     </div>
     
-    <style>
+    <style nonce="{{ request()->attributes->get('csp_nonce') }}">
 
     
     /* Sidebar Scrollbar Styling */
@@ -850,7 +850,7 @@
     </style>
     
     <!-- TipTap Content Processing Script -->
-    <script>
+    <script nonce="{{ request()->attributes->get('csp_nonce') }}">
     document.addEventListener('DOMContentLoaded', function() {
         // Process TipTap content
         const contentContainers = document.querySelectorAll('.tiptap-content, .filament-rich-content');
@@ -1009,7 +1009,7 @@
     });
     </script>
 </body>
-<script>
+<script nonce="{{ request()->attributes->get('csp_nonce') }}">
 // Alpine.js Data Function
 function courseData() {
     return {

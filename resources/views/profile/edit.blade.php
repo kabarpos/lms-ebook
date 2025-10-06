@@ -61,7 +61,7 @@
         </div>
     </main>
     
-    <style>
+    <style nonce="{{ request()->attributes->get('csp_nonce') }}">
     /* Force Manrope Font Implementation */
     body, html, * {
         font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;

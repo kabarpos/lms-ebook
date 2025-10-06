@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Global middleware
         $middleware->append([
             \App\Http\Middleware\SecurityHeaders::class,
+            \App\Http\Middleware\CspValidator::class,
             \App\Http\Middleware\RateLimitLogger::class,
             \App\Http\Middleware\RequestLogger::class,
             \App\Http\Middleware\PerformanceMonitor::class,
@@ -32,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'request.logger' => \App\Http\Middleware\RequestLogger::class,
             'performance.monitor' => \App\Http\Middleware\PerformanceMonitor::class,
             'security.scanner' => \App\Http\Middleware\SecurityScanner::class,
+            'csp.validator' => \App\Http\Middleware\CspValidator::class,
         ]);
 
         // CSRF exceptions

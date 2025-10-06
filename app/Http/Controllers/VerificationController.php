@@ -11,55 +11,94 @@ use Illuminate\Support\Facades\Log;
 class VerificationController extends Controller
 {
     /**
-     * Verify user account with token
+     * Verify WhatsApp via token (publik)
      */
-    public function verify(Request $request, $id, $token)
+    public function verifyWhatsapp(Request $request, $id, $token)
     {
         try {
-            // Find user by ID
             $user = User::findOrFail($id);
-            
-            // Check if token matches
+
             if ($user->verification_token !== $token) {
                 return redirect()->route('login')
                     ->with('error', 'Token verifikasi tidak valid atau sudah kadaluarsa.');
             }
-            
-            // Check if already verified
+
             if ($user->isFullyVerified()) {
                 return redirect()->route('login')
                     ->with('info', 'Akun Anda sudah terverifikasi sebelumnya.');
             }
-            
-            // Mark email as verified
-            $user->verifyEmail();
-            
-            // Mark WhatsApp as verified (assuming the user clicked the link from WhatsApp)
+
+            // Verifikasi WhatsApp saja
             $user->verifyWhatsapp();
-            
-            // Clear verification token
-            $user->update([
-                'verification_token' => null,
-                'is_account_active' => true
-            ]);
-            
-            Log::info('User account verified successfully', [
+
+            // Hapus token hanya jika sudah fully verified
+            if ($user->isFullyVerified()) {
+                $user->update(['verification_token' => null]);
+            }
+
+            Log::info('User WhatsApp verified successfully', [
                 'user_id' => $user->id,
                 'email' => $user->email
             ]);
-            
+
             return redirect()->route('login')
-                ->with('success', 'Akun Anda berhasil diverifikasi! Silakan login untuk mengakses platform.');
-                
+                ->with('success', 'Nomor WhatsApp berhasil diverifikasi. Silakan verifikasi email Anda untuk mengaktifkan akun.');
+
         } catch (\Exception $e) {
-            Log::error('Account verification failed', [
+            Log::error('WhatsApp verification failed', [
                 'user_id' => $id,
                 'token' => $token,
                 'error' => $e->getMessage()
             ]);
-            
+
             return redirect()->route('login')
-                ->with('error', 'Terjadi kesalahan saat memverifikasi akun. Silakan hubungi administrator.');
+                ->with('error', 'Terjadi kesalahan saat verifikasi WhatsApp. Silakan hubungi administrator.');
+        }
+    }
+
+    /**
+     * Verify Email via token (publik)
+     */
+    public function verifyEmail(Request $request, $id, $token)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            if ($user->verification_token !== $token) {
+                return redirect()->route('login')
+                    ->with('error', 'Token verifikasi tidak valid atau sudah kadaluarsa.');
+            }
+
+            if ($user->isFullyVerified()) {
+                return redirect()->route('login')
+                    ->with('info', 'Akun Anda sudah terverifikasi sebelumnya.');
+            }
+
+            // Verifikasi Email saja
+            $user->verifyEmail();
+
+            // Hapus token hanya jika sudah fully verified
+            if ($user->isFullyVerified()) {
+                $user->update(['verification_token' => null]);
+            }
+
+            Log::info('User email verified successfully', [
+                'user_id' => $user->id,
+                'email' => $user->email
+            ]);
+
+            return redirect()->route('login')
+                ->with('success', 'Email berhasil diverifikasi. Silakan verifikasi WhatsApp Anda untuk mengaktifkan akun.');
+
+        } catch (\Exception $e) {
+            Log::error('Email verification failed', [
+                'user_id' => $id,
+                'token' => $token,
+                'error' => $e->getMessage()
+            ]);
+
+            return redirect()->route('login')
+                ->with('error', 'Terjadi kesalahan saat verifikasi email. Silakan hubungi administrator.');
         }
     }
     

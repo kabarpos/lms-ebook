@@ -110,7 +110,7 @@
         </section>
     </main>
 
-    <script>
+    <script nonce="{{ request()->attributes->get('csp_nonce') }}">
         function selectResetMethod(method) {
             // Hide all forms
             document.getElementById('email-form').classList.add('hidden');

@@ -142,7 +142,7 @@
     </form>
 </section>
 
-<script>
+<script nonce="{{ request()->attributes->get('csp_nonce') }}">
 function previewPhoto(event) {
     const file = event.target.files[0];
     const preview = document.getElementById('profile-photo-preview');

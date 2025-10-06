@@ -584,7 +584,7 @@
 @endsection
 
 @push('after-scripts')
-<script>
+<script nonce="{{ request()->attributes->get('csp_nonce') }}">
     // Get course data
     const courseData = {
         name: @json($course->name),

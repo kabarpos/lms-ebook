@@ -38,7 +38,7 @@
 </div>
 
 @push('after-styles')
-<style>
+<style nonce="{{ request()->attributes->get('csp_nonce') }}">
     /* CRITICAL: YouTube Player Styling - Proper Z-Index */
     .youtube-player-container {
         position: relative !important;
@@ -95,7 +95,7 @@
 @endpush
 
 @push('scripts')
-<script>
+<script nonce="{{ request()->attributes->get('csp_nonce') }}">
 // CRITICAL: Following specification - iframe harus langsung visible tanpa display:none
 document.addEventListener('DOMContentLoaded', function() {
     const iframe = document.getElementById('youtube-iframe-{{ $videoId }}');

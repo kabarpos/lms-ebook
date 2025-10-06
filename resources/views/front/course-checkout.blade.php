@@ -2,7 +2,7 @@
 @section('title', 'Course Checkout - ' . $course->name)
 
 @push('styles')
-<style>
+<style nonce="{{ request()->attributes->get('csp_nonce') }}">
     /* Enhanced discount system animations and transitions */
     .discount-transition {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -381,7 +381,7 @@
             src="https://app.sandbox.midtrans.com/snap/snap.js" 
             data-client-key="{{ $midtrans_client_key ?? config('midtrans.clientKey') }}"></script>
 
-    <script type="text/javascript">
+    <script type="text/javascript" nonce="{{ request()->attributes->get('csp_nonce') }}">
         // Global variables for discount management
         let appliedDiscount = @if(isset($appliedDiscount)) @json($appliedDiscount) @else null @endif;
         let originalPricing = {
