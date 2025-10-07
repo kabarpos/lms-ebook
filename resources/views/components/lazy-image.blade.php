@@ -4,27 +4,38 @@
     'class' => '',
     'loading' => 'lazy',
     'containerClass' => '',
-    'placeholderHeight' => '120px'
+    'placeholderHeight' => '0'
 ])
 
 @php
     // Generate a deterministic class for min-height to avoid inline style attributes (CSP-friendly)
-    $placeholderClass = 'lazy-min-'.substr(md5($placeholderHeight), 0, 8);
+    $ph = trim($placeholderHeight);
+    $hasSkeleton = $ph !== '' && $ph !== '0' && $ph !== '0px';
+    $placeholderClass = $hasSkeleton ? 'lazy-min-'.substr(md5($placeholderHeight), 0, 8) : '';
+    $useWrapper = $hasSkeleton || trim($containerClass) !== '';
 @endphp
 
-<div class="{{ $containerClass ?? '' }} relative overflow-hidden bg-gray-100 {{ $placeholderClass }}">
-    
-    <!-- Simple skeleton via container background; no overlay to avoid flicker -->
-    
-    <!-- Actual image (no Alpine gating to avoid invisible images) -->
+@if($useWrapper)
+    <div class="{{ $containerClass ?? '' }} {{ $hasSkeleton ? 'relative overflow-hidden' : '' }} {{ $placeholderClass }}">
+        <!-- Actual image (no Alpine gating to avoid invisible images) -->
+        <img
+             src="{{ $src }}"
+             alt="{{ $alt ?? '' }}"
+             class="{{ $class ?? '' }}"
+             loading="{{ $loading ?? 'lazy' }}"
+             decoding="async"
+             />
+    </div>
+@else
+    <!-- Render without wrapper for small inline icons -->
     <img
          src="{{ $src }}"
          alt="{{ $alt ?? '' }}"
-         class="{{ $class ?? '' }} {{ $placeholderClass }}"
+         class="{{ $class ?? '' }}"
          loading="{{ $loading ?? 'lazy' }}"
          decoding="async"
          />
-</div>
+@endif
 
 @push('after-styles')
 <style nonce="{{ request()->attributes->get('csp_nonce') }}">
@@ -54,8 +65,10 @@
 }
 
 /* Deterministic min-height class injected per instance to avoid inline style attributes */
+@if($hasSkeleton && $placeholderClass)
 .{{ $placeholderClass }} {
     min-height: {{ $placeholderHeight }};
 }
+@endif
 </style>
 @endpush
