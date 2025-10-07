@@ -80,10 +80,13 @@
     display: none;
 }
 
-/* Hero Gradient */
+/* Hero Gradient - align with page design (light blue) */
 .hero-gradient {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
 }
+
+/* Alpine x-cloak utility to prevent FOUC */
+[x-cloak] { display: none !important; }
 
 /* Progress Bar Dynamic Width */
 .progress-bar {

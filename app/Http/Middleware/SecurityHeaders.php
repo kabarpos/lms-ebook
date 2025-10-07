@@ -154,7 +154,8 @@ class SecurityHeaders
             . ($viteDevServerV6 ? " $viteDevServerV6" : "");
         $scriptSrcElem = $scriptSrc;
 
-        $styleSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' " : "'unsafe-inline' ") . $styleCdn
+        // Allow inline style attributes in production to support dynamic bindings (e.g., Alpine :style)
+        $styleSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' 'unsafe-inline' " : "'unsafe-inline' ") . $styleCdn
             . ($viteDevServerV4 ? " $viteDevServerV4" : "")
             . ($viteDevServerV6 ? " $viteDevServerV6" : "");
         $styleSrcElem = $styleSrc;
@@ -165,6 +166,8 @@ class SecurityHeaders
             "script-src-elem" => $scriptSrcElem,
             "style-src" => $styleSrc,
             "style-src-elem" => $styleSrcElem,
+            // Explicitly allow style attributes where supported (CSP3). If not supported, style-src 'unsafe-inline' covers it.
+            "style-src-attr" => "'unsafe-inline'",
             "font-src" => "'self' data: https://fonts.gstatic.com https://fonts.bunny.net",
             "img-src" => "'self' data: https: https://ui-avatars.com",
             "connect-src" => "'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://ui-avatars.com ws: wss:"
