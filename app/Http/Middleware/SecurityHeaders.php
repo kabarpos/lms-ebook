@@ -149,19 +149,38 @@ class SecurityHeaders
         
         $isProd = config('app.env') === 'production';
 
+        // Detect Filament admin area to scope CSP relaxation strictly to admin pages
+        $isFilamentAdmin = $this->isFilamentAdmin($request);
+
         $scriptCdn = "https://app.sandbox.midtrans.com https://app.midtrans.com https://code.jquery.com https://cdnjs.cloudflare.com";
         $styleCdn = "https://fonts.googleapis.com https://fonts.bunny.net https://cdnjs.cloudflare.com";
 
         $scriptSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' " : "'unsafe-inline' ") . $scriptCdn
             . ($viteDevServerV4 ? " $viteDevServerV4" : "")
             . ($viteDevServerV6 ? " $viteDevServerV6" : "");
+
+        // Livewire currently uses AsyncFunction/new Function which requires 'unsafe-eval'.
+        // To keep CSP strict globally, allow 'unsafe-eval' ONLY within Filament admin pages.
+        if ($isFilamentAdmin) {
+            $scriptSrc .= " 'unsafe-eval'";
+        }
         $scriptSrcElem = $scriptSrc;
 
         // Allow inline style attributes in production to support dynamic bindings (e.g., Alpine :style)
         $styleSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' 'unsafe-inline' " : "'unsafe-inline' ") . $styleCdn
             . ($viteDevServerV4 ? " $viteDevServerV4" : "")
             . ($viteDevServerV6 ? " $viteDevServerV6" : "");
-        $styleSrcElem = $styleSrc;
+
+        // style-src-elem: In admin (Filament), some libraries insert <style> tags without nonce.
+        // Since browsers ignore 'unsafe-inline' when a nonce is present, provide a scoped relaxation
+        // by omitting nonce and allowing 'unsafe-inline' ONLY within admin pages.
+        if ($isFilamentAdmin) {
+            $styleSrcElem = "'self' 'unsafe-inline' " . $styleCdn
+                . ($viteDevServerV4 ? " $viteDevServerV4" : "")
+                . ($viteDevServerV6 ? " $viteDevServerV6" : "");
+        } else {
+            $styleSrcElem = $styleSrc;
+        }
 
         $csp = [
             "default-src" => "'self'",
@@ -217,6 +236,25 @@ class SecurityHeaders
             ]);
             $response->headers->set('Report-To', $reportTo);
         }
+    }
+
+    /**
+     * Determine if current request targets Filament admin area.
+     */
+    private function isFilamentAdmin(Request $request): bool
+    {
+        // Match path configured in AdminPanelProvider ->path('admin')
+        if ($request->is('admin') || $request->is('admin/*')) {
+            return true;
+        }
+
+        // Fallback: detect by route name prefix 'filament.' when available
+        $routeName = optional($request->route())->getName();
+        if (is_string($routeName) && str_starts_with($routeName, 'filament.')) {
+            return true;
+        }
+
+        return false;
     }
     
     /**
