@@ -152,8 +152,9 @@ class SecurityHeaders
         // Detect Filament admin area to scope CSP relaxation strictly to admin pages
         $isFilamentAdmin = $this->isFilamentAdmin($request);
 
-        $scriptCdn = "https://app.sandbox.midtrans.com https://app.midtrans.com https://code.jquery.com https://cdnjs.cloudflare.com";
-        $styleCdn = "https://fonts.googleapis.com https://fonts.bunny.net https://cdnjs.cloudflare.com";
+        // Allow essential CDNs, including Plyr for YouTube player UI
+        $scriptCdn = "https://app.sandbox.midtrans.com https://app.midtrans.com https://code.jquery.com https://cdnjs.cloudflare.com https://cdn.plyr.io";
+        $styleCdn = "https://fonts.googleapis.com https://fonts.bunny.net https://cdnjs.cloudflare.com https://cdn.plyr.io";
 
         $scriptSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' " : "'unsafe-inline' ") . $scriptCdn
             . ($viteDevServerV4 ? " $viteDevServerV4" : "")

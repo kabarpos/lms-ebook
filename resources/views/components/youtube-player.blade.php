@@ -76,11 +76,24 @@ document.addEventListener('DOMContentLoaded', function() {
         border-radius: 0.5rem;
         overflow: hidden;
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        /* Fallback: enforce 16:9 ratio even if Tailwind aspect-video is purged */
+        aspect-ratio: 16 / 9;
+    }
+    /* Fallback sizing when Plyr CSS is unavailable */
+    .youtube-player-wrapper .plyr__video-embed {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .youtube-player-wrapper .plyr__video-embed iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
     
     .youtube-player-wrapper iframe {
-        width: 100%;
-        height: 100%;
         border: none;
         border-radius: 0.5rem;
     }
