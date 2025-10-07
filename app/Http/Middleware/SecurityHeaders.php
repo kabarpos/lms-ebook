@@ -78,10 +78,11 @@ class SecurityHeaders
             'magnetometer' => '()',
             'gyroscope' => '()',
             'accelerometer' => '()',
-            'autoplay' => '(self)',
-            'encrypted-media' => '(self)',
-            'fullscreen' => '(self)',
-            'picture-in-picture' => '()',
+            // Allow media features for cross-origin players like YouTube
+            'autoplay' => '*',
+            'encrypted-media' => '*',
+            'fullscreen' => '*',
+            'picture-in-picture' => '*',
             'sync-xhr' => '()',
             'web-share' => '(self)',
         ];
@@ -153,7 +154,7 @@ class SecurityHeaders
         $isFilamentAdmin = $this->isFilamentAdmin($request);
 
         // Allow essential CDNs, including Plyr for YouTube player UI
-        $scriptCdn = "https://app.sandbox.midtrans.com https://app.midtrans.com https://code.jquery.com https://cdnjs.cloudflare.com https://cdn.plyr.io";
+        $scriptCdn = "https://app.sandbox.midtrans.com https://app.midtrans.com https://code.jquery.com https://cdnjs.cloudflare.com https://cdn.plyr.io https://www.youtube.com";
         $styleCdn = "https://fonts.googleapis.com https://fonts.bunny.net https://cdnjs.cloudflare.com https://cdn.plyr.io";
 
         $scriptSrc = "'self' " . ($isProd ? "'nonce-{$nonce}' " : "'unsafe-inline' ") . $scriptCdn
