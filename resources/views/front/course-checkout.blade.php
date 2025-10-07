@@ -554,6 +554,14 @@
             
             // Discount code validation with debouncing
         
+        // Prevent accidental form submission that corrupts URL with GET params
+        const checkoutForm = document.getElementById('checkout-details');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+        }
+
         if (applyDiscountBtn && discountCodeInput) {
             applyDiscountBtn.addEventListener('click', function(e) {
                 if (!isValidating) {
@@ -562,6 +570,15 @@
             });
             
             discountCodeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!isValidating) {
+                        validateDiscountCode();
+                    }
+                }
+            });
+            // Extra guard: also prevent Enter on keydown to avoid form submission in some browsers
+            discountCodeInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (!isValidating) {

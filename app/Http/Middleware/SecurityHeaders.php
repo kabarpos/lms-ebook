@@ -17,6 +17,12 @@ class SecurityHeaders
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Generate CSP nonce EARLY so views can access it while rendering
+        $nonce = $this->generateNonce();
+        // Make nonce available to Blade views via request attributes
+        $request->attributes->set('csp_nonce', $nonce);
+
+        // Proceed with request handling (views render here and can use the nonce)
         $response = $next($request);
         
         // Basic Security Headers
@@ -25,8 +31,8 @@ class SecurityHeaders
         // Advanced Security Headers
         $this->setAdvancedSecurityHeaders($response, $request);
         
-        // Content Security Policy
-        $this->setContentSecurityPolicy($response, $request);
+        // Content Security Policy — use the SAME nonce value that views used
+        $this->setContentSecurityPolicy($response, $request, $nonce);
         
         // HTTPS-specific headers
         if ($request->isSecure()) {
@@ -132,12 +138,9 @@ class SecurityHeaders
     /**
      * Set Content Security Policy
      */
-    private function setContentSecurityPolicy(Response $response, Request $request): void
+    private function setContentSecurityPolicy(Response $response, Request $request, string $nonce): void
     {
-        $nonce = $this->generateNonce();
-        
-        // Store nonce in request for use in views
-        $request->attributes->set('csp_nonce', $nonce);
+        // Nonce is generated in handle() BEFORE views render; do not regenerate here
         
         // Get Vite dev server URLs for development (IPv4 and IPv6 loopback)
         $isLocal = config('app.env') === 'local' || config('app.env') === 'development';
