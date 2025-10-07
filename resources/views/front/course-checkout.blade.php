@@ -84,9 +84,9 @@
     <!-- Breadcrumb -->
     <div id="path" class="flex w-full bg-white border-b border-gray-200 py-4 hidden lg:block">
         <div class="flex items-center w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto gap-3">
-            <a href="{{ route('front.index') }}" class="text-gray-600 hover:text-lochmara-600 cursor-pointer">Home</a>
+            <a href="{{ route('front.index') }}" class="text-gray-600 hover:text-mountain-meadow-600 cursor-pointer">Home</a>
             <div class="h-4 w-px bg-gray-300"></div>
-            <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-600 hover:text-lochmara-600 cursor-pointer">{{ $course->name }}</a>
+            <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-600 hover:text-mountain-meadow-600 cursor-pointer">{{ $course->name }}</a>
             <span class="text-gray-400">/</span>
             <span class="font-semibold text-gray-900">Checkout</span>
         </div>
@@ -116,10 +116,10 @@
                                         loading="lazy" />
                                 @endif
                             @else
-                                <div class="w-full h-full flex items-center justify-center bg-lochmara-100">
+                                <div class="w-full h-full flex items-center justify-center bg-mountain-meadow-100">
                                     <div class="text-center">
-                                        <div class="text-lochmara-600 font-bold text-3xl mb-2">{{ substr($course->name, 0, 2) }}</div>
-                                        <div class="text-lochmara-500 text-sm">Course Preview</div>
+                                        <div class="text-mountain-meadow-600 font-bold text-3xl mb-2">{{ substr($course->name, 0, 2) }}</div>
+                                        <div class="text-mountain-meadow-500 text-sm">Course Preview</div>
                                     </div>
                                 </div>
                             @endif
@@ -130,7 +130,7 @@
                             <!-- Course Title and Category -->
                             <div class="space-y-3">
                                 @if($course->category)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-lochmara-100 text-lochmara-700">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-mountain-meadow-100 text-mountain-meadow-700">
                                         {{ $course->category->name }}
                                     </span>
                                 @endif
@@ -141,11 +141,11 @@
                             <!-- Course Stats -->
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                    <div class="text-2xl font-bold text-lochmara-600">{{ $course->courseSections->sum(function($section) { return $section->sectionContents->count(); }) }}</div>
+                                    <div class="text-2xl font-bold text-mountain-meadow-600">{{ $course->courseSections->sum(function($section) { return $section->sectionContents->count(); }) }}</div>
                                     <div class="text-sm text-gray-600">Total Lessons</div>
                                 </div>
                                 <div class="text-center p-4 bg-gray-50 rounded-lg">
-                                    <div class="text-2xl font-bold text-lochmara-600">{{ $course->courseStudents->count() }}</div>
+                                    <div class="text-2xl font-bold text-mountain-meadow-600">{{ $course->courseStudents->count() }}</div>
                                     <div class="text-sm text-gray-600">Students Enrolled</div>
                                 </div>
                             </div>
@@ -203,7 +203,7 @@
                                 <div class="space-y-3">
                                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                         <div class="flex items-center space-x-2">
-                                            <svg class="w-5 h-5 text-lochmara-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <svg class="w-5 h-5 text-mountain-meadow-600" fill="currentColor" viewBox="0 0 20 20">
                                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>
                                             <span class="font-medium">Course Purchase</span>
@@ -261,12 +261,12 @@
                                                        id="discount-code" 
                                                        name="discount_code"
                                                        placeholder="Masukkan kode diskon" 
-                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lochmara-500 focus:border-lochmara-500 text-sm cursor-pointer"
+                                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mountain-meadow-500 focus:border-mountain-meadow-500 text-sm cursor-pointer"
                                                        autocomplete="off">
                                             </div>
                                             <button type="button" 
                                                     id="apply-discount" 
-                                                    class="px-4 py-2 bg-lochmara-600 text-white text-sm font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer">
+                                                    class="px-4 py-2 bg-mountain-meadow-600 text-white text-sm font-medium rounded-lg hover:bg-mountain-meadow-700 transition-colors duration-200 cursor-pointer">
                                                 Terapkan
                                             </button>
                                         </div>
@@ -342,15 +342,15 @@
                                 
                                 <hr class="border-gray-200">
                                 
-                                <div class="flex items-center justify-between p-4 bg-lochmara-50 rounded-lg border border-lochmara-200">
-                                    <span class="text-lg font-bold text-lochmara-800">Total Payment</span>
-                                    <span class="text-2xl font-bold text-lochmara-800" id="total-payment">Rp {{ number_format($grand_total_amount, 0, '', '.') }}</span>
+                                <div class="flex items-center justify-between p-4 bg-mountain-meadow-50 rounded-lg border border-mountain-meadow-200">
+                                    <span class="text-lg font-bold text-mountain-meadow-800">Total Payment</span>
+                                    <span class="text-2xl font-bold text-mountain-meadow-800" id="total-payment">Rp {{ number_format($grand_total_amount, 0, '', '.') }}</span>
                                 </div>
                             </section>
                             
                             <!-- Payment Button -->
                             <button type="button" id="pay-button" 
-                                    class="w-full py-4 bg-lochmara-600 text-white font-bold rounded-lg hover:bg-lochmara-700 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer">
+                                    class="w-full py-4 bg-mountain-meadow-600 text-white font-bold rounded-lg hover:bg-mountain-meadow-700 transition-colors duration-200 shadow-lg hover:shadow-xl cursor-pointer">
                                 <div class="flex items-center justify-center space-x-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
@@ -363,7 +363,7 @@
                             
                             <p class="text-sm text-gray-500 text-center">
                                 By purchasing this course, you agree to our 
-                                <a href="{{ route('front.terms-of-service') }}" class="text-lochmara-600 hover:underline cursor-pointer">Terms & Conditions</a>
+                                <a href="{{ route('front.terms-of-service') }}" class="text-mountain-meadow-600 hover:underline cursor-pointer">Terms & Conditions</a>
                             </p>
                         </form>
                     </div>

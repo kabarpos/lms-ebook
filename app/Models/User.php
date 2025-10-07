@@ -162,7 +162,8 @@ class User extends Authenticatable implements FilamentUser
     {
         $this->update([
             'email_verified_at' => now(),
-            'is_account_active' => $this->whatsapp_verified_at ? true : false
+            // Aktifkan akun jika ada minimal satu metode verifikasi
+            'is_account_active' => true
         ]);
     }
 
@@ -173,7 +174,8 @@ class User extends Authenticatable implements FilamentUser
     {
         $this->update([
             'whatsapp_verified_at' => now(),
-            'is_account_active' => $this->email_verified_at ? true : false
+            // Aktifkan akun jika ada minimal satu metode verifikasi
+            'is_account_active' => true
         ]);
     }
 
@@ -190,6 +192,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isAccountActive(): bool
     {
-        return $this->is_account_active && $this->isFullyVerified();
+        // Akun dianggap aktif jika flag aktif dan minimal satu verifikasi terpenuhi
+        return $this->is_account_active && ($this->email_verified_at || $this->whatsapp_verified_at);
     }
 }

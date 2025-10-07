@@ -16,10 +16,10 @@
 
     <!-- YouTube Player enhanced by Plyr -->
     <div class="youtube-player-wrapper relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden">
-        <div class="plyr__video-embed" id="plyr-{{ $videoId }}">
+        <div class="plyr__video-embed live-video-player" id="plyr-{{ $videoId }}">
             <iframe
                 class="youtube-component-iframe"
-                src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?iv_load_policy=3&modestbranding=1&rel=0&playsinline=1&enablejsapi=1"
+                src="https://www.youtube-nocookie.com/embed/{{ $videoId }}?iv_load_policy=3&modestbranding=1&rel=0&playsinline=1&enablejsapi=1&controls=0"
                 title="{{ $title }}"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen
@@ -56,11 +56,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 @push('after-styles')
 <style nonce="{{ request()->attributes->get('csp_nonce') }}">
+    /* Crop YouTube overlays to reduce visible branding */
+    .live-video-player .plyr--youtube iframe {
+        top: -50%;
+        height: 200% !important;
+    }
+    .live-video-player .plyr--youtube.plyr--paused.plyr--loading.plyr__poster-enabled .plyr__poster {
+        opacity: 1 !important;
+    }
+
     .youtube-player-container {
         position: relative;
         background: transparent;
     }
-    
+
     .youtube-player-wrapper {
         position: relative;
         background: #000;

@@ -97,7 +97,7 @@ class="learning-page bg-gray-50 min-h-screen">
         
         <!-- Back to Dashboard Button (Above Sidebar) -->
         <div class="flex-shrink-0 px-6 py-4 border-b border-gray-100">
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center text-gray-600 hover:text-lochmara-600 transition-colors text-sm font-medium">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center text-gray-600 hover:text-mountain-meadow-600 transition-colors text-sm font-medium">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
@@ -117,9 +117,9 @@ class="learning-page bg-gray-50 min-h-screen">
         <!-- Lesson Navigation -->
         <div class="flex-1 overflow-y-auto">
             <!-- Course Progress Header -->
-            <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
+            <div class="px-6 py-4 bg-gradient-to-r from-mountain-meadow-600 to-mountain-meadow-700 text-white">
                 <div class="mb-3">
-                    <p class="text-lochmara-100 text-sm mt-1">Course Progress</p>
+                    <p class="text-mountain-meadow-100 text-sm mt-1">Course Progress</p>
                 </div>
                 
                 <!-- Progress Bar -->
@@ -128,14 +128,14 @@ class="learning-page bg-gray-50 min-h-screen">
                         <span x-text="`${completedLessons} of ${totalLessons} lessons`"></span>
                         <span x-text="`${Math.round(currentProgress)}%`"></span>
                     </div>
-                    <div class="w-full bg-lochmara-800 rounded-full h-2">
+                    <div class="w-full bg-mountain-meadow-800 rounded-full h-2">
                         <div class="bg-white h-2 rounded-full transition-all duration-500" 
                              :style="`width: ${currentProgress}%`"></div>
                     </div>
                 </div>
                 
                 <!-- Progress Stats -->
-                <div class="flex items-center justify-between text-xs text-lochmara-100">
+                <div class="flex items-center justify-between text-xs text-mountain-meadow-100">
                     <div class="flex items-center">
                         <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
@@ -159,15 +159,15 @@ class="learning-page bg-gray-50 min-h-screen">
                             @click="openSections['section_{{ $section->id }}'] = !openSections['section_{{ $section->id }}']"
                             class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-lochmara-100 flex items-center justify-center flex-shrink-0">
-                                <span class="text-lochmara-700 font-semibold text-sm">{{ $sectionIndex + 1 }}</span>
+                            <div class="w-8 h-8 rounded-lg bg-mountain-meadow-100 flex items-center justify-center flex-shrink-0">
+                                <span class="text-mountain-meadow-700 font-semibold text-sm">{{ $sectionIndex + 1 }}</span>
                             </div>
                             <div class="text-left">
-                                <h3 class="font-semibold text-gray-900 text-sm group-hover:text-lochmara-700 transition-colors">{{ $section->name }}</h3>
+                                <h3 class="font-semibold text-gray-900 text-sm group-hover:text-mountain-meadow-700 transition-colors">{{ $section->name }}</h3>
                                 <p class="text-xs text-gray-500 mt-0.5">{{ $section->sectionContents->count() }} lessons</p>
                             </div>
                         </div>
-                        <svg class="w-5 h-5 text-gray-400 group-hover:text-lochmara-600 transition-all duration-200 transform" 
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-mountain-meadow-600 transition-all duration-200 transform" 
                              :class="openSections['section_{{ $section->id }}'] ? 'rotate-180' : ''"
                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -196,15 +196,15 @@ class="learning-page bg-gray-50 min-h-screen">
                             ]) }}"
                            @click="sidebarOpen = false" 
                            class="group block">
-                            <div class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-lochmara-50 border border-lochmara-200' : 'hover:bg-gray-50 border border-transparent hover:border-gray-200' }}">
+                            <div class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-mountain-meadow-50 border border-mountain-meadow-200' : 'hover:bg-gray-50 border border-transparent hover:border-gray-200' }}">
                                 <!-- Lesson Status Icon -->
                                 <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 
                                     @if($isCompleted) 
                                         bg-green-500 text-white
                                     @elseif($isActive) 
-                                        bg-lochmara-600 text-white
+                                        bg-mountain-meadow-600 text-white
                                     @else 
-                                        bg-gray-100 text-gray-400 group-hover:bg-lochmara-100 group-hover:text-lochmara-600
+                                        bg-gray-100 text-gray-400 group-hover:bg-mountain-meadow-100 group-hover:text-mountain-meadow-600
                                     @endif">
                                     @if($isCompleted)
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -221,13 +221,13 @@ class="learning-page bg-gray-50 min-h-screen">
                                 
                                 <!-- Lesson Info -->
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="font-medium text-sm {{ $isActive ? 'text-lochmara-900' : 'text-gray-900 group-hover:text-lochmara-700' }} line-clamp-2 leading-tight">
+                                    <h4 class="font-medium text-sm {{ $isActive ? 'text-mountain-meadow-900' : 'text-gray-900 group-hover:text-mountain-meadow-700' }} line-clamp-2 leading-tight">
                                         {{ $content->name }}
                                         @if($isCompleted)
                                             <span class="ml-2 text-green-600 text-xs">✓</span>
                                         @endif
                                     </h4>
-                                    <div class="flex items-center space-x-4 mt-1 text-xs {{ $isActive ? 'text-lochmara-600' : 'text-gray-500' }}">
+                                    <div class="flex items-center space-x-4 mt-1 text-xs {{ $isActive ? 'text-mountain-meadow-600' : 'text-gray-500' }}">
 
                                         @if($isCompleted)
                                         <span class="flex items-center text-green-600">
@@ -242,7 +242,7 @@ class="learning-page bg-gray-50 min-h-screen">
                                 
                                 <!-- Active Indicator -->
                                 @if($isActive)
-                                <div class="w-2 h-8 bg-lochmara-600 rounded-full flex-shrink-0"></div>
+                                <div class="w-2 h-8 bg-mountain-meadow-600 rounded-full flex-shrink-0"></div>
                                 @endif
                             </div>
                         </a>
@@ -280,11 +280,11 @@ class="learning-page bg-gray-50 min-h-screen">
                         
                         <!-- Breadcrumb Navigation -->
                         <nav class="hidden lg:flex items-center space-x-2 text-sm">
-                            <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors">Dashboard</a>
+                            <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-mountain-meadow-600 transition-colors">Dashboard</a>
                             <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
-                            <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors truncate max-w-xs">{{ $course->name }}</a>
+                            <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-mountain-meadow-600 transition-colors truncate max-w-xs">{{ $course->name }}</a>
                             <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                             </svg>
@@ -295,7 +295,7 @@ class="learning-page bg-gray-50 min-h-screen">
                         <div class="flex items-center space-x-3">
                             <!-- Progress Info -->
                             <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-                                <svg class="w-4 h-4 text-lochmara-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-mountain-meadow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                                 </svg>
                                 <span x-text="`Lesson ${completedLessons + 1} of ${totalLessons}`"></span>
@@ -309,7 +309,7 @@ class="learning-page bg-gray-50 min-h-screen">
                                         'courseSection' => $prevContent->course_section_id,
                                         'sectionContent' => $prevContent->id,
                                     ]) }}" 
-                                   class="p-2 rounded-lg text-gray-400 hover:text-lochmara-600 hover:bg-lochmara-50 transition-colors" 
+                                   class="p-2 rounded-lg text-gray-400 hover:text-mountain-meadow-600 hover:bg-mountain-meadow-50 transition-colors" 
                                    title="Previous Lesson">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -323,7 +323,7 @@ class="learning-page bg-gray-50 min-h-screen">
                                         'courseSection' => $nextContent->course_section_id,
                                         'sectionContent' => $nextContent->id,
                                     ]) }}" 
-                                   class="p-2 rounded-lg text-gray-400 hover:text-lochmara-600 hover:bg-lochmara-50 transition-colors" 
+                                   class="p-2 rounded-lg text-gray-400 hover:text-mountain-meadow-600 hover:bg-mountain-meadow-50 transition-colors" 
                                    title="Next Lesson">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -365,7 +365,7 @@ class="learning-page bg-gray-50 min-h-screen">
                             
                             <!-- Progress Bar -->
                             <div class="w-full bg-gray-200 rounded-full h-2 mb-8">
-                                <div class="bg-gradient-to-r from-lochmara-600 to-lochmara-500 h-2 rounded-full transition-all duration-500" 
+                                <div class="bg-gradient-to-r from-mountain-meadow-600 to-mountain-meadow-500 h-2 rounded-full transition-all duration-500" 
                                      :style="`width: ${currentProgress}%`"></div>
                             </div>
                         </header>
@@ -426,7 +426,7 @@ class="learning-page bg-gray-50 min-h-screen">
                                         'courseSection' => $nextContent->course_section_id,
                                         'sectionContent' => $nextContent->id,
                                     ]) }}" 
-                               class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white text-sm font-medium rounded-lg hover:from-lochmara-700 hover:to-lochmara-800 transition-all duration-200">
+                               class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-mountain-meadow-600 to-mountain-meadow-700 text-white text-sm font-medium rounded-lg hover:from-mountain-meadow-700 hover:to-mountain-meadow-800 transition-all duration-200">
                                 <span>Continue Learning</span>
                                 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -453,7 +453,7 @@ class="learning-page bg-gray-50 min-h-screen">
                                         'courseSection' => $prevContent->course_section_id,
                                         'sectionContent' => $prevContent->id,
                                     ]) }}" 
-                                   class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-lochmara-600 transition-colors">
+                                   class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-mountain-meadow-600 transition-colors">
                                     <svg class="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                                     </svg>
@@ -473,7 +473,7 @@ class="learning-page bg-gray-50 min-h-screen">
                                         'courseSection' => $nextContent->course_section_id,
                                         'sectionContent' => $nextContent->id,
                                     ]) }}" 
-                                   class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-lochmara-600 transition-colors">
+                                   class="group inline-flex items-center text-sm font-medium text-gray-600 hover:text-mountain-meadow-600 transition-colors">
                                     <div class="text-right mr-2">
                                         <div class="text-xs text-gray-500">Next</div>
                                         <div class="font-semibold line-clamp-1">{{ $nextContent->name ?? 'Next Lesson' }}</div>
@@ -1075,7 +1075,7 @@ class="learning-page bg-gray-50 min-h-screen">
         }
         
         /* Focus states for accessibility */
-        .focus\:ring-lochmara:focus {
+        .focus\:ring-mountain-meadow:focus {
             --tw-ring-color: rgba(15, 76, 122, 0.5);
         }
         
@@ -1107,7 +1107,7 @@ class="learning-page bg-gray-50 min-h-screen">
         }
         
         /* Custom gradient backgrounds */
-        .bg-gradient-lochmara {
+        .bg-gradient-mountain-meadow {
             background: linear-gradient(135deg, #0f4c7a 0%, #1d4ed8 100%);
         }
         
@@ -1168,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         content = content.replace(youtubeShortPattern, (match, videoId) => {
-            return `<div class="video-wrapper my-6"><iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}?rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
+            return `<div class="video-wrapper my-6"><iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}?rel=0&controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
         });
         
         contentArea.innerHTML = content;

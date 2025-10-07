@@ -49,7 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->registration()
             ->homeUrl('/admin/data')
             ->colors([
-                'primary' => Color::Cyan,
+                'primary' => Color::Emerald,
                 'secondary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

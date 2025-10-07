@@ -4,7 +4,7 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="{{ route('front.index') }}" class="flex-shrink-0 cursor-pointer">
-                    <img src="{{ asset('assets/images/logos/logo.png') }}" alt="logo" class="h-10 w-auto" />
+                    <img src="{{ asset('assets/images/logos/logo.png') }}" alt="logo" class="h-6 w-auto" />
                 </a>
             </div>
 
@@ -13,10 +13,10 @@
                 <form method="GET" action="{{ route('dashboard.search.courses') }}" class="w-full">
                     <div class="relative">
                         <input type="text" name="search" 
-                               class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lochmara-500 focus:border-transparent transition-all duration-200" 
+                               class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mountain-meadow-500 focus:border-transparent transition-all duration-200" 
                                placeholder="Search courses...">
                         <button type="submit" 
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-lochmara-600 hover:text-lochmara-700 cursor-pointer">
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-mountain-meadow-600 hover:text-mountain-meadow-700 cursor-pointer">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -66,22 +66,22 @@
                          x-transition:leave-start="transform opacity-100 scale-100"
                          x-transition:leave-end="transform opacity-0 scale-95"
                          class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                             My Courses
                         </a>
 
                         @if($user && ($user->hasRole('admin') || $user->hasRole('super-admin')))
-                        <a href="/admin" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                        <a href="/admin" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                             Admin Panel
                         </a>
                         @endif
                         <div class="border-t border-gray-100 my-1"></div>
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                             Settings
                         </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                            <button type="submit" class="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                                 Logout
                             </button>
                         </form>
@@ -91,7 +91,7 @@
 
             <!-- Mobile menu button -->
             <div class="lg:hidden">
-                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-lochmara-500 cursor-pointer">
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-mountain-meadow-500 cursor-pointer">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': !open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': !open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -109,10 +109,10 @@
                 <form method="GET" action="{{ route('dashboard.search.courses') }}">
                     <div class="relative">
                         <input type="text" name="search" 
-                               class="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lochmara-500 focus:border-transparent" 
+                               class="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mountain-meadow-500 focus:border-transparent" 
                                placeholder="Search courses...">
                         <button type="submit" 
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-lochmara-600 cursor-pointer">
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-mountain-meadow-600 cursor-pointer">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -147,21 +147,21 @@
                     @endif
                 </div>
                 <div class="mt-3 space-y-1">
-                    <a href="{{ route('dashboard') }}" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                    <a href="{{ route('dashboard') }}" class="block px-3 py-2 text-base text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                         My Courses
                     </a>
 
                     @if($user && ($user->hasRole('admin') || $user->hasRole('super-admin')))
-                    <a href="/admin" target="_blank" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                    <a href="/admin" target="_blank" class="block px-3 py-2 text-base text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                         Admin Panel
                     </a>
                     @endif
-                    <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                    <a href="{{ route('profile.edit') }}" class="block px-3 py-2 text-base text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                         Settings
                     </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="w-full text-left block px-3 py-2 text-base text-gray-700 hover:bg-lochmara-50 hover:text-lochmara-600 transition-colors duration-200 cursor-pointer">
+                        <button type="submit" class="w-full text-left block px-3 py-2 text-base text-gray-700 hover:bg-mountain-meadow-50 hover:text-mountain-meadow-600 transition-colors duration-200 cursor-pointer">
                             Logout
                         </button>
                     </form>

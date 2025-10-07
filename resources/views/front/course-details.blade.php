@@ -16,7 +16,7 @@
                 <div class="space-y-8">
                     <!-- Category Badge -->
                     @if($course->category)
-                        <div class="inline-flex items-center px-4 py-2 bg-lochmara-50 text-lochmara-700 rounded-full border border-lochmara-200">
+                        <div class="inline-flex items-center px-4 py-2 bg-mountain-meadow-50 text-mountain-meadow-700 rounded-full border border-mountain-meadow-200">
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
@@ -50,7 +50,7 @@
                         
                         <!-- Students Count -->
                         <div class="flex items-center space-x-2 bg-gray-50 px-4 py-2 rounded-lg">
-                            <svg class="w-4 h-4 text-lochmara-600" fill="currentColor" viewBox="0 0 20 20">
+                            <svg class="w-4 h-4 text-mountain-meadow-600" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
                             </svg>
                             <span class="text-sm font-medium text-gray-700">{{ $course->courseStudents->count() }} Students</span>
@@ -82,7 +82,7 @@
                                 @else
                                     <!-- User hasn't purchased, show purchase option -->
                                     <div class="flex flex-col space-y-4 w-full">
-                                        <div class="bg-lochmara-50 border border-lochmara-200 rounded-lg p-4">
+                                        <div class="bg-mountain-meadow-50 border border-mountain-meadow-200 rounded-lg p-4">
                                             <div class="flex items-center justify-between">
                                                 <div>
                                                     @if($course->original_price && $course->original_price > $course->price)
@@ -96,10 +96,10 @@
                                                             </span>
                                                         </div>
                                                     @endif
-                                                    <div class="text-2xl font-bold text-lochmara-700">
+                                                    <div class="text-2xl font-bold text-mountain-meadow-700">
                                                         Rp {{ number_format($course->price, 0, '', '.') }}
                                                     </div>
-                                                    <div class="text-sm text-lochmara-600">One-time purchase • Lifetime access</div>
+                                                    <div class="text-sm text-mountain-meadow-600">One-time purchase • Lifetime access</div>
                                                 </div>
                                                 <div class="text-right">
                                                     <div class="text-sm text-gray-600">Get instant access to</div>
@@ -109,7 +109,7 @@
                                         </div>
                                         <div class="flex flex-col sm:flex-row gap-3">
                                             <a href="{{ route('front.course.checkout', $course->slug) }}" 
-                                               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl">
+                                               class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-mountain-meadow-600 text-white font-medium rounded-lg hover:bg-mountain-meadow-700 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl">
                                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                                 </svg>
@@ -128,7 +128,7 @@
                             @else
                                 <!-- Not authenticated user -->
                                 <div class="flex flex-col space-y-4 w-full">
-                                    <div class="bg-lochmara-50 border border-lochmara-200 rounded-lg p-4">
+                                    <div class="bg-mountain-meadow-50 border border-mountain-meadow-200 rounded-lg p-4">
                                         <div class="flex items-center justify-between">
                                             <div>
                                                 @if($course->original_price && $course->original_price > $course->price)
@@ -142,10 +142,10 @@
                                                         </span>
                                                     </div>
                                                 @endif
-                                                <div class="text-2xl font-bold text-lochmara-700">
+                                                <div class="text-2xl font-bold text-mountain-meadow-700">
                                                     Rp {{ number_format($course->price, 0, '', '.') }}
                                                 </div>
-                                                <div class="text-sm text-lochmara-600">One-time purchase • Lifetime access</div>
+                                                <div class="text-sm text-mountain-meadow-600">One-time purchase • Lifetime access</div>
                                             </div>
                                             <div class="text-right">
                                                 <div class="text-sm text-gray-600">Get instant access to</div>
@@ -155,7 +155,7 @@
                                     </div>
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <a href="{{ route('register') }}" 
-                                           class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl">
+                                           class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-mountain-meadow-600 text-white font-medium rounded-lg hover:bg-mountain-meadow-700 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                             </svg>
@@ -214,10 +214,10 @@
                                         loading="lazy" />
                                 @endif
                             @else
-                                <div class="w-full h-full flex items-center justify-center bg-lochmara-100">
+                                <div class="w-full h-full flex items-center justify-center bg-mountain-meadow-100">
                                     <div class="text-center">
-                                        <div class="text-lochmara-600 font-bold text-3xl mb-2">{{ substr($course->name, 0, 2) }}</div>
-                                        <div class="text-lochmara-500 text-sm">Course Preview</div>
+                                        <div class="text-mountain-meadow-600 font-bold text-3xl mb-2">{{ substr($course->name, 0, 2) }}</div>
+                                        <div class="text-mountain-meadow-500 text-sm">Course Preview</div>
                                     </div>
                                 </div>
                             @endif
@@ -255,11 +255,11 @@
                                             <!-- Section Header (Clickable) -->
                                             <button 
                                                 @click="openSections['{{ $sectionId }}'] = !openSections['{{ $sectionId }}']"
-                                                class="w-full bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lochmara-500 focus:ring-inset cursor-pointer">
+                                                class="w-full bg-gray-50 px-4 sm:px-6 py-4 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-mountain-meadow-500 focus:ring-inset cursor-pointer">
                                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                                     <div class="flex items-center min-w-0 flex-1">
                                                         <!-- Section Number -->
-                                                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-lochmara-600 text-white rounded-lg flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+                                                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-mountain-meadow-600 text-white rounded-lg flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
                                                             <span class="font-bold text-xs sm:text-sm">{{ $index + 1 }}</span>
                                                         </div>
                                                         
@@ -308,7 +308,7 @@
                                                                 @if($content->is_free)
                                                                     <!-- Free Preview Content -->
                                                                     <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $content->id]) }}" 
-                                                                       class="flex flex-col sm:flex-row sm:items-center p-3 sm:p-4 rounded-lg border border-gray-100 hover:border-lochmara-200 hover:bg-lochmara-50 transition-all duration-200 cursor-pointer gap-3 sm:gap-0">
+                                                                       class="flex flex-col sm:flex-row sm:items-center p-3 sm:p-4 rounded-lg border border-gray-100 hover:border-mountain-meadow-200 hover:bg-mountain-meadow-50 transition-all duration-200 cursor-pointer gap-3 sm:gap-0">
                                                                         <div class="flex items-center flex-1 min-w-0">
                                                                             <!-- Lesson Icon -->
                                                                             <div class="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
@@ -319,7 +319,7 @@
                                                                             
                                                                             <!-- Lesson Info -->
                                                                             <div class="flex-1 min-w-0">
-                                                                                <h4 class="font-medium text-gray-900 group-hover:text-lochmara-700 text-sm sm:text-base truncate">{{ $content->name }}</h4>
+                                                                                <h4 class="font-medium text-gray-900 group-hover:text-mountain-meadow-700 text-sm sm:text-base truncate">{{ $content->name }}</h4>
                                                                     
                                                                             </div>
                                                                         </div>
@@ -337,10 +337,10 @@
                                                                     </a>
                                                                 @else
                                                                     <!-- Locked/Premium Content -->
-                                                                    <div class="flex flex-col sm:flex-row sm:items-center p-3 sm:p-4 rounded-lg border border-gray-100 {{ $isLocked ? 'bg-gray-50' : 'hover:border-lochmara-200 hover:bg-lochmara-50' }} transition-all duration-200 gap-3 sm:gap-0">
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center p-3 sm:p-4 rounded-lg border border-gray-100 {{ $isLocked ? 'bg-gray-50' : 'hover:border-mountain-meadow-200 hover:bg-mountain-meadow-50' }} transition-all duration-200 gap-3 sm:gap-0">
                                                                         <div class="flex items-center flex-1 min-w-0">
                                                                             <!-- Lesson Icon -->
-                                                                            <div class="w-6 h-6 sm:w-8 sm:h-8 {{ $isLocked ? 'bg-gray-200 text-gray-400' : 'bg-lochmara-100 text-lochmara-600' }} rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                                                                            <div class="w-6 h-6 sm:w-8 sm:h-8 {{ $isLocked ? 'bg-gray-200 text-gray-400' : 'bg-mountain-meadow-100 text-mountain-meadow-600' }} rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
                                                                                 @if($isLocked)
                                                                                     <svg class="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
                                                                                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
@@ -417,8 +417,8 @@
                         <div class="p-8">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 @foreach($course->benefits as $index => $benefit)
-                                    <div class="flex items-start space-x-3 p-4 rounded-lg border border-gray-100 hover:border-lochmara-200 hover:bg-lochmara-50 transition-all duration-200">
-                                        <div class="w-6 h-6 bg-lochmara-100 text-lochmara-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <div class="flex items-start space-x-3 p-4 rounded-lg border border-gray-100 hover:border-mountain-meadow-200 hover:bg-mountain-meadow-50 transition-all duration-200">
+                                        <div class="w-6 h-6 bg-mountain-meadow-100 text-mountain-meadow-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                             </svg>
@@ -456,7 +456,7 @@
                                 </div>
                                 <div class="flex items-center justify-between py-2">
                                     <span class="text-gray-600">Certificate</span>
-                                    <span class="font-semibold text-lochmara-600">Yes</span>
+                                    <span class="font-semibold text-mountain-meadow-600">Yes</span>
                                 </div>
                             </div>
                         </div>
@@ -467,7 +467,7 @@
                             <div class="space-y-3">
                                 @auth
                                     <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                                       class="w-full flex items-center justify-center px-4 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                                       class="w-full flex items-center justify-center px-4 py-3 bg-mountain-meadow-600 text-white font-medium rounded-lg hover:bg-mountain-meadow-700 transition-colors duration-200">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                         </svg>
@@ -475,7 +475,7 @@
                                     </a>
                                 @else
                                     <a href="{{ route('register') }}" 
-                                       class="w-full flex items-center justify-center px-4 py-3 bg-lochmara-600 text-white font-medium rounded-lg hover:bg-lochmara-700 transition-colors duration-200">
+                                       class="w-full flex items-center justify-center px-4 py-3 bg-mountain-meadow-600 text-white font-medium rounded-lg hover:bg-mountain-meadow-700 transition-colors duration-200">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                         </svg>
@@ -563,8 +563,8 @@
                         @if($course->category)
                         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Category</h3>
-                            <div class="flex items-center p-3 bg-lochmara-50 rounded-lg border border-lochmara-200">
-                                <div class="w-10 h-10 bg-lochmara-100 text-lochmara-600 rounded-lg flex items-center justify-center mr-3">
+                            <div class="flex items-center p-3 bg-mountain-meadow-50 rounded-lg border border-mountain-meadow-200">
+                                <div class="w-10 h-10 bg-mountain-meadow-100 text-mountain-meadow-600 rounded-lg flex items-center justify-center mr-3">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                     </svg>

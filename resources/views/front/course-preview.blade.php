@@ -42,16 +42,16 @@
                class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white w-80 lg:w-96 h-screen border-r border-gray-200 transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0">
         
             <!-- Back to Course Details/Dashboard -->
-            <div class="px-6 py-4 bg-gradient-to-r from-lochmara-600 to-lochmara-700">
+            <div class="px-6 py-4 bg-gradient-to-r from-mountain-meadow-600 to-mountain-meadow-700">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center text-white hover:text-lochmara-100 transition-colors cursor-pointer">
+                    <a href="{{ route('dashboard') }}" class="inline-flex items-center text-white hover:text-mountain-meadow-100 transition-colors cursor-pointer">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                         </svg>
                         Back to Dashboard
                     </a>
                 @else
-                    <a href="{{ route('front.course.details', $course->slug) }}" class="inline-flex items-center text-white hover:text-lochmara-100 transition-colors cursor-pointer">
+                    <a href="{{ route('front.course.details', $course->slug) }}" class="inline-flex items-center text-white hover:text-mountain-meadow-100 transition-colors cursor-pointer">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                         </svg>
@@ -85,11 +85,11 @@
                                     @click="toggleSection('{{ $sectionId }}')"
                                     class="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group cursor-pointer">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 rounded-lg bg-lochmara-100 flex items-center justify-center flex-shrink-0">
-                                        <span class="text-lochmara-700 font-semibold text-sm">{{ $sectionIndex + 1 }}</span>
+                                    <div class="w-8 h-8 rounded-lg bg-mountain-meadow-100 flex items-center justify-center flex-shrink-0">
+                                        <span class="text-mountain-meadow-700 font-semibold text-sm">{{ $sectionIndex + 1 }}</span>
                                     </div>
                                     <div class="text-left">
-                                        <h3 class="font-semibold text-gray-900 text-sm group-hover:text-lochmara-700 transition-colors">{{ $section->name }}</h3>
+                                        <h3 class="font-semibold text-gray-900 text-sm group-hover:text-mountain-meadow-700 transition-colors">{{ $section->name }}</h3>
                                         <div class="flex items-center space-x-2 text-xs text-gray-500 mt-0.5">
                                             <span>{{ $section->sectionContents->count() }} lessons</span>
                                             @if($freeContentCount > 0)
@@ -145,11 +145,11 @@
                                         <a href="{{ route($routeName, $routeParams) }}" 
                                            @click="sidebarOpen = false" 
                                            class="group block cursor-pointer">
-                                            <div class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-lochmara-50 border border-lochmara-200' : 'hover:bg-gray-50 border border-transparent hover:border-gray-200' }}">
+                                            <div class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 {{ $isActive ? 'bg-mountain-meadow-50 border border-mountain-meadow-200' : 'hover:bg-gray-50 border border-transparent hover:border-gray-200' }}">
                                                 <!-- Lesson Status Icon -->
                                                 <div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0">
                                                     @if($isActive)
-                                                        <div class="w-6 h-6 bg-lochmara-600 text-white rounded-full flex items-center justify-center">
+                                                        <div class="w-6 h-6 bg-mountain-meadow-600 text-white rounded-full flex items-center justify-center">
                                                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                                                 <path d="M8 5v14l11-7z"/>
                                                             </svg>
@@ -161,13 +161,13 @@
                                                             </svg>
                                                         </div>
                                                     @elseif($content->is_free)
-                                                        <div class="w-6 h-6 bg-green-100 text-green-600 group-hover:bg-lochmara-100 group-hover:text-lochmara-600 rounded-full flex items-center justify-center">
+                                                        <div class="w-6 h-6 bg-green-100 text-green-600 group-hover:bg-mountain-meadow-100 group-hover:text-mountain-meadow-600 rounded-full flex items-center justify-center">
                                                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                                             </svg>
                                                         </div>
                                                     @else
-                                                        <div class="w-6 h-6 bg-lochmara-100 text-lochmara-600 group-hover:bg-lochmara-200 rounded-full flex items-center justify-center">
+                                                        <div class="w-6 h-6 bg-mountain-meadow-100 text-mountain-meadow-600 group-hover:bg-mountain-meadow-200 rounded-full flex items-center justify-center">
                                                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                                                                 <path d="M8 5v14l11-7z"/>
                                                             </svg>
@@ -177,7 +177,7 @@
                                                 
                                                 <!-- Lesson Info -->
                                                 <div class="flex-1 min-w-0">
-                                                    <h4 class="font-medium text-sm {{ $isActive ? 'text-lochmara-900' : 'text-gray-900 group-hover:text-lochmara-700' }} line-clamp-2 leading-tight">
+                                                    <h4 class="font-medium text-sm {{ $isActive ? 'text-mountain-meadow-900' : 'text-gray-900 group-hover:text-mountain-meadow-700' }} line-clamp-2 leading-tight">
                                                         {{ $lessonNumber }}. {{ $content->name }}
                                                     </h4>
                                                     <div class="flex items-center text-xs text-gray-500 mt-1">
@@ -189,7 +189,7 @@
                                                                 Free
                                                             </span>
                                                         @else
-                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-lochmara-100 text-lochmara-800">
+                                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-mountain-meadow-100 text-mountain-meadow-800">
                                                                 <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                                                     <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
                                                                 </svg>
@@ -206,7 +206,7 @@
                                                 
                                                 <!-- Active Indicator -->
                                                 @if($isActive)
-                                                <div class="w-2 h-8 bg-lochmara-600 rounded-full flex-shrink-0"></div>
+                                                <div class="w-2 h-8 bg-mountain-meadow-600 rounded-full flex-shrink-0"></div>
                                                 @endif
                                             </div>
                                         </a>
@@ -219,27 +219,27 @@
                 
                 <!-- CTA Section -->
                 @if(!auth()->check())
-                <div class="p-6 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white">
+                <div class="p-6 bg-gradient-to-r from-mountain-meadow-600 to-mountain-meadow-700 text-white">
                     <div class="text-center">
                         <h3 class="text-lg font-bold mb-2">Ready to Continue?</h3>
-                        <p class="text-sm text-lochmara-100 mb-4">Get full access to all lessons, quizzes, and certificates.</p>
+                        <p class="text-sm text-mountain-meadow-100 mb-4">Get full access to all lessons, quizzes, and certificates.</p>
                         <div class="space-y-3">
                             <a href="{{ route('dashboard.course.join', $course->slug) }}" 
-                               class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                               class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-mountain-meadow-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                 </svg>
                                 Start Learning
                             </a>
                             <a href="{{ route('register') }}" 
-                               class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-lochmara-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                               class="w-full inline-flex items-center justify-center px-4 py-3 bg-white text-mountain-meadow-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
                                 Sign Up Now
                             </a>
                             <a href="{{ route('login') }}" 
-                               class="w-full inline-flex items-center justify-center px-4 py-2 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-lochmara-700 transition-colors cursor-pointer">
+                               class="w-full inline-flex items-center justify-center px-4 py-2 border border-white text-white font-medium rounded-lg hover:bg-white hover:text-mountain-meadow-700 transition-colors cursor-pointer">
                                 Already have an account? Login
                             </a>
                         </div>
@@ -267,17 +267,17 @@
                 <!-- Breadcrumb Navigation -->
                 <nav class="flex items-center space-x-2 text-sm mb-3">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors cursor-pointer">Dashboard</a>
+                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-mountain-meadow-600 transition-colors cursor-pointer">Dashboard</a>
                         <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
-                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-lochmara-600 transition-colors truncate max-w-xs cursor-pointer">{{ $course->name }}</a>
+                        <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-mountain-meadow-600 transition-colors truncate max-w-xs cursor-pointer">{{ $course->name }}</a>
                     @else
-                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-lochmara-600 transition-colors cursor-pointer">Course Details</a>
+                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-mountain-meadow-600 transition-colors cursor-pointer">Course Details</a>
                         <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
-                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-lochmara-600 transition-colors truncate max-w-xs cursor-pointer">{{ $course->name }}</a>
+                        <a href="{{ route('front.course.details', $course->slug) }}" class="text-gray-500 hover:text-mountain-meadow-600 transition-colors truncate max-w-xs cursor-pointer">{{ $course->name }}</a>
                     @endauth
                     <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -305,7 +305,7 @@
                                     👑 Admin Access
                                 </span>
                             @elseif(!$sectionContent->is_free && auth()->check())
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-lochmara-100 text-lochmara-800 mr-2">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-mountain-meadow-100 text-mountain-meadow-800 mr-2">
                                     <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clip-rule="evenodd"/>
                                     </svg>
@@ -326,7 +326,7 @@
                     @if(!$sectionContent->is_free && auth()->check() && isset($currentProgress))
                     <!-- Progress Info -->                        
                     <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-                        <svg class="w-4 h-4 text-lochmara-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-mountain-meadow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
                         </svg>
                         <span x-text="`Lesson ${completedLessons} of ${totalLessons}`"></span>
@@ -337,7 +337,7 @@
                 @if(!$sectionContent->is_free && auth()->check() && isset($currentProgress))
                 <!-- Progress Bar -->
                 <div class="w-full bg-gray-200 rounded-full h-2 mt-4">
-                    <div class="bg-gradient-to-r from-lochmara-600 to-lochmara-500 h-2 rounded-full transition-all duration-500" 
+                    <div class="bg-gradient-to-r from-mountain-meadow-600 to-mountain-meadow-500 h-2 rounded-full transition-all duration-500" 
                          :style="`width: ${currentProgress}%`"></div>
                 </div>
                 @endif
@@ -368,7 +368,7 @@
                                                 Login to Access
                                             </a>
                                             <a href="{{ route('register') }}" 
-                                               class="inline-flex items-center px-4 py-2 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors cursor-pointer">
+                                               class="inline-flex items-center px-4 py-2 bg-mountain-meadow-600 text-white font-semibold rounded-lg hover:bg-mountain-meadow-700 transition-colors cursor-pointer">
                                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                                 </svg>
@@ -444,7 +444,7 @@
                                 
                                 @if($nextContentToShow)
                                 <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $nextContentToShow->id]) }}" 
-                                   class="inline-flex items-center px-4 py-2 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors cursor-pointer">
+                                   class="inline-flex items-center px-4 py-2 bg-mountain-meadow-600 text-white font-semibold rounded-lg hover:bg-mountain-meadow-700 transition-colors cursor-pointer">
                                     <span>Continue Learning</span>
                                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -516,7 +516,7 @@
                                 
                                 @if($nextContentToShow)
                                 <a href="{{ route('front.course.preview', ['course' => $course->slug, 'sectionContent' => $nextContentToShow->id]) }}" 
-                                   class="inline-flex items-center px-4 py-2 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-colors cursor-pointer">
+                                   class="inline-flex items-center px-4 py-2 bg-mountain-meadow-600 text-white font-semibold rounded-lg hover:bg-mountain-meadow-700 transition-colors cursor-pointer">
                                     <span>Continue Learning</span>
                                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -1077,7 +1077,7 @@ function courseData() {
             notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 ${
                 type === 'success' ? 'bg-green-500 text-white' : 
                 type === 'error' ? 'bg-red-500 text-white' : 
-                'bg-lochmara-500 text-white'
+                'bg-mountain-meadow-500 text-white'
             }`;
             notification.textContent = message;
             

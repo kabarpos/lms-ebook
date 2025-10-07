@@ -323,12 +323,11 @@
 .learning-page .animate-slide-in { animation: slideIn 0.3s ease-out; }
 @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.learning-page .focus\:ring-lochmara:focus { --tw-ring-color: rgba(15, 76, 122, 0.5); }
 .learning-page .shadow-3xl { box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25); }
 .learning-page .line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
 .learning-page .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .learning-page .line-clamp-3 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
-.learning-page .bg-gradient-lochmara { background: linear-gradient(135deg, #0f4c7a 0%, #1d4ed8 100%); }
-.learning-page .btn-primary { background: linear-gradient(135deg, #0f4c7a 0%, #1d4ed8 100%); border: none; color: white; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(15, 76, 122, 0.1); }
-.learning-page .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(15, 76, 122, 0.2); }
+.learning-page .bg-gradient-mountain-meadow { background: linear-gradient(135deg, #0c8f70 0%, #31ba93 100%); }
+.learning-page .btn-primary { background: linear-gradient(135deg, #0c8f70 0%, #31ba93 100%); border: none; color: white; font-weight: 600; transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(12, 143, 112, 0.1); }
+.learning-page .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(12, 143, 112, 0.2); }
 .learning-page .btn-primary:active { transform: translateY(0); }

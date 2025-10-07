@@ -12,14 +12,14 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <!-- Favicon -->
-        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/logos/logo-64.png') }}">
-        <link rel="apple-touch-icon" href="{{ asset('assets/images/logos/logo-64.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/images/logos/favicon.svg') }}">
+        <link rel="apple-touch-icon" href="{{ asset('assets/images/logos/favicon.svg') }}">
 
         <!-- Open Graph Meta Tags -->
         <meta property="og:title" content="LMS Online Learning Platform - Learn Anytime, Anywhere">
         <meta property="og:description" content="LMS is an innovative online learning platform that empowers students and professionals with high-quality, accessible courses.">
-        <meta property="og:image" content="https://LMS-platform.netlify.app/assets/images/logos/logo-64-big.png">
-        <meta property="og:url" content="https://LMS-platform.netlify.app">
+        <meta property="og:image" content="/assets/images/logos/logo-64-big.png">
+        <meta property="og:url" content="https://aksellera.com">
         <meta property="og:type" content="website">
     </head>
     <body>

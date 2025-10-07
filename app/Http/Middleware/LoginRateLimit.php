@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Support\Str;
 
 class LoginRateLimit
 {
@@ -25,7 +26,8 @@ class LoginRateLimit
         
         if (RateLimiter::tooManyAttempts($key, $maxAttempts)) {
             $seconds = RateLimiter::availableIn($key);
-            
+            $minutes = (int) ceil($seconds / 60);
+
             // Log suspicious activity
             \Log::warning('Login rate limit exceeded', [
                 'ip' => $request->ip(),
@@ -33,13 +35,12 @@ class LoginRateLimit
                 'user_agent' => $request->userAgent(),
                 'available_in' => $seconds
             ]);
-            
-            throw new ThrottleRequestsException(
-                'Terlalu banyak percobaan login. Silakan coba lagi dalam ' . ceil($seconds / 60) . ' menit.',
-                null,
-                [],
-                $seconds
-            );
+
+            // Redirect ke halaman login dengan flash message agar tampil elegan
+            return redirect()->route('login')
+                ->with('rate_limit_blocked', true)
+                ->with('blocked_seconds', $seconds)
+                ->with('error', 'Terlalu banyak percobaan login. Silakan coba lagi dalam ' . $minutes . ' menit.');
         }
         
         $response = $next($request);
@@ -80,8 +81,8 @@ class LoginRateLimit
     {
         $email = $request->input('email', '');
         $ip = $request->ip();
-        
-        // Combine email and IP for more specific rate limiting
-        return 'login_attempts:' . sha1($email . '|' . $ip);
+
+        // Samakan format key dengan LoginRequest::throttleKey agar konsisten
+        return Str::transliterate(Str::lower($email) . '|' . $ip);
     }
 }

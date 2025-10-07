@@ -18,7 +18,7 @@
                     @endif
                 </div>
                 <div class="mt-4 text-center lg:text-left">
-                    <label for="photo" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-lochmara-500 focus:border-transparent cursor-pointer transition-colors">
+                    <label for="photo" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-mountain-meadow-500 focus:border-transparent cursor-pointer transition-colors">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -38,7 +38,7 @@
                     </label>
                     <div class="relative">
                         <input id="name" name="name" type="text" 
-                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lochmara-500 focus:border-transparent transition-all duration-200 font-medium" 
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mountain-meadow-500 focus:border-transparent transition-all duration-200 font-medium" 
                                value="{{ old('name', $user->name) }}" 
                                placeholder="Enter your full name"
                                required autofocus autocomplete="name">
@@ -58,7 +58,7 @@
                     </label>
                     <div class="relative">
                         <input id="email" name="email" type="email" 
-                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lochmara-500 focus:border-transparent transition-all duration-200 font-medium" 
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mountain-meadow-500 focus:border-transparent transition-all duration-200 font-medium" 
                                value="{{ old('email', $user->email) }}" 
                                placeholder="Enter your email address"
                                required autocomplete="username">
@@ -101,7 +101,7 @@
                     </label>
                     <div class="relative">
                         <input id="whatsapp_number" name="whatsapp_number" type="tel" 
-                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lochmara-500 focus:border-transparent transition-all duration-200 font-medium" 
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-mountain-meadow-500 focus:border-transparent transition-all duration-200 font-medium" 
                                value="{{ old('whatsapp_number', $user->whatsapp_number ?? '') }}" 
                                placeholder="+62812345678"
                                required
@@ -121,7 +121,7 @@
         <div class="flex flex-col sm:flex-row items-center justify-between pt-6 border-t border-gray-200 gap-4">
             <div class="flex items-center space-x-4">
                 <button type="submit" 
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-lochmara-600 to-lochmara-700 text-white font-semibold rounded-lg hover:from-lochmara-700 hover:to-lochmara-800 focus:outline-none focus:ring-2 focus:ring-lochmara-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl">
+                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mountain-meadow-600 to-mountain-meadow-700 text-white font-semibold rounded-lg hover:from-mountain-meadow-700 hover:to-mountain-meadow-800 focus:outline-none focus:ring-2 focus:ring-mountain-meadow-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>

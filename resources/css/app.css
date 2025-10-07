@@ -30,22 +30,24 @@ body {
 @theme {
   --font-family-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   
-  /* Lochmara Brand Colors */
-  --color-lochmara-50: #f0f9ff;
-  --color-lochmara-100: #e0f2fe;
-  --color-lochmara-200: #b9e6fe;
-  --color-lochmara-300: #7cd4fd;
-  --color-lochmara-400: #36bffa;
-  --color-lochmara-500: #0ca8eb;
-  --color-lochmara-600: #007ebd;
-  --color-lochmara-700: #016aa3;
-  --color-lochmara-800: #065a86;
-  --color-lochmara-900: #0b4b6f;
-  --color-lochmara-950: #072f4a;
+  /* Mountain Meadow Brand Colors */
+  --color-mountain-meadow-50: #edfcf6;
+  --color-mountain-meadow-100: #d3f8e8;
+  --color-mountain-meadow-200: #abefd5;
+  --color-mountain-meadow-300: #74e1bf;
+  --color-mountain-meadow-400: #31ba93;
+  --color-mountain-meadow-500: #18b18a;
+  --color-mountain-meadow-600: #0c8f70;
+  --color-mountain-meadow-700: #09735d;
+  --color-mountain-meadow-800: #0a5b4a;
+  --color-mountain-meadow-900: #094b3e;
+  --color-mountain-meadow-950: #042a24;
+
   
-  /* Legacy LMS Colors for Backward Compatibility */
-  --color-LMS-green: #007ebd;
-  --color-LMS-light-green: #e0f2fe;
+  
+  /* Legacy LMS Colors for Backward Compatibility (updated to Mountain Meadow palette) */
+  --color-LMS-green: var(--color-mountain-meadow-600);
+  --color-LMS-light-green: var(--color-mountain-meadow-50);
   --color-LMS-grey: #f3f4f6;
   --color-LMS-text-secondary: #6b7280;
   --color-LMS-text-grey: #9ca3af;

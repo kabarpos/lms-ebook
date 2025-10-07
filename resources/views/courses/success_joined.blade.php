@@ -41,7 +41,7 @@
                                     loading="lazy" />
                             @endif
                         @else
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-lochmara-500 to-lochmara-600">
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-mountain-meadow-500 to-mountain-meadow-600">
                                 <span class="text-white font-bold text-lg sm:text-xl">{{ substr($course->name, 0, 2) }}</span>
                             </div>
                         @endif
@@ -57,8 +57,8 @@
                     <div class="space-y-2">
                         <!-- Category -->
                         <div class="flex items-center gap-2">
-                            <div class="flex-shrink-0 w-5 h-5 bg-lochmara-100 rounded-md flex items-center justify-center">
-                                <svg class="w-3 h-3 text-lochmara-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex-shrink-0 w-5 h-5 bg-mountain-meadow-100 rounded-md flex items-center justify-center">
+                                <svg class="w-3 h-3 text-mountain-meadow-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                 </svg>
                             </div>
@@ -69,8 +69,8 @@
                         
                         <!-- Lessons Count -->
                         <div class="flex items-center gap-2">
-                            <div class="flex-shrink-0 w-5 h-5 bg-lochmara-100 rounded-md flex items-center justify-center">
-                                <svg class="w-3 h-3 text-lochmara-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="flex-shrink-0 w-5 h-5 bg-mountain-meadow-100 rounded-md flex items-center justify-center">
+                                <svg class="w-3 h-3 text-mountain-meadow-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
                                 </svg>
                             </div>
@@ -86,7 +86,7 @@
         <!-- Action Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Get Guidelines Button -->
-            <a href="{{ route('front.terms-of-service') }}" class="w-full px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-lochmara-300 hover:text-lochmara-600 transition-all duration-200 text-center cursor-pointer">
+            <a href="{{ route('front.terms-of-service') }}" class="w-full px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-mountain-meadow-300 hover:text-mountain-meadow-600 transition-all duration-200 text-center cursor-pointer">
                 Term Of Services
             </a>
             
@@ -96,7 +96,7 @@
                     'courseSection' => $firstSectionId,
                     'sectionContent' => $firstContentId,
                 ]) }}"
-               class="w-full px-6 py-3 bg-lochmara-600 text-white font-semibold rounded-lg hover:bg-lochmara-700 transition-all duration-200 text-center cursor-pointer shadow-lg hover:shadow-xl">
+               class="w-full px-6 py-3 bg-mountain-meadow-600 text-white font-semibold rounded-lg hover:bg-mountain-meadow-700 transition-all duration-200 text-center cursor-pointer shadow-lg hover:shadow-xl">
                 Start Learning
             </a>
         </div>
