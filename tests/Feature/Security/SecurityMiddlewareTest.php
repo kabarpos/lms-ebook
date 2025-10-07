@@ -150,7 +150,8 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->get('/');
 
         // Assert
-        $response->assertHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+        // COEP is relaxed to 'unsafe-none' to avoid blocking valid cross-origin assets
+        $response->assertHeader('Cross-Origin-Embedder-Policy', 'unsafe-none');
         $response->assertHeader('Cross-Origin-Opener-Policy', 'same-origin');
         $response->assertHeader('Cross-Origin-Resource-Policy', 'same-origin');
     }

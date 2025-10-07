@@ -2,16 +2,6 @@
 @section('title', 'Course Catalog - DripCourse')
 
 @section('content')
-    <style nonce="{{ request()->attributes->get('csp_nonce') }}">
-    /* Force Manrope Font Implementation */
-    body, html, * {
-        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
-    }
-    
-    .hero-gradient {
-        background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
-    }
-    </style>
     
     <x-nav-guest />
     

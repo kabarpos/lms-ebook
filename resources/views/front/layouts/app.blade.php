@@ -22,7 +22,7 @@
         <meta property="og:url" content="https://aksellera.com">
         <meta property="og:type" content="website">
     </head>
-    <body>
+    <body class="font-manrope">
         <div class="min-h-screen flex flex-col">
             <div class="flex-1">
                 @yield('content')

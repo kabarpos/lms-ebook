@@ -64,7 +64,20 @@ if (!function_exists('generateInitialsAvatar')) {
      */
     function generateInitialsAvatar($initials, $size = 100, $bgColor = '6366f1', $textColor = 'ffffff')
     {
-        return "https://via.placeholder.com/{$size}x{$size}/{$bgColor}/{$textColor}?text=" . urlencode($initials);
+        // Generate a local SVG avatar as data URI to avoid external requests
+        $fontSize = max(12, (int) round($size * 0.4));
+        $svg = sprintf(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="%1$d" height="%1$d" viewBox="0 0 %1$d %1$d">'
+            .'<rect width="100%%" height="100%%" fill="#%2$s" />'
+            .'<text x="50%%" y="50%%" dominant-baseline="middle" text-anchor="middle" fill="#%3$s" font-family="Manrope, Arial, sans-serif" font-size="%4$d" font-weight="600">%5$s</text>'
+            .'</svg>',
+            $size,
+            $bgColor,
+            $textColor,
+            $fontSize,
+            htmlspecialchars($initials, ENT_QUOTES)
+        );
+        return 'data:image/svg+xml,' . rawurlencode($svg);
     }
 }
 

@@ -3,7 +3,13 @@
         <div class="thumbnail-container p-4">
             <div class="relative w-full h-50 rounded-lg overflow-hidden bg-gray-100">
                 @if($course->thumbnail)
-                    @if(str_starts_with($course->thumbnail, 'http'))
+                    @if(str_starts_with($course->thumbnail, 'http') && str_contains($course->thumbnail, 'via.placeholder.com'))
+                        <x-lazy-image 
+                            src="{{ asset('assets/images/placeholder.svg') }}" 
+                            alt="{{ $course->name }}" 
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            loading="lazy" />
+                    @elseif(str_starts_with($course->thumbnail, 'http'))
                         <x-lazy-image 
                             src="{{ $course->thumbnail }}" 
                             alt="{{ $course->name }}" 

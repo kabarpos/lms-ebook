@@ -7,6 +7,11 @@
     'placeholderHeight' => '120px'
 ])
 
+@php
+    // Generate a deterministic class for min-height to avoid inline style attributes (CSP-friendly)
+    $placeholderClass = 'lazy-min-'.substr(md5($placeholderHeight), 0, 8);
+@endphp
+
 <div x-data="{
     loaded: false,
     error: false,
@@ -44,8 +49,7 @@
     
     <!-- Loading placeholder -->
     <div x-show="isLoading && !error" 
-         class="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse"
-         style="min-height: {{ $placeholderHeight }}">
+         class="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse {{ $placeholderClass }}">
         <div class="flex flex-col items-center space-y-2">
             <svg class="w-6 h-6 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -57,8 +61,7 @@
     
     <!-- Error state -->
     <div x-show="error" 
-         class="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500"
-         style="min-height: {{ $placeholderHeight }}">
+         class="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500 {{ $placeholderClass }}">
         <div class="text-center">
             <svg class="w-6 h-6 mx-auto mb-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -75,9 +78,9 @@
          x-transition:enter-end="opacity-100"
          src="{{ $src }}"
          alt="{{ $alt ?? '' }}"
-         class="{{ $class ?? '' }}"
+         class="{{ $class ?? '' }} {{ $placeholderClass }}"
          loading="{{ $loading ?? 'lazy' }}"
-         style="min-height: {{ $placeholderHeight }}" />
+         />
 </div>
 
 @push('styles')
@@ -105,6 +108,11 @@
     position: relative;
     z-index: 2;
     transition: opacity 0.3s ease;
+}
+
+/* Deterministic min-height class injected per instance to avoid inline style attributes */
+.{{ $placeholderClass }} {
+    min-height: {{ $placeholderHeight }};
 }
 </style>
 @endpush
