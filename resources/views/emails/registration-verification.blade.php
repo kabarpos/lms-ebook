@@ -14,14 +14,14 @@
     <div class="container">
         <h2>Verifikasi Email Akun Anda</h2>
         <p>Halo {{ $user->name }},</p>
-        <p>Terima kasih telah mendaftar di {{ config('app.name', 'LMS Ebook') }}. Untuk mengaktifkan akun, silakan verifikasi email Anda dengan menekan tombol di bawah:</p>
+        <p>Terima kasih telah mendaftar di {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }}. Untuk mengaktifkan akun, silakan verifikasi email Anda dengan menekan tombol di bawah:</p>
         <p>
             <a class="btn" href="{{ route('email.verification.verify', ['id' => $user->id, 'token' => $user->verification_token]) }}">Verifikasi Email</a>
         </p>
         <p>Jika tombol tidak berfungsi, salin dan buka link berikut di browser Anda:</p>
         <p>{{ route('email.verification.verify', ['id' => $user->id, 'token' => $user->verification_token]) }}</p>
         <p>Catatan: Akun akan aktif setelah Anda memverifikasi email dan nomor WhatsApp.</p>
-        <p>Salam,<br>{{ config('app.name', 'LMS Ebook') }}</p>
+        <p>Salam,<br>{{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }}</p>
     </div>
 </body>
 </html>

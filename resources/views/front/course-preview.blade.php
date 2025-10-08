@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="{{ $sectionContent->name }} - Learn {{ $course->name }} with comprehensive lessons and practical examples.">
     <meta name="keywords" content="{{ $course->name }}, online learning, course, {{ $sectionContent->name }}">
-    <meta name="author" content="{{ config('app.name') }}">
+    <meta name="author" content="{{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }}">
     <meta property="og:title" content="{{ $sectionContent->name }} - {{ $course->name }}">
     <meta property="og:description" content="Learn {{ $course->name }} with comprehensive lessons and practical examples.">
     <meta property="og:type" content="article">

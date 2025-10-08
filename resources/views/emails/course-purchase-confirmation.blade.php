@@ -215,13 +215,13 @@
             <p>We're excited to be part of your learning journey. If you have any questions or need assistance, don't hesitate to reach out to our support team.</p>
 
             <p>Happy learning!</p>
-            <p><strong>The DripCourse Team</strong></p>
+            <p><strong>The {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }} Team</strong></p>
         </div>
 
         <!-- Footer -->
         <div class="footer">
             <p>This email was sent to {{ $user->email }}</p>
-            <p>© {{ date('Y') }} DripCourse. All rights reserved.</p>
+            <p>© {{ date('Y') }} {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }}. All rights reserved.</p>
             
             <div class="social-links">
                 <a href="#">Follow us on Social Media</a>

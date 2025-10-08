@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', 'Aksellera - Learning Platform')
+@section('title', \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') . ' - Learning Platform')
 @section('content')
     
     <x-nav-guest />

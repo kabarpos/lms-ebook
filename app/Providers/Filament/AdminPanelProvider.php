@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Dashboard\Data;
 use App\Filament\Pages\Dashboard\Statistik;
+use App\Helpers\WebsiteSettingHelper;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -30,6 +31,10 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName(WebsiteSettingHelper::get('site_name', 'Admin Panel'))
+            ->brandLogo(fn () => WebsiteSettingHelper::getLogoUrl() ? asset(WebsiteSettingHelper::getLogoUrl()) : null)
+            ->brandLogoHeight('2rem')
+            ->favicon(fn () => WebsiteSettingHelper::getFaviconUrl() ? asset(WebsiteSettingHelper::getFaviconUrl()) : null)
             // ->spa() // Dinonaktifkan untuk mengatasi masalah halaman blank di production
             // ->spaUrlExceptions([
             //     // External URLs yang tidak kompatibel dengan SPA

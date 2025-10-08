@@ -5,12 +5,13 @@ namespace App\Filament\Resources\WebsiteSettings;
 use App\Filament\Resources\WebsiteSettings\Pages\ManageWebsiteSettings;
 use App\Filament\Resources\WebsiteSettings\Pages;
 use App\Models\WebsiteSetting;
-use Filament\Schemas\Components\FileUpload;
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Textarea;
-use Filament\Schemas\Components\TextInput;
-use Filament\Schemas\Components\Toggle;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -19,7 +20,7 @@ class WebsiteSettingResource extends Resource
 {
     protected static ?string $model = WebsiteSetting::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static string | \BackedEnum | null $navigationIcon = null;
 
     protected static ?string $navigationLabel = 'Pengaturan Website';
 
@@ -27,7 +28,7 @@ class WebsiteSettingResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Pengaturan Website';
 
-    protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
+    protected static string | \UnitEnum | null $navigationGroup = 'System';
 
     protected static ?int $navigationSort = 99;
 
@@ -38,7 +39,7 @@ class WebsiteSettingResource extends Resource
                 Tabs::make('Website Settings')
                     ->tabs([
                         // Tab SEO Settings
-                        Tabs\Tab::make('SEO & Meta')
+                        Tab::make('SEO & Meta')
                             ->icon('heroicon-o-magnifying-glass')
                             ->schema([
                                 Section::make('Informasi Dasar Website')
@@ -76,7 +77,7 @@ class WebsiteSettingResource extends Resource
                             ]),
 
                         // Tab Media Settings
-                        Tabs\Tab::make('Media & Branding')
+                        Tab::make('Media & Branding')
                             ->icon('heroicon-o-photo')
                             ->schema([
                                 Section::make('Logo & Favicon')
@@ -108,7 +109,7 @@ class WebsiteSettingResource extends Resource
                             ]),
 
                         // Tab Scripts Settings
-                        Tabs\Tab::make('Scripts & Tracking')
+                        Tab::make('Scripts & Tracking')
                             ->icon('heroicon-o-code-bracket')
                             ->schema([
                                 Section::make('Custom Scripts')
@@ -139,7 +140,7 @@ class WebsiteSettingResource extends Resource
                             ]),
 
                         // Tab Footer & Contact
-                        Tabs\Tab::make('Footer & Kontak')
+                        Tab::make('Footer & Kontak')
                             ->icon('heroicon-o-phone')
                             ->schema([
                                 Section::make('Footer Website')
@@ -170,7 +171,7 @@ class WebsiteSettingResource extends Resource
                             ]),
 
                         // Tab Advanced Settings
-                        Tabs\Tab::make('Pengaturan Lanjutan')
+                        Tab::make('Pengaturan Lanjutan')
                             ->icon('heroicon-o-cog-6-tooth')
                             ->schema([
                                 Section::make('Mode Maintenance')

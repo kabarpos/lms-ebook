@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', 'Register - LMS EBook')
+@section('title', 'Register - ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'))
 
 @section('content')
     <x-nav-guest />

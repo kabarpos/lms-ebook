@@ -51,10 +51,10 @@ class EmailNotificationService
             $data = [
                 'user_name' => $user->name,
                 'verification_link' => $verificationLink,
-                'app_name' => config('app.name', 'LMS Ebook'),
+                'app_name' => \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'),
             ];
 
-            $subject = $template->subject ?: ('Verifikasi Akun ' . config('app.name', 'LMS Ebook'));
+            $subject = $template->subject ?: ('Verifikasi Akun ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'));
             $message = $template->parseMessage($data);
 
             // Decide to send HTML or plain text based on content heuristics

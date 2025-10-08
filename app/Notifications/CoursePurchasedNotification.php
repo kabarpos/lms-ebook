@@ -56,7 +56,7 @@ class CoursePurchasedNotification extends Notification
             ->line('You now have **lifetime access** to this course.')
             ->action('Start Learning Now', url('/course/' . $this->course->slug))
             ->line('Visit your dashboard to see all your purchased courses.')
-            ->line('Thank you for choosing DripCourse!');
+            ->line('Thank you for choosing ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') . '!');
     }
 
     /**

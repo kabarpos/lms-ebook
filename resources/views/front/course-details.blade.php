@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', $course->name . ' - LMS DripCourse')
+@section('title', $course->name . ' - ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'))
 
 @section('content')
     @auth

@@ -1,5 +1,5 @@
-@extends('front.layouts.app')
-@section('title', 'My Courses - DripCourse')
+@extends('layouts.app')
+@section('title', 'My Courses - ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'))
 @section('content')
     <x-navigation-auth />
     

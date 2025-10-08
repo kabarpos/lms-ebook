@@ -1,5 +1,5 @@
-@extends('front.layouts.app')
-@section('title', 'Profile Settings - DripCourse')
+@extends('layouts.app')
+@section('title', 'Profile Settings - ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'))
 @section('content')
     <x-navigation-auth />
     

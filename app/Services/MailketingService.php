@@ -66,9 +66,9 @@ class MailketingService
 
         $recipient = $toEmail ?: (Auth::user()->email ?? $this->smtpSetting->from_email);
         try {
-            Mail::raw('Tes koneksi SMTP dari sistem ' . config('app.name'), function ($message) use ($recipient) {
+            Mail::raw('Tes koneksi SMTP dari sistem ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'), function ($message) use ($recipient) {
                 $message->to($recipient);
-                $message->subject('Tes SMTP: ' . config('app.name'));
+                $message->subject('Tes SMTP: ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'));
             });
 
             return [

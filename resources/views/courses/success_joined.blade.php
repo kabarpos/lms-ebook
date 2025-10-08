@@ -1,5 +1,5 @@
-@extends('front.layouts.app')
-@section('title', 'Success Joined - LMS DripCourse')
+@extends('layouts.app')
+@section('title', 'Success Joined - ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'))
 @section('content')
 <x-nav-guest />
 

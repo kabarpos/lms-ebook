@@ -1,5 +1,5 @@
-@extends('front.layouts.app')
-@section('title', 'Search Courses - LMS DripCourse')
+@extends('layouts.app')
+@section('title', 'Search Courses - ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'))
 @section('content')
     <x-navigation-auth />
     <main class="flex flex-col gap-10 pb-10 mt-[50px]">

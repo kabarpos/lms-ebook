@@ -31,11 +31,11 @@ WHAT'S NEXT?
 We're excited to be part of your learning journey. If you have any questions or need assistance, don't hesitate to reach out to our support team.
 
 Happy learning!
-The DripCourse Team
+The {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }} Team
 
 ---
 This email was sent to {{ $user->email }}
-© {{ date('Y') }} DripCourse. All rights reserved.
+© {{ date('Y') }} {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }}. All rights reserved.
 
 If you're having trouble accessing your course, copy and paste this URL into your web browser:
 {{ $courseUrl }}

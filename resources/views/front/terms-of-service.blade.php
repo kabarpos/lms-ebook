@@ -1,5 +1,5 @@
 @extends('front.layouts.app')
-@section('title', 'Terms of Service - LMS DripCourse')
+@section('title', 'Terms of Service - ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'))
 
 @section('content')
     
@@ -21,7 +21,7 @@
                 Ketentuan Layanan
             </h1>
             <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-                Ketentuan dan peraturan penggunaan platform LMS DripCourse yang harus dipahami dan disetujui oleh semua pengguna
+                Ketentuan dan peraturan penggunaan platform {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }} yang harus dipahami dan disetujui oleh semua pengguna
             </p>
         </div>
     </section>
@@ -42,7 +42,7 @@
                         1. Pendahuluan
                     </h2>
                     <p class="text-gray-700 leading-relaxed text-line-height-relaxed">
-                        Selamat datang di LMS DripCourse. Dengan mengakses dan menggunakan platform kami, Anda setuju untuk terikat oleh ketentuan layanan ini. Platform LMS DripCourse adalah sistem manajemen pembelajaran yang menyediakan akses ke berbagai kursus online, materi pembelajaran, dan sertifikasi profesional.
+                        Selamat datang di {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }}. Dengan mengakses dan menggunakan platform kami, Anda setuju untuk terikat oleh ketentuan layanan ini. Platform {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }} adalah sistem manajemen pembelajaran yang menyediakan akses ke berbagai kursus online, materi pembelajaran, dan sertifikasi profesional.
                     </p>
                 </div>
 
@@ -57,7 +57,7 @@
                         2. Definisi
                     </h2>
                     <ul class="space-y-3 text-gray-700 text-line-height-relaxed">
-                        <li><strong>Platform:</strong> Sistem LMS DripCourse yang dapat diakses melalui website dan aplikasi mobile</li>
+                        <li><strong>Platform:</strong> Sistem {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }} yang dapat diakses melalui website dan aplikasi mobile</li>
                         <li><strong>Pengguna:</strong> Setiap individu yang mendaftar dan menggunakan layanan kami</li>
                         <li><strong>Konten:</strong> Semua materi pembelajaran, video, teks, gambar, dan dokumen yang tersedia di platform</li>
                         <li><strong>Kursus:</strong> Program pembelajaran terstruktur yang tersedia di platform</li>
@@ -149,7 +149,7 @@
                         6. Hak Kekayaan Intelektual
                     </h2>
                     <p class="text-gray-700 text-line-height-relaxed">
-                        Semua konten, materi, design, logo, dan elemen lainnya di platform ini adalah milik LMS DripCourse atau mitra konten kami. Pengguna diberikan lisensi terbatas untuk mengakses dan menggunakan konten hanya untuk tujuan pembelajaran pribadi. Setiap pelanggaran hak cipta akan ditindak sesuai hukum yang berlaku.
+                        Semua konten, materi, design, logo, dan elemen lainnya di platform ini adalah milik {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }} atau mitra konten kami. Pengguna diberikan lisensi terbatas untuk mengakses dan menggunakan konten hanya untuk tujuan pembelajaran pribadi. Setiap pelanggaran hak cipta akan ditindak sesuai hukum yang berlaku.
                     </p>
                 </div>
 
@@ -186,7 +186,7 @@
                         8. Pembatasan Tanggung Jawab
                     </h2>
                     <p class="text-gray-700 text-line-height-relaxed">
-                        LMS DripCourse tidak bertanggung jawab atas kerugian yang timbul dari penggunaan platform, termasuk namun tidak terbatas pada kehilangan data, gangguan bisnis, atau kerusakan perangkat. Platform disediakan "sebagaimana adanya" tanpa jaminan tersurat maupun tersirat. Pengguna menggunakan layanan dengan risiko sendiri.
+                        {{ \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') }} tidak bertanggung jawab atas kerugian yang timbul dari penggunaan platform, termasuk namun tidak terbatas pada kehilangan data, gangguan bisnis, atau kerusakan perangkat. Platform disediakan "sebagaimana adanya" tanpa jaminan tersurat maupun tersirat. Pengguna menggunakan layanan dengan risiko sendiri.
                     </p>
                 </div>
 
@@ -241,7 +241,7 @@
                         Jika Anda memiliki pertanyaan tentang ketentuan layanan ini, silakan hubungi kami:
                     </p>
                     <div class="space-y-2 text-gray-700 text-line-height-relaxed">
-                        <p><strong>Email:</strong> support@lmsdripcourse.com</p>
+                        <p><strong>Email:</strong> support@{{ strtolower(str_replace(' ', '', \App\Helpers\WebsiteSettingHelper::get('site_name', 'lmsplatform'))) }}.com</p>
                         <p><strong>Telepon:</strong> +62 21 1234 5678</p>
                         <p><strong>Alamat:</strong> Jakarta, Indonesia</p>
                     </div>

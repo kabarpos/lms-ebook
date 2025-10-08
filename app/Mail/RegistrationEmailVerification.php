@@ -27,7 +27,7 @@ class RegistrationEmailVerification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Verifikasi Email Akun ' . config('app.name', 'LMS Ebook'),
+            subject: 'Verifikasi Email Akun ' . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'),
         );
     }
 

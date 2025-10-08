@@ -50,7 +50,7 @@ class WhatsappNotificationService
             $messageData = [
                 'user_name' => $user->name,
                 'verification_link' => $verificationLink,
-                'app_name' => config('app.name', 'LMS Ebook'),
+                'app_name' => \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'),
             ];
 
             $message = $template->parseMessage($messageData);
@@ -119,7 +119,7 @@ class WhatsappNotificationService
                 'course_name' => $courseName,
                 'total_amount' => $totalAmount,
                 'payment_link' => $paymentLink,
-                'app_name' => config('app.name', 'LMS Ebook'),
+                'app_name' => \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'),
             ];
 
             $message = $template->parseMessage($messageData);
@@ -184,7 +184,7 @@ class WhatsappNotificationService
                 'order_id' => $transaction->booking_trx_id,
                 'course_name' => $courseName,
                 'total_amount' => $totalAmount,
-                'app_name' => config('app.name', 'LMS Ebook'),
+                'app_name' => \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'),
             ];
 
             $message = $template->parseMessage($messageData);
@@ -246,7 +246,7 @@ class WhatsappNotificationService
                 'transaction_id' => $transaction->booking_trx_id,
                 'course_url' => url('/course/' . $course->slug),
                 'dashboard_url' => url('/dashboard'),
-                'app_name' => config('app.name', 'LMS Ebook'),
+                'app_name' => \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'),
             ];
 
             $message = $template->parseMessage($messageData);
@@ -387,12 +387,12 @@ class WhatsappNotificationService
             
             if (!$template) {
                 // If template doesn't exist, create a default message
-                $message = "Halo {$user->name},\n\nAnda telah meminta reset password untuk akun Anda di " . config('app.name', 'LMS Ebook') . ".\n\nKlik link berikut untuk mereset password Anda:\n{$resetUrl}\n\nLink ini akan kedaluwarsa dalam 60 menit.\n\nJika Anda tidak meminta reset password, abaikan pesan ini.";
+                $message = "Halo {$user->name},\n\nAnda telah meminta reset password untuk akun Anda di " . \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform') . ".\n\nKlik link berikut untuk mereset password Anda:\n{$resetUrl}\n\nLink ini akan kedaluwarsa dalam 60 menit.\n\nJika Anda tidak meminta reset password, abaikan pesan ini.";
             } else {
                 $messageData = [
                     'user_name' => $user->name,
                     'reset_url' => $resetUrl,
-                    'app_name' => config('app.name', 'LMS Ebook'),
+                    'app_name' => \App\Helpers\WebsiteSettingHelper::get('site_name', 'LMS Platform'),
                     'expiry_time' => '60 menit'
                 ];
                 $message = $template->parseMessage($messageData);
