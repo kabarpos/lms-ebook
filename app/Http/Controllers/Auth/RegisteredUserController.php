@@ -56,19 +56,28 @@ class RegisteredUserController extends Controller
         // Generate verification token
         $user->generateVerificationToken();
 
-        // Send WhatsApp verification
+        // Send verification notifications
         try {
             $whatsappService = app(WhatsappNotificationService::class);
             $result = $whatsappService->sendRegistrationVerification($user);
             
             if ($result['success']) {
-                // Send Email verification as well
+                // Send Email verification as well via templated service
                 try {
-                    Mail::to($user->email)->send(new RegistrationEmailVerification($user));
-                    Log::info('Registration email verification sent successfully', [
-                        'user_id' => $user->id,
-                        'email' => $user->email
-                    ]);
+                    $emailService = app(\App\Services\EmailNotificationService::class);
+                    $emailResult = $emailService->sendRegistrationVerification($user);
+                    if ($emailResult['success']) {
+                        Log::info('Registration email verification sent successfully', [
+                            'user_id' => $user->id,
+                            'email' => $user->email
+                        ]);
+                    } else {
+                        Log::warning('Failed to send registration email verification', [
+                            'user_id' => $user->id,
+                            'email' => $user->email,
+                            'error' => $emailResult['error'] ?? $emailResult['message'] ?? 'Unknown'
+                        ]);
+                    }
                 } catch (\Exception $emailEx) {
                     Log::warning('Failed to send registration email verification', [
                         'user_id' => $user->id,
