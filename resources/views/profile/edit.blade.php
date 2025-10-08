@@ -4,7 +4,7 @@
     <x-navigation-auth />
     
     <!-- Main Content -->
-    <main class="bg-gray-50 min-h-screen py-8 font-manrope">
+    <main class="bg-gray-50 min-h-screen py-8">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header Section -->
             <div class="mb-8">
@@ -46,25 +46,9 @@
                         @include('profile.partials.update-password-form')
                     </div>
                 </div>
-
-                <!-- Danger Zone Card -->
-                <div class="bg-white rounded-2xl shadow-lg border border-red-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
-                        <h2 class="text-xl font-bold text-white">Danger Zone</h2>
-                        <p class="text-red-100 text-sm mt-1">Permanently delete your account and all associated data</p>
-                    </div>
-                    <div class="p-6 lg:p-8">
-                        @include('profile.partials.delete-user-form')
-                    </div>
-                </div>
             </div>
         </div>
     </main>
     
-    <style nonce="{{ request()->attributes->get('csp_nonce') }}">
-    /* Force Manrope Font Implementation */
-    body, html, * {
-        font-family: "Manrope", ui-sans-serif, system-ui, sans-serif !important;
-    }
-    </style>
+    
 @endsection

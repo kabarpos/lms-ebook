@@ -129,7 +129,7 @@
                 </button>
                 
                 @if (session('status') === 'profile-updated')
-                    <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 3000)" 
+                    <div x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(function(){ show = false }, 3000)" 
                          class="flex items-center space-x-2 text-green-600 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>

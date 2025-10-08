@@ -4,23 +4,10 @@
 @source "../../app/Filament/**/*.php";
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 
-/* Global Font Enforcement - Maximum Specificity */
-*, *::before, *::after {
-  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
-}
-
-body, html {
-  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
-}
-
-/* Target common elements that might override font */
-h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label {
-  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
-}
-
-/* Ensure body has proper default styling */
+/* Hapus pemaksaan font global agar kembali ke standar Tailwind/proyek */
+/* Gunakan pengaturan font melalui utilitas Tailwind atau variabel tema saja */
+/* Body styling yang ringan (tanpa override font) */
 body {
-  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f8fafc;
