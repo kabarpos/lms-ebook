@@ -194,7 +194,8 @@ class SecurityHeaders
             "style-src-attr" => "'unsafe-inline'",
             "font-src" => "'self' data: https://fonts.gstatic.com https://fonts.bunny.net",
             "img-src" => "'self' data: https: https://ui-avatars.com",
-            "connect-src" => "'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://ui-avatars.com ws: wss:"
+            // Allow connections to Plyr CDN for source maps and any runtime fetches, and YouTube domains
+            "connect-src" => "'self' https://api.sandbox.midtrans.com https://api.midtrans.com https://ui-avatars.com https://cdn.plyr.io https://www.youtube.com ws: wss:"
                 . ($viteDevServerV4 ? " $viteDevServerV4 ws://localhost:5173" : "")
                 . ($viteDevServerV6 ? " $viteDevServerV6 ws://[::1]:5173" : ""),
             "object-src" => "'none'",

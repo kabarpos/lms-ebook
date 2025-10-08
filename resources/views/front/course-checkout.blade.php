@@ -97,7 +97,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
                 <!-- Course Preview -->
-                <div class="space-y-8">
+                <div class="space-y-8 order-2 lg:order-1">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                         <!-- Course Image -->
                         <div class="aspect-video bg-gray-100">
@@ -185,7 +185,7 @@
                 </div>
 
                 <!-- Checkout Form -->
-                <div class="space-y-8">
+                <div class="space-y-8 order-1 lg:order-2">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                         <form id="checkout-details" class="space-y-6">
                             @csrf
