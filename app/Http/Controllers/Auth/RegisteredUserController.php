@@ -82,7 +82,7 @@ class RegisteredUserController extends Controller
                 ]);
                 
                 return redirect()->route('login')
-                    ->with('success', 'Pendaftaran berhasil! Link verifikasi telah dikirim ke WhatsApp dan Email Anda. Silakan verifikasi keduanya sebelum login.');
+                    ->with('success', 'Pendaftaran berhasil! Link verifikasi telah dikirim ke WhatsApp dan Email Anda. Verifikasi salah satu (WhatsApp atau Email) untuk mengaktifkan akun dan login. (Opsional: verifikasi keduanya untuk keamanan tambahan).');
             } else {
                 Log::warning('Registration successful but WhatsApp notification failed', [
                     'user_id' => $user->id,

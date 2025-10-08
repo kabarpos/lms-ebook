@@ -110,7 +110,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::middleware(['role:student|admin|super-admin'])->group(function () {
+    Route::middleware(['role:student|admin|super-admin', 'verified.account'])->group(function () {
         Route::get('/dashboard/courses/', [CourseController::class, 'index'])
         ->name('dashboard');
 
@@ -137,7 +137,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // API Routes for Lesson Progress (JSON responses)
-    Route::prefix('api')->middleware(['check.course.access', 'throttle:api'])->group(function () {
+    Route::prefix('api')->middleware(['verified.account', 'check.course.access', 'throttle:api'])->group(function () {
         Route::get('/lesson-progress', [LessonProgressController::class, 'index'])
             ->name('api.lesson-progress.index');
         

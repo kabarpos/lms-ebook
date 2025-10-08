@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'course.access' => \App\Http\Middleware\CheckCourseAccess::class,
+            'check.course.access' => \App\Http\Middleware\CheckCourseAccess::class,
             'security.headers' => \App\Http\Middleware\SecurityHeaders::class,
             'login.rate.limit' => \App\Http\Middleware\LoginRateLimit::class,
             'rate.limit.logger' => \App\Http\Middleware\RateLimitLogger::class,
@@ -34,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'performance.monitor' => \App\Http\Middleware\PerformanceMonitor::class,
             'security.scanner' => \App\Http\Middleware\SecurityScanner::class,
             'csp.validator' => \App\Http\Middleware\CspValidator::class,
+            'verified.account' => \App\Http\Middleware\EnsureAccountActive::class,
         ]);
 
         // CSRF exceptions

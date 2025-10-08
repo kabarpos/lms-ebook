@@ -42,7 +42,7 @@ class VerificationController extends Controller
             ]);
 
             return redirect()->route('login')
-                ->with('success', 'Nomor WhatsApp berhasil diverifikasi. Silakan verifikasi email Anda untuk mengaktifkan akun.');
+                ->with('success', 'Nomor WhatsApp berhasil diverifikasi. Akun Anda telah diaktifkan dan Anda dapat login sekarang. (Opsional: verifikasi email untuk keamanan tambahan).');
 
         } catch (\Exception $e) {
             Log::error('WhatsApp verification failed', [
@@ -88,7 +88,7 @@ class VerificationController extends Controller
             ]);
 
             return redirect()->route('login')
-                ->with('success', 'Email berhasil diverifikasi. Silakan verifikasi WhatsApp Anda untuk mengaktifkan akun.');
+                ->with('success', 'Email berhasil diverifikasi. Akun Anda telah diaktifkan dan Anda dapat login sekarang. (Opsional: verifikasi WhatsApp untuk keamanan tambahan).');
 
         } catch (\Exception $e) {
             Log::error('Email verification failed', [
