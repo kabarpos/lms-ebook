@@ -23,7 +23,7 @@ class EmailNotificationService
     {
         try {
             // Ensure SMTP is applied
-            $this->mailketing->applyActiveSmtpConfig();
+            $this->mailketing->applyMailConfig();
 
             // Generate token if missing
             if (!$user->verification_token) {

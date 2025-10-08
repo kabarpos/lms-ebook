@@ -5,12 +5,12 @@ namespace App\Filament\Resources\WebsiteSettings;
 use App\Filament\Resources\WebsiteSettings\Pages\ManageWebsiteSettings;
 use App\Filament\Resources\WebsiteSettings\Pages;
 use App\Models\WebsiteSetting;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\FileUpload;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Textarea;
+use Filament\Schemas\Components\TextInput;
+use Filament\Schemas\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -26,6 +26,8 @@ class WebsiteSettingResource extends Resource
     protected static ?string $modelLabel = 'Pengaturan Website';
 
     protected static ?string $pluralModelLabel = 'Pengaturan Website';
+
+    protected static string | \UnitEnum | null $navigationGroup = 'Sistem';
 
     protected static ?int $navigationSort = 99;
 
