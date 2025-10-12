@@ -87,12 +87,9 @@
         @endif
 
         <!-- Copyright -->
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-center items-center gap-4 border-t border-gray-200 pt-6">
             <p class="text-gray-500 text-sm">
                 {{ WebsiteSettingHelper::getFooterCopyright() }}
-            </p>
-            <p class="text-gray-500 text-sm">
-                Made with ❤️ for better education
             </p>
         </div>
     </div>

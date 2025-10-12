@@ -86,6 +86,7 @@ class WebsiteSettingResource extends Resource
                                             ->label('Logo Website')
                                             ->image()
                                             ->directory('website-settings/logos')
+                                            ->disk('public')
                                             ->visibility('public')
                                             ->helperText('Upload logo website (format: PNG, JPG, SVG)'),
                                         
@@ -93,6 +94,7 @@ class WebsiteSettingResource extends Resource
                                             ->label('Favicon')
                                             ->image()
                                             ->directory('website-settings/favicons')
+                                            ->disk('public')
                                             ->visibility('public')
                                             ->helperText('Upload favicon (16x16 atau 32x32 pixel, format: ICO, PNG)'),
                                     ])->columns(2),
@@ -103,6 +105,7 @@ class WebsiteSettingResource extends Resource
                                             ->label('Thumbnail Default')
                                             ->image()
                                             ->directory('website-settings/thumbnails')
+                                            ->disk('public')
                                             ->visibility('public')
                                             ->helperText('Gambar default untuk konten yang tidak memiliki thumbnail'),
                                     ])->columns(1),

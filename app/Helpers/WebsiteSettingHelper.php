@@ -91,7 +91,7 @@ class WebsiteSettingHelper
     public static function getLogoUrl()
     {
         $logo = self::get('logo');
-        return $logo ? Storage::url($logo) : null;
+        return $logo ? Storage::disk('public')->url($logo) : null;
     }
 
     /**
@@ -100,7 +100,7 @@ class WebsiteSettingHelper
     public static function getFaviconUrl()
     {
         $favicon = self::get('favicon');
-        return $favicon ? Storage::url($favicon) : null;
+        return $favicon ? Storage::disk('public')->url($favicon) : null;
     }
 
     /**
@@ -109,7 +109,7 @@ class WebsiteSettingHelper
     public static function getDefaultThumbnailUrl()
     {
         $thumbnail = self::get('default_thumbnail');
-        return $thumbnail ? Storage::url($thumbnail) : null;
+        return $thumbnail ? Storage::disk('public')->url($thumbnail) : null;
     }
 
     /**
